@@ -1,6 +1,8 @@
-# Monkey-Business-project
+# Трекер підготовки до технічних співбесід
 
-ToDo
+## Короткий опис
+
+Інструмент для систематизації пошуку роботи та підготовки до співбесід. В основі - Канбан-дошка, де користувач додає вакансії та переміщує їх між етапами: Відгук, Скринінг, Технічне інтерв'ю, Офер. Система дозволяє зберігати вимоги вакансії, прикріплювати посилання на тестові завдання та вести нотатки з фідбеком від рекрутерів.
 
 ## CI Status
 [![CI Test](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/workflows/ci.yml/badge.svg)](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/workflows/ci.yml)
