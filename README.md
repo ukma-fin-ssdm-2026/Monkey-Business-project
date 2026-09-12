@@ -20,3 +20,4 @@ ToDo
 ## Документи
 - [TeamCharter.md](./TeamCharter.md) — командний статут
 - [Project-Description.md](./Project-Description.md) — опис проєкту
+- [docs/TaskWorkflow.md](./docs/TaskWorkflow.md) — робочий процес завдань (issues)
