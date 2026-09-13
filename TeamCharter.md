@@ -36,7 +36,7 @@
 ## 6. Доступність та робоче навантаження
 ### Доступність учасників:
 - Nazar Sydorchuk - ~X годин/тиждень
-- Oleksii Volik - ~X годин/тиждень
+- Oleksii Volik - ~10 годин/тиждень
 - Mykola Vashchenko - ~10 годин/тиждень
 - Nikita Dyshlyuk - ~X годин/тиждень
 
@@ -58,6 +58,6 @@
 
 ## 9. Підписи
 - [ ] Nazar Sydorchuk (GitHub: @punguiin)
-- [ ] Oleksii Volik (GitHub: @saoleksii)
+- [x] Oleksii Volik (GitHub: @saoleksii)
 - [x] Mykola Vashchenko (GitHub: @MykolaVashchenko)
 - [ ] Nikita Dyshlyuk (GitHub: @mytec0l)
