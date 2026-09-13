@@ -38,7 +38,7 @@
 - Nazar Sydorchuk - ~X годин/тиждень
 - Oleksii Volik - ~10 годин/тиждень
 - Mykola Vashchenko - ~10 годин/тиждень
-- Nikita Dyshlyuk - ~X годин/тиждень
+- Nikita Dyshlyuk - 10.1 годин/тиждень
 
 ### Балансування навантаження: 
 - Статус завдань переглядається на кожній командній зустрічі; застарілі issues перепризначаються або закриваються. 
@@ -60,4 +60,4 @@
 - [ ] Nazar Sydorchuk (GitHub: @punguiin)
 - [x] Oleksii Volik (GitHub: @saoleksii)
 - [x] Mykola Vashchenko (GitHub: @MykolaVashchenko)
-- [ ] Nikita Dyshlyuk (GitHub: @mytec0l)
+- [x] Nikita Dyshlyuk (GitHub: @mytec0l)
