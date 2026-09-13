@@ -35,7 +35,7 @@
 
 ## 6. Доступність та робоче навантаження
 ### Доступність учасників:
-- Nazar Sydorchuk - ~X годин/тиждень
+- Nazar Sydorchuk - ~13 годин/тиждень
 - Oleksii Volik - ~10 годин/тиждень
 - Mykola Vashchenko - ~10 годин/тиждень
 - Nikita Dyshlyuk - 10.1 годин/тиждень
@@ -57,7 +57,7 @@
 - Правило верифікації: Будь-який згенерований ШІ код обов'язково проходить перегляд та проходить CI-тести перед злиттям у main. Неперевірений або непротестований згенерований код у основну гілку не потрапляє.
 
 ## 9. Підписи
-- [ ] Nazar Sydorchuk (GitHub: @punguiin)
+- [x] Nazar Sydorchuk (GitHub: @punguiin)
 - [x] Oleksii Volik (GitHub: @saoleksii)
 - [x] Mykola Vashchenko (GitHub: @MykolaVashchenko)
 - [x] Nikita Dyshlyuk (GitHub: @mytec0l)
