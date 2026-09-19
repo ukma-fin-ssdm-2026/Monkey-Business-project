@@ -11,13 +11,18 @@
 
 | Ім'я | GitHub | Роль |
 |---|---|---|
-| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Repo Maintainer |
-| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Issue Tracker Lead |
-| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | CI Maintainer |
-| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Documentation Lead |
+| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Documentation Lead |
+| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Requirements Lead |
+| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Quality Lead |
+| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Traceability Lead |
 
 ## Стратегія розробки
 Використовуємо GitHub Flow: зміни в `main` вносяться лише через Pull Request з проходженням CI та щонайменше одним схваленням.
+
+## Артефакти вимог
+- [Вимоги до системи (FR та NFR)](./docs/requirements/requirements.md) — функціональні та нефункціональні вимоги (ISO 25010)
+- [Користувацькі історії](./docs/requirements/user-stories.md) — користувацькі історії з критеріями прийняття (INVEST)
+- [Матриця простежуваності (RTM)](./docs/requirements/rtm.md) — зв'язок User Stories → FR → NFR → Test Cases
 
 ## Документи
 - [TeamCharter.md](./TeamCharter.md) — командний статут
