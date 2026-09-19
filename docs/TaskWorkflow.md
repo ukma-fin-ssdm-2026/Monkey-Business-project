@@ -1,54 +1,54 @@
-# Task Workflow
+# Робочий процес завдань
 
-This document describes how work is tracked and delivered in the Monkey-Business-project repository.
-Every teammate is expected to follow it.
+Цей документ описує, як у репозиторії ведеться облік роботи та як вона доводиться до результату.
+Кожен учасник команди зобов'язаний його дотримуватися.
 
-## 1. Where tasks live
+## 1. Де знаходяться завдання
 
-- All work items are tracked as **GitHub Issues** in this repository.
-- Anyone on the team may create an issue. Before creating one, search existing issues to avoid duplicates.
-- An issue must have:
-  - a short, action-oriented title (e.g. `Write TeamCharter.md`, `Setup GitHub Actions CI`);
-  - a description of what needs to be done and what "done" looks like (acceptance criteria);
-  - at least one label;
-  - an assignee.
+- Усі робочі завдання ведуться як **GitHub Issues** у цьому репозиторії.
+- Будь-хто з команди може створити issue. Перш ніж створювати нове, пошукайте серед наявних issues, щоб не створити дублікатів.
+- Issue обов'язково має:
+  - короткий заголовок (напр. `Write TeamCharter.md`, `Setup GitHub Actions CI`);
+  - опис того, що потрібно зробити і як виглядає результат «готово» (критерії готовності);
+  - принаймні один ярлик;
+  - виконавця.
 
-## 2. Labels
+## 2. Ярлики
 
-| Label           | Meaning                                                                                             |
-|-----------------|-----------------------------------------------------------------------------------------------------|
-| `setup`         | Repository, tooling, or process configuration (will be archived later)                              |
-| `documentation` | Writing or updating project documents (`*.md` files)                                                |
-| `feature`       | New functionality of the product                                                                    |
-| `bug`           | Something that is broken and must be fixed                                                          |
-| `in progress`   | Someone is actively working on the task (see Task states)                                           |
-| `accepted`      | Tasks that were reviewed, and merged with main                                                      |
-| `blocker`       | Critical bugs that interrupt existing features or issues that must be done before doing other tasks |
+| Ярлик           | Значення                                                                                                        |
+|-----------------|-----------------------------------------------------------------------------------------------------------------|
+| `setup`         | Налаштування репозиторію, інструментів або процесу (згодом буде архівовано)                                     |
+| `documentation` | Написання або оновлення проєктних документів (файли `*.md`)                                                     |
+| `feature`       | Нова функціональність сервісу                                                                                  |
+| `bug`           | Щось зламане, що потрібно виправити                                                                             |
+| `in progress`   | Хтось активно працює над завданням (див. «Стани завдань»)                                                       |
+| `accepted`      | Завдання, які пройшли рев'ю та злиті з `main`                                                                   |
+| `blocker`       | Критичні баги, що порушують роботу наявних функцій, або issues, які потрібно виконати перед іншими завданнями   |
 
-Labels may be combined (e.g. `documentation` + `setup`). New labels are added only after a team discussion.
+Ярлики можна комбінувати (напр. `documentation` + `setup`). Нові ярлики додаються лише після обговорення в команді.
 
-## 3. Task states
+## 3. Стани завдань
 
-A task moves through the following states:
+Завдання проходить такі стани:
 
 ```
 Open -> In progress -> Done -> Accepted
 ```
 
-| State       | How you know                                  | Who moves it                                                     |
-|-------------|-----------------------------------------------|------------------------------------------------------------------|
-| Open        | Issue exists, no `in progress` label          | Issue author                                                     |
-| In progress | Issue has the `in progress` label             | Assignee, when they start work                                   |
-| Done        | Issue is closed, no `accepted` label          | Assignee, when done with work and the PR is opened               |
-| Accepted    | Issue is closed and has the `accepted` label  | Issue author, when all requirements are met and changes are on `main` |
+| Стан        | Як визначити                                  | Хто змінює стан                                                        |
+|-------------|-----------------------------------------------|------------------------------------------------------------------------|
+| Open        | Issue існує, ярлика `in progress` немає       | Автор issue                                                            |
+| In progress | Issue має ярлик `in progress`                 | Виконавець, коли починає роботу                                        |
+| Done        | Issue закрито, ярлика `accepted` немає        | Виконавець, коли роботу завершено і PR відкрито                        |
+| Accepted    | Issue закрито і має ярлик `accepted`          | Автор issue, коли всі вимоги виконано і зміни вже в `main`             |
 
-An issue that turns out to be unnecessary is closed with a comment explaining why.
-An issue can be reopened by the reviewer if not all conditions were met or something came up during review (a bug, missing requirement, etc.). It then goes back to **In progress**.
+Issue, яке виявилося непотрібним, закривається з коментарем, що пояснює причину.
+Оглядач може перевідкрити issue, якщо не всі умови виконано або під час рев'ю щось виявилося (баг, пропущена вимога тощо). Тоді воно повертається в стан **In progress**.
 
-## 4. Working with git
+## 4. Робота з git
 
-1. **Never commit directly to `main`.** `main` is protected and receives changes only through Pull Requests.
-2. Create a branch from the latest `main` for each task:
+1. **Ніколи не комітьте напряму в `main`.** Гілка `main` захищена й отримує зміни лише через Pull Request.
+2. Для кожного завдання створюйте гілку від найсвіжішого `main`:
 
    ```
    git switch main
@@ -57,38 +57,38 @@ An issue can be reopened by the reviewer if not all conditions were met or somet
    git switch -c <type>/<issue-number>-<short-description>
    ```
 
-   Examples: `docs/7-task-status`, `setup/4-github-actions-ci`, `feature/12-login-form`.
+   Приклади: `docs/7-task-status`, `setup/4-github-actions-ci`, `feature/12-login-form`.
 
-3. Commit small, focused changes. Write a commit message in the imperative mood and reference the issue:
+3. Робіть невеликі, сфокусовані коміти. Повідомлення коміту пишіть у наказовому способі й посилайтеся на issue:
 
    ```
    Add task workflow description (#7)
    ```
 
-4. Push the branch and open a **Pull Request** into `main`.
-   - The PR title matches the task.
-   - The PR description references the issue (e.g. `#7`).
-   - Request review from the issue creator. If the creator is also the assignee, request any other teammate.
-   - Close the issue (state **Done**) and remove the `in progress` label. The issue stays closed unless the reviewer reopens it.
+4. Запуште гілку та відкрийте **Pull Request** у `main`.
+   - Заголовок PR відповідає завданню.
+   - Опис PR посилається на issue (напр. `#7`).
+   - Запитайте рев'ю в автора issue. Якщо автор є одночасно виконавцем, запитайте будь-кого іншого з команди.
+   - Закрийте issue (стан **Done**) і зніміть лейбл `in progress`. Issue залишається закритим, якщо рев'юер його не перевідкриє.
 
-## 5. Review and merge
+## 5. Рев'ю та злиття
 
-- Every PR needs **at least one approval**, normally from the issue creator (see step 4 above).
-- The **CI workflow** (`.github/workflows/ci.yml`) must pass before merging.
-- The reviewer checks that the change does what the issue asks, is readable, and does not break anything.
-- Review comments are resolved by the PR author, either by changing the code or by explaining why no change is needed.
-- If the review finds that the task is not complete, the reviewer reopens the issue and it returns to **In progress**.
-- After approval and green CI, the PR author merges the PR and deletes the branch.
-- After the merge, the issue creator verifies that all requirements are met on `main` and adds the `accepted` label. The task is now **Accepted**.
+- Кожен PR потребує **щонайменше одного схвалення**, зазвичай від автора issue (див. крок 4 вище).
+- Перед злиттям має успішно пройти **CI workflow** (`.github/workflows/ci.yml`).
+- Оглядач перевіряє, що зміна робить те, чого вимагає issue, є читабельною й нічого не ламає.
+- Зауваження з рев'ю вирішує автор PR: або змінює код, або пояснює, чому зміна не потрібна.
+- Якщо під час рев'ю з'ясовується, що завдання не завершено, оглядач перевідкриває issue, і воно повертається в стан **In progress**.
+- Після схвалення та зеленого CI автор PR зливає PR і видаляє гілку.
+- Після злиття автор issue перевіряє, що всі вимоги виконано в `main`, і додає лейбл `accepted`. Тепер завдання в стані **Accepted**.
 
-## 6. Communication
+## 6. Комунікація
 
-- Anything that defines or changes a task is recorded in the issue itself, so that it leaves a footprint and is easy to find later:
-  - requirements and acceptance criteria (in the issue description, updated when they change);
-  - decisions that affect scope, approach, or deadlines;
-  - blockers and their resolution;
-  - the reason an issue is closed as unnecessary or reopened.
-- Smaller details, questions, and anything not important for the task history may be discussed wherever the team finds convenient (chat, calls, in person). Keeping every message in issues makes the important information hard to find.
-- Code-level remarks belong in the Pull Request review.
-- If a task is blocked, the assignee writes a comment on the issue explaining what is blocking it and tags the teammate who can help. If the blocking issue is not yet marked, it gets the `blocker` label.
-- Task status is reviewed at each team meeting; stale issues are re-assigned or closed.
+- Усе, що визначає або змінює завдання, фіксується в самому issue, щоб залишити слід і щоб це було легко знайти пізніше:
+  - вимоги та критерії готовності (в описі issue; оновлюються, коли змінюються);
+  - рішення, що впливають на обсяг роботи, підхід або дедлайни;
+  - блокери та їх вирішення;
+  - причина, чому issue закрито як непотрібне або перевідкрито.
+- Дрібніші деталі, запитання й усе, що не важливо для історії завдання, можна обговорювати там, де команді зручно (чат, дзвінки, особисто). Якщо тримати кожне повідомлення в issues, важливу інформацію стає важко знайти.
+- Зауваження на рівні коду належать до рев'ю Pull Request.
+- Якщо завдання заблоковано, виконавець пише коментар в issue з поясненням, що саме блокує, і тегає учасника, який може допомогти. Якщо блокуюче issue ще не позначено, йому додається ярлик `blocker`.
+- Статус завдань переглядається на кожній командній зустрічі; застарілі issues перепризначаються або закриваються.
