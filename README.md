@@ -9,12 +9,12 @@
 
 ## Команда
 
-| Ім'я | GitHub | Роль |
-|---|---|---|
-| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Documentation Lead |
-| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Requirements Lead |
-| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Quality Lead |
-| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Traceability Lead |
+| Ім'я | GitHub | Роль (Lab 2) | Роль (Lab 3) |
+|---|---|---|---|
+| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Documentation Lead | Requirements-Architecture Mapper |
+| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Requirements Lead | UML Lead |
+| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Quality Lead | Architecture Lead |
+| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Traceability Lead | Data & Threat Modeler / Documentation Lead |
 
 ## Стратегія розробки
 Використовуємо GitHub Flow: зміни в `main` вносяться лише через Pull Request з проходженням CI та щонайменше одним схваленням.
