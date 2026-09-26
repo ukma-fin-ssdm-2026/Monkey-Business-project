@@ -24,6 +24,21 @@
 - [Користувацькі історії](./docs/requirements/user-stories.md) — користувацькі історії з критеріями прийняття (INVEST)
 - [Матриця простежуваності (RTM)](./docs/requirements/rtm.md) — зв'язок User Stories → FR → NFR → Test Cases
 
+## Артефакти архітектури
+- [Архітектурний огляд](./docs/architecture/high-level-design.md) — обраний архітектурний стиль, ключові компоненти системи
+- [Матриця простежуваності архітектури](./docs/architecture/traceability-matrix.md) — зв'язок вимог (FR/NFR/US) → компонент → проєктне рішення (ADR) → метод верифікації
+- [Модель даних](./docs/architecture/data-model.md) — ER-модель, персональні та чутливі дані
+- [Модель загроз (STRIDE)](./docs/architecture/threat-model.md) — ризики за схемою STRIDE та контрзаходи
+- UML-діаграми (`./docs/architecture/uml/`):
+  - [Діаграма компонентів](./docs/architecture/uml/component-diagram.png)
+  - [Діаграма послідовності](./docs/architecture/uml/sequence-diagram.png)
+  - [Діаграма розгортання](./docs/architecture/uml/deployment-diagram.png)
+  - [ER-модель даних](./docs/architecture/uml/data-model.puml) ([*рендер*](./docs/architecture/uml/data-model.png))
+- Архітектурні рішення (ADR):
+  - [ADR-001: Frontend-архітектура (React + PWA)](./docs/architecture/decisions/ADR-001.md)
+  - [ADR-002: Backend та база даних (FastAPI + PostgreSQL)](./docs/architecture/decisions/ADR-002.md)
+  - [ADR-003: Система моніторингу (Prometheus + Grafana)](./docs/architecture/decisions/ADR-003.md)
+
 ## Документи
 - [TeamCharter.md](./TeamCharter.md) — командний статут
 - [Project-Description.md](./Project-Description.md) — опис проєкту
