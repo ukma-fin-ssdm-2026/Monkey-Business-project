@@ -1,0 +1,54 @@
+@startuml component-diagram
+' Використання ШІ: Claude Code — генерація PlantUML за ескізом команди та
+' артефактами high-level-design.md, traceability-matrix.md, ADR-001 – ADR-003.
+' Верифікація: склад компонентів звірено з реєстром COMP-1 – COMP-5, рендер перевірено вручну.
+
+title Tech Interview Board — діаграма компонентів
+
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam nodesep 60
+skinparam ranksep 60
+skinparam component {
+  BackgroundColor White
+  BorderColor #444444
+}
+skinparam package {
+  BorderColor #888888
+  BackgroundColor #FAFAFA
+}
+
+component "Frontend App\n(React + PWA, офлайн-синхронізація)" as fe
+component "Backend API\n(RESTful, Python FastAPI)" as be
+database "Database\n(PostgreSQL)" as db
+
+package "Моніторинг та аналітика" {
+  component "Prometheus" as prom
+  component "Grafana" as graf
+}
+
+package "Зовнішні сервіси" <<external>> {
+  component "Email Service" as email
+  component "Llm API" as llm
+}
+
+note bottom of email
+  запрошення ментора (FR-012),
+  нагадування про дедлайн (FR-016)
+end note
+note bottom of llm
+  питання для співбесіди (FR-022)
+end note
+
+' Стрілка залежності: від того, хто викликає, до того, хто надає інтерфейс
+fe -down-> be : REST API\n(HTTPS, JSON, JWT)
+be -down-> db : SQL (asyncpg)
+
+prom -left-> be : /metrics (HTTP)
+prom -down-> db : /metrics\n(postgres_exporter)
+graf -left-> prom : PromQL (HTTP API)
+
+be -left-> email : SMTP / Email API
+be -left-> llm : REST API
+
+@enduml
