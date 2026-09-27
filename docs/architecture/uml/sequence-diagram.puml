@@ -1,0 +1,88 @@
+@startuml sequence-diagram
+' Використання ШІ: Claude Code — генерація PlantUML за US-002, FR-012, FR-015,
+' data-model.md (board_mentors) та component-diagram.puml.
+' Верифікація: кроки звірено з критеріями прийняття US-002, рендер перевірено вручну.
+
+title Запрошення ментора до дошки (критичний кейс: US-002)
+
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+skinparam sequence {
+  ParticipantBackgroundColor White
+  ActorBackgroundColor White
+  LifeLineBorderColor #444444
+}
+autonumber
+
+actor "Кандидат" as cand
+participant "Frontend App\n(браузер кандидата)" as fe1
+participant "Backend API" as be
+database "Database" as db
+participant "Email Service" as email
+actor "Ментор" as mentor
+participant "Frontend App\n(браузер ментора)" as fe2
+
+== Запрошення (FR-012) ==
+cand -> fe1 : «Запросити ментора», вводить email
+activate fe1
+fe1 -> be : POST /boards/{id}/mentors {email}\n(JWT кандидата)
+activate be
+be -> be : перевірка: власник дошки,\nформат email
+alt email некоректний
+  be --> fe1 : 422 Unprocessable Entity
+  fe1 --> cand : помилка валідації
+else email коректний
+  be -> db : INSERT board_mentors\n(invited_email, invite_token, status='pending')
+  activate db
+  db --> be : ok
+  deactivate db
+  be ->> email : надіслати лист із посиланням\n/invite/{token}
+  be --> fe1 : 201 Created {status: 'pending'}
+  deactivate be
+  fe1 --> cand : ментор у списку зі статусом «Очікує»
+  deactivate fe1
+end
+
+== Прийняття запрошення ==
+email ->> mentor : лист із посиланням-запрошенням
+mentor -> fe2 : відкриває посилання, входить у систему
+activate fe2
+fe2 -> be : POST /invitations/{token}/accept\n(JWT ментора)
+activate be
+be -> db : SELECT board_mentors\nWHERE invite_token = token
+activate db
+db --> be : запис або нічого
+deactivate db
+alt токен існує і status = 'pending'
+  be -> db : UPDATE board_mentors\nSET mentor_id, status='accepted', accepted_at
+  activate db
+  db --> be : ok
+  deactivate db
+  be --> fe2 : 200 OK + дошка (read-only)
+  fe2 --> mentor : дошка в режимі «перегляд і коментарі»
+else токен невідомий, відкликаний або вже використаний
+  be --> fe2 : 403 Forbidden
+  deactivate be
+  fe2 --> mentor : «немає доступу»
+  deactivate fe2
+end
+
+== Відкликання доступу (FR-015) ==
+cand -> fe1 : «Відкликати доступ» біля імені ментора
+activate fe1
+fe1 -> be : DELETE /boards/{id}/mentors/{mentor_id}
+activate be
+be -> db : UPDATE board_mentors SET status='revoked'
+activate db
+db --> be : ok
+deactivate db
+be --> fe1 : 204 No Content
+deactivate be
+deactivate fe1
+fe2 -> be : GET /boards/{id}
+activate be
+be --> fe2 : 403 Forbidden
+deactivate be
+fe2 --> mentor : «немає доступу»
+
+@enduml
