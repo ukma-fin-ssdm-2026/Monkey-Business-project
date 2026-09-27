@@ -1,4 +1,9 @@
 @startuml data-model
+' Використання ШІ: Claude — генерація ER-моделі (PlantUML) за Project-Description.md,
+' requirements.md (FR-001–FR-026) та traceability-matrix.md, з урахуванням ADR-002 (PostgreSQL).
+' Верифікація: сутності, ключі та звʼязки звірені вручну з FR/NFR і user-stories.md;
+' персональні/чутливі поля позначені та перевірені вручну.
+
 !theme plain
 skinparam linetype ortho
 skinparam entity {
