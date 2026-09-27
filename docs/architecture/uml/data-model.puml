@@ -1,0 +1,158 @@
+@startuml data-model
+!theme plain
+skinparam linetype ortho
+skinparam entity {
+  BackgroundColor White
+  BorderColor #444444
+  FontSize 13
+}
+skinparam roundcorner 6
+
+' ===================== Легенда =====================
+legend top left
+  <b>Позначення</b>
+  * = обов'язкове поле (NOT NULL)
+  <<PK>> = первинний ключ
+  <<FK>> = зовнішній ключ
+  <back:#FFDDDD>PII / sensitive</back> = персональні або чутливі дані
+end legend
+
+' ===================== Сутності =====================
+
+entity "users" as users {
+  * id : UUID <<PK>>
+  --
+  * <back:#FFDDDD>email</back> : VARCHAR <<PII>>
+  * <back:#FFDDDD>password_hash</back> : VARCHAR <<sensitive>>
+  * role : ENUM('candidate','mentor','admin')
+  * is_active : BOOLEAN
+  created_at : TIMESTAMP
+}
+
+entity "boards" as boards {
+  * id : UUID <<PK>>
+  --
+  * owner_id : UUID <<FK>>
+  created_at : TIMESTAMP
+}
+
+entity "default_stages" as default_stages {
+  * id : UUID <<PK>>
+  --
+  * name : VARCHAR
+  * order_index : INT
+}
+note bottom of default_stages
+  Загальносистемний шаблон (FR-024).
+  При створенні нової дошки записи
+  копіюються у **stages** — прямого
+  FK-звʼязку з boards немає.
+end note
+
+entity "stages" as stages {
+  * id : UUID <<PK>>
+  --
+  * board_id : UUID <<FK>>
+  * name : VARCHAR
+  * order_index : INT
+}
+
+entity "cards" as cards {
+  * id : UUID <<PK>>
+  --
+  * board_id : UUID <<FK>>
+  * stage_id : UUID <<FK>>
+  * <back:#FFDDDD>company</back> : VARCHAR <<sensitive>>
+  * <back:#FFDDDD>position</back> : VARCHAR <<sensitive>>
+  vacancy_url : VARCHAR
+  <back:#FFDDDD>requirements_text</back> : TEXT <<sensitive>>
+  deadline : TIMESTAMP
+  notifications_enabled : BOOLEAN
+  status : ENUM('active','rejected','offer_accepted')
+  position : INT
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+entity "card_links" as card_links {
+  * id : UUID <<PK>>
+  --
+  * card_id : UUID <<FK>>
+  * url : VARCHAR
+  created_at : TIMESTAMP
+}
+
+entity "card_notes" as card_notes {
+  * id : UUID <<PK>>
+  --
+  * card_id : UUID <<FK>>
+  <back:#FFDDDD>content</back> : TEXT <<sensitive>>
+  source : ENUM('candidate','ai_assistant')
+  created_at : TIMESTAMP
+}
+
+entity "comments" as comments {
+  * id : UUID <<PK>>
+  --
+  * card_id : UUID <<FK>>
+  * author_id : UUID <<FK>>
+  <back:#FFDDDD>content</back> : TEXT <<sensitive>>
+  created_at : TIMESTAMP
+}
+
+entity "board_mentors" as board_mentors {
+  * id : UUID <<PK>>
+  --
+  * board_id : UUID <<FK>>
+  * mentor_id : UUID <<FK>>
+  * <back:#FFDDDD>invite_token</back> : VARCHAR <<sensitive>>
+  status : ENUM('pending','accepted','revoked')
+  invited_at : TIMESTAMP
+  accepted_at : TIMESTAMP
+}
+
+entity "reminder_log" as reminder_log {
+  * id : UUID <<PK>>
+  --
+  * card_id : UUID <<FK>>
+  channel : ENUM('in_app','email')
+  sent_at : TIMESTAMP
+  status : ENUM('sent','failed')
+}
+
+entity "support_tickets" as support_tickets {
+  * id : UUID <<PK>>
+  --
+  * author_id : UUID <<FK>>
+  * subject : VARCHAR
+  status : ENUM('open','in_progress','closed')
+  created_at : TIMESTAMP
+}
+
+entity "ticket_messages" as ticket_messages {
+  * id : UUID <<PK>>
+  --
+  * ticket_id : UUID <<FK>>
+  * sender_id : UUID <<FK>>
+  <back:#FFDDDD>content</back> : TEXT <<sensitive>>
+  created_at : TIMESTAMP
+}
+
+' ===================== Звʼязки =====================
+
+users     ||--o|  boards         : "власник\n(1 кандидат : 0..1 дошка)"
+boards    ||--|{  stages         : "має етапи"
+boards    ||--o{  cards          : "містить"
+stages    ||--o{  cards          : "групує за етапом"
+cards     ||--o{  card_links     : "посилання на тест. завдання"
+cards     ||--o{  card_notes     : "нотатки / фідбек"
+cards     ||--o{  comments       : "коментарі ментора"
+users     ||--o{  comments       : "автор коментаря (mentor)"
+boards    ||--o{  board_mentors  : "запрошення менторів"
+users     ||--o{  board_mentors  : "ментор запрошений на"
+cards     ||--o{  reminder_log   : "історія нагадувань"
+users     ||--o{  support_tickets: "створює звернення"
+support_tickets ||--|{ ticket_messages : "листування"
+users     ||--o{  ticket_messages: "автор повідомлення\n(користувач або адмін)"
+
+@enduml
