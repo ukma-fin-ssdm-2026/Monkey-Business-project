@@ -1,0 +1,92 @@
+@startuml deployment-diagram
+' Використання ШІ: Claude Code — генерація PlantUML за component-diagram.puml,
+' high-level-design.md, traceability-matrix.md (REL-1: Docker, healthcheck) та ADR-001 – ADR-003.
+' Верифікація: вузли звірено з компонентами системи, рендер перевірено вручну.
+
+title Tech Interview Board — діаграма розгортання (виробниче середовище)
+
+skinparam defaultFontSize 12
+skinparam nodesep 40
+skinparam ranksep 45
+skinparam rectangle {
+  BorderStyle dashed
+  BorderColor #C0392B
+  BackgroundColor transparent
+}
+skinparam node {
+  BackgroundColor White
+  BorderColor #444444
+}
+skinparam artifact {
+  BackgroundColor #FAFAFA
+  BorderColor #444444
+}
+skinparam database {
+  BackgroundColor #FAFAFA
+}
+skinparam cloud {
+  BackgroundColor #FAFAFA
+  BorderColor #444444
+}
+
+rectangle "Зона 0 — клієнт (недовірена)" as z0 {
+  node "Браузер на пристрої користувача" as browser {
+    artifact "Frontend App\n(React + PWA bundle)" as fe
+    artifact "Service Worker\n(кеш, IndexedDB: черга офлайн-дій)" as sw
+  }
+}
+
+rectangle "Зона 1 — сервер застосунку (VPS, Docker Compose)" as z1 {
+  node "nginx\n(TLS-термінація, статика PWA,\nreverse proxy)" as nginx
+  node "Backend API container\n(FastAPI + Uvicorn, APScheduler,\nhealthcheck + auto-restart)" as be
+
+  rectangle "Зона 2 — дані" as z2 {
+    node "PostgreSQL container" as pgn {
+      database "Database" as db
+    }
+    node "Backup job\n(cron: pg_dump щодня,\nшифрування дампа)" as bak
+  }
+
+  node "Моніторинг" as mon {
+    node "postgres_exporter" as pgx
+    node "Prometheus" as prom
+    node "Grafana" as graf
+  }
+}
+
+rectangle "Зона 3 — зовнішні провайдери" as z3 {
+  cloud "Email Service\n(SMTP / Email API)" as email
+  cloud "Llm API" as llm
+  cloud "Backup Storage\n(S3-сумісне сховище,\nінший регіон)" as bstore
+}
+
+browser -down-> nginx : TB-1: HTTPS 443\n(REST API, статика)
+nginx -down-> be : HTTP 8000\n(внутрішня docker-мережа)
+be -down-> db : TB-2: SQL 5432\n(внутрішня docker-мережа)
+
+prom -left-> be : HTTP 8000 /metrics
+pgx -left-> db : SQL 5432
+prom -down-> pgx : HTTP 9187 /metrics
+graf -up-> prom : HTTP 9090 (PromQL)
+
+be -right-> email : TB-3: SMTP 587 (STARTTLS)\nабо HTTPS Email API
+be -right-> llm : TB-4: HTTPS 443
+bak -left-> db : SQL 5432\n(pg_dump)
+bak -right-> bstore : TB-5: HTTPS 443\n(зашифрований дамп)
+
+note bottom of mon
+  Порти 9090 і 3000 назовні не публікуються;
+  доступ до Grafana — лише через SSH-тунель.
+end note
+
+legend bottom left
+  |= Межа довіри (TB) |= Що перетинає |
+  | TB-1 | браузер ↔ сервер (Інтернет) |
+  | TB-2 | застосунок ↔ база даних |
+  | TB-3 | система ↔ поштовий провайдер |
+  | TB-4 | система ↔ LLM-провайдер |
+  | TB-5 | резервна копія БД ↔ зовнішнє сховище |
+  Пунктирні рамки — зони з різним рівнем довіри (вхід для STRIDE-аналізу).
+endlegend
+
+@enduml
