@@ -10,7 +10,7 @@
 | **TB-4** | Система ↔ LLM-провайдер (Зона 3) |
 | **TB-5** | Резервна копія БД ↔ зовнішнє сховище (Зона 3) |
 
-Для кожної межі й ключового компонента пройдено шість категорій STRIDE (Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege). Нижче — 6 виявлених ризиків, що охоплюють усі шість категорій і торкаються найчутливіших даних, позначених у [`data-model.md`](data-model.md) (`users.password_hash`, `board_mentors.invite_token`, `cards.company/position/requirements_text`, `users.email`).
+Для кожної межі й ключового компонента пройдено шість категорій STRIDE (Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege). Нижче — 7 виявлених ризиків, що охоплюють усі шість категорій і торкаються найчутливіших даних, позначених у [`data-model.md`](data-model.md) (`users.password_hash`, `board_mentors.invite_token`, `cards.company/position/requirements_text`, `users.email`).
 
 ## Реєстр ризиків
 
