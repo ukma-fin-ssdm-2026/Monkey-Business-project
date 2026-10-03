@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!--
+Tool: Antigravity
+Application: Assisted in configuring the Swagger UI static page to load the auto-generated OpenAPI specification.
+Verification: Verified manually by reviewing the HTML structure and integration parameters.
+-->
+<html>
+<head>
+  <title>API Documentation</title>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui.css">
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.js"></script>
+  <script>
+    SwaggerUIBundle({
+      url: "./openapi-generated.yaml",
+      dom_id: '#swagger-ui',
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIBundle.SwaggerUIStandalonePreset
+      ],
+      layout: "BaseLayout",
+      tryItOutEnabled: true
+    });
+  </script>
+</body>
+</html>
