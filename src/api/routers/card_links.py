@@ -2,9 +2,7 @@
 Інструмент: Claude
 Застосування: Створення вкладених ендпоінтів для під-ресурсу Card Links з реалізацією валідації посилань (HttpUrl).
 Верифікація: Перевірено вручну логіку додавання та видалення посилань через Swagger UI, узгоджено командою.
-"""
 
-"""
 Ресурс: Card Links (`/boards/{board_id}/cards/{card_id}/links`).
 
 Вкладений під `cards`, бо посилання не мають самостійного сенсу поза карткою
@@ -72,6 +70,7 @@ def create_link(
 @router.delete(
     "/{link_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
     summary="Видалити посилання",
     responses={404: {"description": "Посилання або картку не знайдено"}},
 )
