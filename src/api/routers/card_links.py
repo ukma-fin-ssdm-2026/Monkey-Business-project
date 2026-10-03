@@ -15,7 +15,7 @@ from uuid import UUID
 from fastapi import APIRouter, Path, status
 
 from .. import store
-from ..errors import NotFoundError
+from ..errors import NotFoundError, error_responses
 from ..schemas import CardLinkCreate, CardLinkOut
 
 router = APIRouter(prefix="/boards/{board_id}/cards/{card_id}/links", tags=["Card Links"])
@@ -33,7 +33,8 @@ def _require_card(board_id: UUID, card_id: UUID) -> dict:
     response_model=list[CardLinkOut],
     status_code=status.HTTP_200_OK,
     summary="Список посилань на тестові завдання картки",
-    responses={404: {"description": "Картку не знайдено"}},
+    description="Повертає всі посилання на тестові завдання, додані до картки (FR-009).",
+    responses=error_responses("Картку не знайдено", "Некоректний ідентифікатор"),
 )
 def list_links(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
@@ -52,10 +53,7 @@ def list_links(
         "Валідація URL відбувається на рівні типу Pydantic (`HttpUrl`) — "
         "рядок, що не є коректним URL, відхиляється з 422 (FR-009)."
     ),
-    responses={
-        404: {"description": "Картку не знайдено"},
-        422: {"description": "Рядок не є коректним URL"},
-    },
+    responses=error_responses("Картку не знайдено", "Рядок не є коректним URL"),
 )
 def create_link(
     payload: CardLinkCreate,
@@ -72,7 +70,8 @@ def create_link(
     status_code=status.HTTP_204_NO_CONTENT,
     response_model=None,
     summary="Видалити посилання",
-    responses={404: {"description": "Посилання або картку не знайдено"}},
+    description="Видаляє посилання з картки. Повторний виклик повертає 404.",
+    responses=error_responses("Посилання або картку не знайдено", "Некоректний ідентифікатор"),
 )
 def delete_link(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),

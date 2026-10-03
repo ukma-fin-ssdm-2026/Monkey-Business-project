@@ -44,7 +44,7 @@ class ErrorBody(BaseModel):
 class ErrorResponse(BaseModel):
     """Єдиний каркас помилки для всіх кінцевих точок API."""
 
-    error: ErrorBody
+    error: ErrorBody = Field(..., description="Опис помилки")
 
 
 class PaginationMeta(BaseModel):
@@ -75,13 +75,16 @@ class CardBase(BaseModel):
         examples=["Backend Engineer"],
     )
     vacancy_url: Optional[HttpUrl] = Field(
-        default=None, description="Посилання на оригінальну вакансію"
+        default=None, description="Посилання на оригінальну вакансію",
+        examples=["https://acme.example.com/jobs/42"],
     )
     requirements_text: Optional[str] = Field(
-        default=None, max_length=5000, description="Текст вимог вакансії (FR-007, FR-003 розширення)"
+        default=None, max_length=5000, description="Текст вимог вакансії (FR-007, FR-003 розширення)",
+        examples=["3+ роки Python, знання FastAPI"],
     )
     deadline: Optional[datetime] = Field(
-        default=None, description="Дедлайн тестового завдання або співбесіди (FR-010)"
+        default=None, description="Дедлайн тестового завдання або співбесіди (FR-010)",
+        examples=["2026-10-20T18:00:00Z"],
     )
     notifications_enabled: bool = Field(
         default=True, description="Чи увімкнені нагадування для цієї картки (FR-018)"
@@ -91,20 +94,39 @@ class CardBase(BaseModel):
 class CardCreate(CardBase):
     """Тіло запиту на створення картки (FR-007)."""
 
-    stage_id: UUID = Field(..., description="Етап, у якому створюється картка")
+    stage_id: UUID = Field(
+        ..., description="Етап, у якому створюється картка",
+        examples=["22222222-2222-2222-2222-222222222222"],
+    )
 
 
 class CardUpdate(BaseModel):
     """Часткове оновлення картки (PATCH, FR-008) — усі поля опційні."""
 
-    company: Optional[str] = Field(default=None, min_length=1, max_length=200)
-    position: Optional[str] = Field(default=None, min_length=1, max_length=200)
-    vacancy_url: Optional[HttpUrl] = None
-    requirements_text: Optional[str] = Field(default=None, max_length=5000)
-    deadline: Optional[datetime] = None
-    notifications_enabled: Optional[bool] = None
+    company: Optional[str] = Field(
+        default=None, min_length=1, max_length=200, description="Нова назва компанії",
+        examples=["Acme Corp"],
+    )
+    position: Optional[str] = Field(
+        default=None, min_length=1, max_length=200, description="Нова назва позиції",
+        examples=["Senior Backend Engineer"],
+    )
+    vacancy_url: Optional[HttpUrl] = Field(
+        default=None, description="Нове посилання на вакансію",
+        examples=["https://acme.example.com/jobs/42"],
+    )
+    requirements_text: Optional[str] = Field(
+        default=None, max_length=5000, description="Новий текст вимог вакансії",
+    )
+    deadline: Optional[datetime] = Field(
+        default=None, description="Новий дедлайн (FR-010)", examples=["2026-10-20T18:00:00Z"],
+    )
+    notifications_enabled: Optional[bool] = Field(
+        default=None, description="Увімкнути або вимкнути нагадування (FR-018)", examples=[False],
+    )
     status: Optional[CardStatus] = Field(
-        default=None, description="Закриття картки: 'rejected' або 'offer_accepted' (FR-006)"
+        default=None, description="Закриття картки: 'rejected' або 'offer_accepted' (FR-006)",
+        examples=["rejected"],
     )
 
     @field_validator("company", "position")
@@ -118,27 +140,31 @@ class CardUpdate(BaseModel):
 class CardMove(BaseModel):
     """Переміщення картки між етапами методом drag-and-drop (FR-004, FR-005)."""
 
-    stage_id: UUID = Field(..., description="Ідентифікатор цільового етапу")
-    position: int = Field(
-        ..., ge=0, description="Позиція картки в межах етапу (0 = перша зверху)"
+    stage_id: UUID = Field(
+        ..., description="Ідентифікатор цільового етапу",
+        examples=["22222222-2222-2222-2222-222222222222"],
+    )
+    position_index: int = Field(
+        ..., ge=0, description="Порядок картки в межах етапу (0 = перша зверху)", examples=[0],
     )
 
 
 class CardOut(CardBase):
-    id: UUID
-    board_id: UUID
-    stage_id: UUID
-    status: CardStatus
-    position: int
-    created_at: datetime
-    updated_at: datetime
+    id: UUID = Field(..., description="Ідентифікатор картки")
+    board_id: UUID = Field(..., description="Дошка, якій належить картка")
+    stage_id: UUID = Field(..., description="Поточний етап картки")
+    status: CardStatus = Field(..., description="Статус картки: активна або закрита (FR-006)")
+    # Not "position": that name is the job title inherited from CardBase (FR-007).
+    position_index: int = Field(..., ge=0, description="Порядок картки в межах етапу (0 = перша зверху)")
+    created_at: datetime = Field(..., description="Час створення")
+    updated_at: datetime = Field(..., description="Час останньої зміни")
 
     model_config = {"from_attributes": True}
 
 
 class CardListResponse(BaseModel):
-    items: list[CardOut]
-    pagination: PaginationMeta
+    items: list[CardOut] = Field(..., description="Картки поточної сторінки")
+    pagination: PaginationMeta = Field(..., description="Параметри пагінації та загальна кількість")
 
 
 # --------------------------------------------------------------------------- #
@@ -146,13 +172,16 @@ class CardListResponse(BaseModel):
 # --------------------------------------------------------------------------- #
 
 class CardLinkCreate(BaseModel):
-    url: HttpUrl = Field(..., description="Посилання на тестове завдання (валідний URL)")
+    url: HttpUrl = Field(
+        ..., description="Посилання на тестове завдання (валідний URL)",
+        examples=["https://github.com/acme/test-task"],
+    )
 
 
 class CardLinkOut(BaseModel):
-    id: UUID
-    card_id: UUID
-    url: HttpUrl
-    created_at: datetime
+    id: UUID = Field(..., description="Ідентифікатор посилання")
+    card_id: UUID = Field(..., description="Картка, до якої додано посилання")
+    url: HttpUrl = Field(..., description="Посилання на тестове завдання")
+    created_at: datetime = Field(..., description="Час додавання")
 
     model_config = {"from_attributes": True}

@@ -42,7 +42,12 @@ register_error_handlers(app)
 app.include_router(cards.router)
 app.include_router(card_links.router)
 
-@app.get("/health", tags=["Meta"])
+@app.get(
+    "/health",
+    tags=["Meta"],
+    summary="Перевірка стану сервісу",
+    description="Повертає 200, якщо сервіс працює. Використовується зовнішнім моніторингом доступності (REL-1).",
+)
 def health() -> dict:
     return {"status": "ok"}
 
