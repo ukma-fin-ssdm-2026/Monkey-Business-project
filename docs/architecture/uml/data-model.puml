@@ -74,7 +74,7 @@ entity "cards" as cards {
   deadline : TIMESTAMP
   notifications_enabled : BOOLEAN
   status : ENUM('active','rejected','offer_accepted')
-  position : INT
+  position_index : INT
   created_at : TIMESTAMP
   updated_at : TIMESTAMP
 }

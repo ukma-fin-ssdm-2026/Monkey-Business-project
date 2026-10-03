@@ -42,6 +42,15 @@ class ConflictError(ApiError):
         super().__init__(status.HTTP_409_CONFLICT, "CONFLICT", message)
 
 
+def error_responses(not_found: str, invalid: str = "Невалідні параметри запиту") -> dict:
+    # Without an explicit 422 entry FastAPI documents its default HTTPValidationError,
+    # which is not what handle_validation_error actually returns.
+    return {
+        404: {"model": ErrorResponse, "description": not_found},
+        422: {"model": ErrorResponse, "description": invalid},
+    }
+
+
 def _request_id(request: Request) -> str:
     return getattr(request.state, "request_id", f"req_{uuid.uuid4().hex[:10]}")
 

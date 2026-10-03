@@ -18,12 +18,13 @@ from uuid import UUID
 from fastapi import APIRouter, Path, Query, status
 
 from .. import store
-from ..errors import NotFoundError
+from ..errors import NotFoundError, error_responses
 from ..schemas import (
     CardCreate,
     CardListResponse,
     CardMove,
     CardOut,
+    CardStatus,
     CardUpdate,
     PaginationMeta,
 )
@@ -37,7 +38,8 @@ def _to_card_out(record: dict) -> CardOut:
         board_id=record["board_id"],
         stage_id=record["stage_id"],
         company=record["company"],
-        position=record["position_index"],
+        position=record["position"],
+        position_index=record["position_index"],
         vacancy_url=record.get("vacancy_url"),
         requirements_text=record.get("requirements_text"),
         deadline=record.get("deadline"),
@@ -70,19 +72,19 @@ def _require_card(board_id: UUID, card_id: UUID) -> dict:
         "(FR-003, FR-006). Пагінація на основі зсуву (offset), бо дошка — "
         "обмежений набір карток (до ~100), а не безкінечна стрічка."
     ),
-    responses={404: {"description": "Дошку не знайдено"}},
+    responses=error_responses("Дошку не знайдено", "Невалідний фільтр або параметри пагінації"),
 )
 def list_cards(
     board_id: UUID = Path(..., description="Ідентифікатор дошки-власника карток"),
     stage_id: Optional[UUID] = Query(default=None, description="Фільтр за етапом"),
-    status_: Optional[str] = Query(
+    status_: Optional[CardStatus] = Query(
         default=None, alias="status", description="Фільтр за статусом картки"
     ),
     limit: int = Query(default=20, ge=1, le=100, description="Розмір сторінки (макс. 100)"),
     offset: int = Query(default=0, ge=0, description="Зсув від початку списку"),
 ) -> CardListResponse:
     _require_board(board_id)
-    all_items = store.list_cards(board_id, stage_id, status_)
+    all_items = store.list_cards(board_id, stage_id, status_.value if status_ else None)
     page = all_items[offset : offset + limit]
     return CardListResponse(
         items=[_to_card_out(r) for r in page],
@@ -96,10 +98,7 @@ def list_cards(
     status_code=status.HTTP_201_CREATED,
     summary="Створити картку вакансії",
     description="Створює нову картку в зазначеному етапі дошки (FR-007).",
-    responses={
-        404: {"description": "Дошку не знайдено"},
-        422: {"description": "Порожнє обов'язкове поле або некоректний формат"},
-    },
+    responses=error_responses("Дошку не знайдено", "Порожнє обов'язкове поле або некоректний формат"),
 )
 def create_card(
     payload: CardCreate,
@@ -118,7 +117,8 @@ def create_card(
     response_model=CardOut,
     status_code=status.HTTP_200_OK,
     summary="Отримати картку за ідентифікатором",
-    responses={404: {"description": "Картку або дошку не знайдено"}},
+    description="Повертає одну картку вакансії з усіма полями (FR-007).",
+    responses=error_responses("Картку або дошку не знайдено", "Некоректний ідентифікатор"),
 )
 def get_card(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
@@ -138,10 +138,7 @@ def get_card(
         "PATCH, а не PUT: клієнт надсилає лише змінені поля (FR-008). "
         "Також використовується для закриття картки (`status`, FR-006)."
     ),
-    responses={
-        404: {"description": "Картку або дошку не знайдено"},
-        422: {"description": "Невалідне значення поля"},
-    },
+    responses=error_responses("Картку або дошку не знайдено", "Невалідне значення поля"),
 )
 def update_card(
     payload: CardUpdate,
@@ -163,7 +160,7 @@ def update_card(
     response_model=None,
     summary="Видалити картку",
     description="Видаляє картку остаточно (FR-008). Повторний виклик — теж 404, а не помилка.",
-    responses={404: {"description": "Картку або дошку не знайдено"}},
+    responses=error_responses("Картку або дошку не знайдено", "Некоректний ідентифікатор"),
 )
 def delete_card(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
@@ -184,10 +181,7 @@ def delete_card(
         "зачіпає позиції інших карток етапу (FR-004, FR-005), тобто це "
         "бізнес-операція, а не проста заміна поля."
     ),
-    responses={
-        404: {"description": "Картку або дошку не знайдено"},
-        422: {"description": "Некоректний stage_id або position"},
-    },
+    responses=error_responses("Картку або дошку не знайдено", "Некоректний stage_id або position_index"),
 )
 def move_card(
     payload: CardMove,
@@ -196,5 +190,5 @@ def move_card(
 ) -> CardOut:
     _require_board(board_id)
     _require_card(board_id, card_id)
-    record = store.move_card(card_id, payload.stage_id, payload.position)
+    record = store.move_card(card_id, payload.stage_id, payload.position_index)
     return _to_card_out(record)

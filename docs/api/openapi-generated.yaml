@@ -39,7 +39,7 @@ paths:
         required: false
         schema:
           anyOf:
-          - type: string
+          - $ref: '#/components/schemas/CardStatus'
           - type: 'null'
           description: Фільтр за статусом картки
           title: Status
@@ -74,12 +74,16 @@ paths:
                 $ref: '#/components/schemas/CardListResponse'
         '404':
           description: Дошку не знайдено
-        '422':
-          description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідний фільтр або параметри пагінації
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
       - Cards
@@ -111,13 +115,22 @@ paths:
                 $ref: '#/components/schemas/CardOut'
         '404':
           description: Дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Порожнє обов'язкове поле або некоректний формат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /boards/{board_id}/cards/{card_id}:
     get:
       tags:
       - Cards
       summary: Отримати картку за ідентифікатором
+      description: Повертає одну картку вакансії з усіма полями (FR-007).
       operationId: get_card_boards__board_id__cards__card_id__get
       parameters:
       - name: board_id
@@ -147,12 +160,16 @@ paths:
                 $ref: '#/components/schemas/CardOut'
         '404':
           description: Картку або дошку не знайдено
-        '422':
-          description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       tags:
       - Cards
@@ -194,8 +211,16 @@ paths:
                 $ref: '#/components/schemas/CardOut'
         '404':
           description: Картку або дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Невалідне значення поля
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
       - Cards
@@ -227,12 +252,16 @@ paths:
           description: Successful Response
         '404':
           description: Картку або дошку не знайдено
-        '422':
-          description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /boards/{board_id}/cards/{card_id}/move:
     post:
       tags:
@@ -276,13 +305,22 @@ paths:
                 $ref: '#/components/schemas/CardOut'
         '404':
           description: Картку або дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '422':
-          description: Некоректний stage_id або position
+          description: Некоректний stage_id або position_index
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /boards/{board_id}/cards/{card_id}/links:
     get:
       tags:
       - Card Links
       summary: Список посилань на тестові завдання картки
+      description: Повертає всі посилання на тестові завдання, додані до картки (FR-009).
       operationId: list_links_boards__board_id__cards__card_id__links_get
       parameters:
       - name: board_id
@@ -316,12 +354,16 @@ paths:
                   Get
         '404':
           description: Картку не знайдено
-        '422':
-          description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
       - Card Links
@@ -363,13 +405,22 @@ paths:
                 $ref: '#/components/schemas/CardLinkOut'
         '404':
           description: Картку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Рядок не є коректним URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /boards/{board_id}/cards/{card_id}/links/{link_id}:
     delete:
       tags:
       - Card Links
       summary: Видалити посилання
+      description: Видаляє посилання з картки. Повторний виклик повертає 404.
       operationId: delete_link_boards__board_id__cards__card_id__links__link_id__delete
       parameters:
       - name: board_id
@@ -404,17 +455,23 @@ paths:
           description: Successful Response
         '404':
           description: Посилання або картку не знайдено
-        '422':
-          description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /health:
     get:
       tags:
       - Meta
-      summary: Health
+      summary: Перевірка стану сервісу
+      description: Повертає 200, якщо сервіс працює. Використовується зовнішнім моніторингом
+        доступності (REL-1).
       operationId: health_health_get
       responses:
         '200':
@@ -453,6 +510,8 @@ components:
           - type: 'null'
           title: Vacancy Url
           description: Посилання на оригінальну вакансію
+          examples:
+          - https://acme.example.com/jobs/42
         requirements_text:
           anyOf:
           - type: string
@@ -460,6 +519,8 @@ components:
           - type: 'null'
           title: Requirements Text
           description: Текст вимог вакансії (FR-007, FR-003 розширення)
+          examples:
+          - 3+ роки Python, знання FastAPI
         deadline:
           anyOf:
           - type: string
@@ -467,6 +528,8 @@ components:
           - type: 'null'
           title: Deadline
           description: Дедлайн тестового завдання або співбесіди (FR-010)
+          examples:
+          - '2026-10-20T18:00:00Z'
         notifications_enabled:
           type: boolean
           title: Notifications Enabled
@@ -477,6 +540,8 @@ components:
           format: uuid
           title: Stage Id
           description: Етап, у якому створюється картка
+          examples:
+          - 22222222-2222-2222-2222-222222222222
       type: object
       required:
       - company
@@ -493,6 +558,8 @@ components:
           format: uri
           title: Url
           description: Посилання на тестове завдання (валідний URL)
+          examples:
+          - https://github.com/acme/test-task
       type: object
       required:
       - url
@@ -503,20 +570,24 @@ components:
           type: string
           format: uuid
           title: Id
+          description: Ідентифікатор посилання
         card_id:
           type: string
           format: uuid
           title: Card Id
+          description: Картка, до якої додано посилання
         url:
           type: string
           maxLength: 2083
           minLength: 1
           format: uri
           title: Url
+          description: Посилання на тестове завдання
         created_at:
           type: string
           format: date-time
           title: Created At
+          description: Час додавання
       type: object
       required:
       - id
@@ -531,8 +602,10 @@ components:
             $ref: '#/components/schemas/CardOut'
           type: array
           title: Items
+          description: Картки поточної сторінки
         pagination:
           $ref: '#/components/schemas/PaginationMeta'
+          description: Параметри пагінації та загальна кількість
       type: object
       required:
       - items
@@ -545,15 +618,19 @@ components:
           format: uuid
           title: Stage Id
           description: Ідентифікатор цільового етапу
-        position:
+          examples:
+          - 22222222-2222-2222-2222-222222222222
+        position_index:
           type: integer
           minimum: 0.0
-          title: Position
-          description: Позиція картки в межах етапу (0 = перша зверху)
+          title: Position Index
+          description: Порядок картки в межах етапу (0 = перша зверху)
+          examples:
+          - 0
       type: object
       required:
       - stage_id
-      - position
+      - position_index
       title: CardMove
       description: Переміщення картки між етапами методом drag-and-drop (FR-004, FR-005).
     CardOut:
@@ -567,8 +644,13 @@ components:
           examples:
           - Acme Corp
         position:
-          type: integer
+          type: string
+          maxLength: 200
+          minLength: 1
           title: Position
+          description: Назва позиції (обов'язкове поле, FR-007)
+          examples:
+          - Backend Engineer
         vacancy_url:
           anyOf:
           - type: string
@@ -578,6 +660,8 @@ components:
           - type: 'null'
           title: Vacancy Url
           description: Посилання на оригінальну вакансію
+          examples:
+          - https://acme.example.com/jobs/42
         requirements_text:
           anyOf:
           - type: string
@@ -585,6 +669,8 @@ components:
           - type: 'null'
           title: Requirements Text
           description: Текст вимог вакансії (FR-007, FR-003 розширення)
+          examples:
+          - 3+ роки Python, знання FastAPI
         deadline:
           anyOf:
           - type: string
@@ -592,6 +678,8 @@ components:
           - type: 'null'
           title: Deadline
           description: Дедлайн тестового завдання або співбесіди (FR-010)
+          examples:
+          - '2026-10-20T18:00:00Z'
         notifications_enabled:
           type: boolean
           title: Notifications Enabled
@@ -601,24 +689,35 @@ components:
           type: string
           format: uuid
           title: Id
+          description: Ідентифікатор картки
         board_id:
           type: string
           format: uuid
           title: Board Id
+          description: Дошка, якій належить картка
         stage_id:
           type: string
           format: uuid
           title: Stage Id
+          description: Поточний етап картки
         status:
           $ref: '#/components/schemas/CardStatus'
+          description: 'Статус картки: активна або закрита (FR-006)'
+        position_index:
+          type: integer
+          minimum: 0.0
+          title: Position Index
+          description: Порядок картки в межах етапу (0 = перша зверху)
         created_at:
           type: string
           format: date-time
           title: Created At
+          description: Час створення
         updated_at:
           type: string
           format: date-time
           title: Updated At
+          description: Час останньої зміни
       type: object
       required:
       - company
@@ -627,6 +726,7 @@ components:
       - board_id
       - stage_id
       - status
+      - position_index
       - created_at
       - updated_at
       title: CardOut
@@ -646,6 +746,9 @@ components:
             minLength: 1
           - type: 'null'
           title: Company
+          description: Нова назва компанії
+          examples:
+          - Acme Corp
         position:
           anyOf:
           - type: string
@@ -653,6 +756,9 @@ components:
             minLength: 1
           - type: 'null'
           title: Position
+          description: Нова назва позиції
+          examples:
+          - Senior Backend Engineer
         vacancy_url:
           anyOf:
           - type: string
@@ -661,40 +767,108 @@ components:
             format: uri
           - type: 'null'
           title: Vacancy Url
+          description: Нове посилання на вакансію
+          examples:
+          - https://acme.example.com/jobs/42
         requirements_text:
           anyOf:
           - type: string
             maxLength: 5000
           - type: 'null'
           title: Requirements Text
+          description: Новий текст вимог вакансії
         deadline:
           anyOf:
           - type: string
             format: date-time
           - type: 'null'
           title: Deadline
+          description: Новий дедлайн (FR-010)
+          examples:
+          - '2026-10-20T18:00:00Z'
         notifications_enabled:
           anyOf:
           - type: boolean
           - type: 'null'
           title: Notifications Enabled
+          description: Увімкнути або вимкнути нагадування (FR-018)
+          examples:
+          - false
         status:
           anyOf:
           - $ref: '#/components/schemas/CardStatus'
           - type: 'null'
           description: 'Закриття картки: ''rejected'' або ''offer_accepted'' (FR-006)'
+          examples:
+          - rejected
       type: object
       title: CardUpdate
       description: Часткове оновлення картки (PATCH, FR-008) — усі поля опційні.
-    HTTPValidationError:
+    ErrorBody:
       properties:
-        detail:
+        code:
+          type: string
+          title: Code
+          description: Машиночитаний код помилки
+          examples:
+          - VALIDATION_ERROR
+        message:
+          type: string
+          title: Message
+          description: Людиночитане повідомлення про помилку
+        details:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: '#/components/schemas/ErrorDetail'
           type: array
-          title: Detail
+          title: Details
+          description: Деталі по кожному полю
+        request_id:
+          type: string
+          title: Request Id
+          description: Ідентифікатор запиту для пошуку в логах
+        documentation:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Documentation
+          description: Посилання на розділ документації з поясненням помилки
       type: object
-      title: HTTPValidationError
+      required:
+      - code
+      - message
+      - request_id
+      title: ErrorBody
+    ErrorDetail:
+      properties:
+        field:
+          type: string
+          title: Field
+          description: Назва поля, яке не пройшло валідацію
+        message:
+          type: string
+          title: Message
+          description: Людиночитане пояснення, що саме не так
+        provided_value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Provided Value
+          description: Значення, яке надіслав клієнт (якщо доречно)
+      type: object
+      required:
+      - field
+      - message
+      title: ErrorDetail
+    ErrorResponse:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+          description: Опис помилки
+      type: object
+      required:
+      - error
+      title: ErrorResponse
+      description: Єдиний каркас помилки для всіх кінцевих точок API.
     PaginationMeta:
       properties:
         limit:
@@ -719,24 +893,3 @@ components:
       - offset
       - total
       title: PaginationMeta
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
