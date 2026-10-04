@@ -36,6 +36,9 @@ app = FastAPI(
     description="REST API для трекера підготовки до технічних співбесід (Code-First).",
     lifespan=lifespan,
     docs_url="/api-docs",
+    # Clean operationIds (list_cards instead of list_cards_v1_boards__board_id__cards_get);
+    # they also become the MCP tool names in mcp_server.py, so handler names must stay unique.
+    generate_unique_id_function=lambda route: route.name,
 )
 
 register_error_handlers(app)
