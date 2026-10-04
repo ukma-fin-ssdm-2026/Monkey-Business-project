@@ -7,14 +7,17 @@
 ## CI Status
 [![CI Test](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/workflows/ci.yml/badge.svg)](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/workflows/ci.yml)
 
+## Документація API
+**[GitHub Pages](https://ukma-fin-ssdm-2026.github.io/Monkey-Business-project/)**
+
 ## Команда
 
-| Ім'я | GitHub | Роль (Lab 2) | Роль (Lab 3) |
-|---|---|---|---|
-| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Documentation Lead | Requirements-Architecture Mapper |
-| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Requirements Lead | UML Lead |
-| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Quality Lead | Architecture Lead |
-| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Traceability Lead | Data & Threat Modeler / Documentation Lead |
+| Ім'я | GitHub | Роль (Lab 4) |
+|---|---|---|
+| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Integration Lead |
+| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Quality Lead |
+| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Documentation Lead |
+| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Backend Lead / API Design Lead |
 
 ## Стратегія розробки
 Використовуємо GitHub Flow: зміни в `main` вносяться лише через Pull Request з проходженням CI та щонайменше одним схваленням.
@@ -38,6 +41,13 @@
   - [ADR-001: Frontend-архітектура (React + PWA)](./docs/architecture/decisions/ADR-001.md)
   - [ADR-002: Backend та база даних (FastAPI + PostgreSQL)](./docs/architecture/decisions/ADR-002.md)
   - [ADR-003: Система моніторингу (Prometheus + Grafana)](./docs/architecture/decisions/ADR-003.md)
+
+## Артефакти API
+- [Код API з анотаціями](./src/api/) — код API з анотаціями для автогенерації
+- [OpenAPI специфікація](./docs/api/openapi-generated.yaml) — автоматично згенерована специфікація OpenAPI
+- [Проєктні рішення (API Design)](./docs/api/api-design.md) — документація проєктних рішень
+- [Атрибути якості](./docs/api/quality-attributes.md) — атрибути якості
+- [Swagger UI](./docs/api/index.html) — сторінка Swagger UI
 
 ## Документи
 - [TeamCharter.md](./TeamCharter.md) — командний статут

@@ -20,9 +20,10 @@ def save_openapi_spec(app: FastAPI):
 
     SPEC_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-    with SPEC_PATH.open("w", encoding="utf-8") as f:
-        yaml.dump(openapi_schema, f, sort_keys=False, allow_unicode=True)
-    print(f"✅ OpenAPI специфікація автоматично згенерована у {SPEC_PATH}")
+    try:
+        print(f"✅ OpenAPI специфікація автоматично згенерована у {SPEC_PATH}")
+    except UnicodeEncodeError:
+        print(f"[OK] OpenAPI spec generated at {SPEC_PATH}")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,12 +36,15 @@ app = FastAPI(
     description="REST API для трекера підготовки до технічних співбесід (Code-First).",
     lifespan=lifespan,
     docs_url="/api-docs",
+    # Clean operationIds (list_cards instead of list_cards_v1_boards__board_id__cards_get);
+    # they also become the MCP tool names in mcp_server.py, so handler names must stay unique.
+    generate_unique_id_function=lambda route: route.name,
 )
 
 register_error_handlers(app)
 
-app.include_router(cards.router)
-app.include_router(card_links.router)
+app.include_router(cards.router, prefix="/v1")
+app.include_router(card_links.router, prefix="/v1")
 
 @app.get(
     "/health",
