@@ -1,0 +1,895 @@
+openapi: 3.1.0
+info:
+  title: Tech Interview Board API
+  description: REST API для трекера підготовки до технічних співбесід (Code-First).
+  version: 0.1.0
+paths:
+  /boards/{board_id}/cards:
+    get:
+      tags:
+      - Cards
+      summary: Список карток вакансій на дошці
+      description: Повертає картки дошки з опційною фільтрацією за етапом і статусом
+        (FR-003, FR-006). Пагінація на основі зсуву (offset), бо дошка — обмежений
+        набір карток (до ~100), а не безкінечна стрічка.
+      operationId: list_cards_boards__board_id__cards_get
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки-власника карток
+          title: Board Id
+        description: Ідентифікатор дошки-власника карток
+      - name: stage_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          description: Фільтр за етапом
+          title: Stage Id
+        description: Фільтр за етапом
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/CardStatus'
+          - type: 'null'
+          description: Фільтр за статусом картки
+          title: Status
+        description: Фільтр за статусом картки
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Розмір сторінки (макс. 100)
+          default: 20
+          title: Limit
+        description: Розмір сторінки (макс. 100)
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Зсув від початку списку
+          default: 0
+          title: Offset
+        description: Зсув від початку списку
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardListResponse'
+        '404':
+          description: Дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідний фільтр або параметри пагінації
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Cards
+      summary: Створити картку вакансії
+      description: Створює нову картку в зазначеному етапі дошки (FR-007).
+      operationId: create_card_boards__board_id__cards_post
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки, до якої додається картка
+          title: Board Id
+        description: Ідентифікатор дошки, до якої додається картка
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardOut'
+        '404':
+          description: Дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Порожнє обов'язкове поле або некоректний формат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /boards/{board_id}/cards/{card_id}:
+    get:
+      tags:
+      - Cards
+      summary: Отримати картку за ідентифікатором
+      description: Повертає одну картку вакансії з усіма полями (FR-007).
+      operationId: get_card_boards__board_id__cards__card_id__get
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardOut'
+        '404':
+          description: Картку або дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+      - Cards
+      summary: Частково оновити картку
+      description: 'PATCH, а не PUT: клієнт надсилає лише змінені поля (FR-008). Також
+        використовується для закриття картки (`status`, FR-006).'
+      operationId: update_card_boards__board_id__cards__card_id__patch
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardOut'
+        '404':
+          description: Картку або дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідне значення поля
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - Cards
+      summary: Видалити картку
+      description: Видаляє картку остаточно (FR-008). Повторний виклик — теж 404,
+        а не помилка.
+      operationId: delete_card_boards__board_id__cards__card_id__delete
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      responses:
+        '204':
+          description: Successful Response
+        '404':
+          description: Картку або дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /boards/{board_id}/cards/{card_id}/move:
+    post:
+      tags:
+      - Cards
+      summary: Перемістити картку між етапами (drag-and-drop)
+      description: 'Дія як під-ресурс, а не PATCH основного ресурсу: переміщення зачіпає
+        позиції інших карток етапу (FR-004, FR-005), тобто це бізнес-операція, а не
+        проста заміна поля.'
+      operationId: move_card_boards__board_id__cards__card_id__move_post
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardMove'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardOut'
+        '404':
+          description: Картку або дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний stage_id або position_index
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /boards/{board_id}/cards/{card_id}/links:
+    get:
+      tags:
+      - Card Links
+      summary: Список посилань на тестові завдання картки
+      description: Повертає всі посилання на тестові завдання, додані до картки (FR-009).
+      operationId: list_links_boards__board_id__cards__card_id__links_get
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CardLinkOut'
+                title: Response List Links Boards  Board Id  Cards  Card Id  Links
+                  Get
+        '404':
+          description: Картку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Card Links
+      summary: Додати посилання на тестове завдання
+      description: Валідація URL відбувається на рівні типу Pydantic (`HttpUrl`) —
+        рядок, що не є коректним URL, відхиляється з 422 (FR-009).
+      operationId: create_link_boards__board_id__cards__card_id__links_post
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardLinkCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardLinkOut'
+        '404':
+          description: Картку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Рядок не є коректним URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /boards/{board_id}/cards/{card_id}/links/{link_id}:
+    delete:
+      tags:
+      - Card Links
+      summary: Видалити посилання
+      description: Видаляє посилання з картки. Повторний виклик повертає 404.
+      operationId: delete_link_boards__board_id__cards__card_id__links__link_id__delete
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      - name: link_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор посилання
+          title: Link Id
+        description: Ідентифікатор посилання
+      responses:
+        '204':
+          description: Successful Response
+        '404':
+          description: Посилання або картку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /health:
+    get:
+      tags:
+      - Meta
+      summary: Перевірка стану сервісу
+      description: Повертає 200, якщо сервіс працює. Використовується зовнішнім моніторингом
+        доступності (REL-1).
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Health Health Get
+components:
+  schemas:
+    CardCreate:
+      properties:
+        company:
+          type: string
+          maxLength: 200
+          minLength: 1
+          title: Company
+          description: Назва компанії (обов'язкове поле, FR-007)
+          examples:
+          - Acme Corp
+        position:
+          type: string
+          maxLength: 200
+          minLength: 1
+          title: Position
+          description: Назва позиції (обов'язкове поле, FR-007)
+          examples:
+          - Backend Engineer
+        vacancy_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Vacancy Url
+          description: Посилання на оригінальну вакансію
+          examples:
+          - https://acme.example.com/jobs/42
+        requirements_text:
+          anyOf:
+          - type: string
+            maxLength: 5000
+          - type: 'null'
+          title: Requirements Text
+          description: Текст вимог вакансії (FR-007, FR-003 розширення)
+          examples:
+          - 3+ роки Python, знання FastAPI
+        deadline:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Deadline
+          description: Дедлайн тестового завдання або співбесіди (FR-010)
+          examples:
+          - '2026-10-20T18:00:00Z'
+        notifications_enabled:
+          type: boolean
+          title: Notifications Enabled
+          description: Чи увімкнені нагадування для цієї картки (FR-018)
+          default: true
+        stage_id:
+          type: string
+          format: uuid
+          title: Stage Id
+          description: Етап, у якому створюється картка
+          examples:
+          - 22222222-2222-2222-2222-222222222222
+      type: object
+      required:
+      - company
+      - position
+      - stage_id
+      title: CardCreate
+      description: Тіло запиту на створення картки (FR-007).
+    CardLinkCreate:
+      properties:
+        url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Url
+          description: Посилання на тестове завдання (валідний URL)
+          examples:
+          - https://github.com/acme/test-task
+      type: object
+      required:
+      - url
+      title: CardLinkCreate
+    CardLinkOut:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: Ідентифікатор посилання
+        card_id:
+          type: string
+          format: uuid
+          title: Card Id
+          description: Картка, до якої додано посилання
+        url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Url
+          description: Посилання на тестове завдання
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Час додавання
+      type: object
+      required:
+      - id
+      - card_id
+      - url
+      - created_at
+      title: CardLinkOut
+    CardListResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CardOut'
+          type: array
+          title: Items
+          description: Картки поточної сторінки
+        pagination:
+          $ref: '#/components/schemas/PaginationMeta'
+          description: Параметри пагінації та загальна кількість
+      type: object
+      required:
+      - items
+      - pagination
+      title: CardListResponse
+    CardMove:
+      properties:
+        stage_id:
+          type: string
+          format: uuid
+          title: Stage Id
+          description: Ідентифікатор цільового етапу
+          examples:
+          - 22222222-2222-2222-2222-222222222222
+        position_index:
+          type: integer
+          minimum: 0.0
+          title: Position Index
+          description: Порядок картки в межах етапу (0 = перша зверху)
+          examples:
+          - 0
+      type: object
+      required:
+      - stage_id
+      - position_index
+      title: CardMove
+      description: Переміщення картки між етапами методом drag-and-drop (FR-004, FR-005).
+    CardOut:
+      properties:
+        company:
+          type: string
+          maxLength: 200
+          minLength: 1
+          title: Company
+          description: Назва компанії (обов'язкове поле, FR-007)
+          examples:
+          - Acme Corp
+        position:
+          type: string
+          maxLength: 200
+          minLength: 1
+          title: Position
+          description: Назва позиції (обов'язкове поле, FR-007)
+          examples:
+          - Backend Engineer
+        vacancy_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Vacancy Url
+          description: Посилання на оригінальну вакансію
+          examples:
+          - https://acme.example.com/jobs/42
+        requirements_text:
+          anyOf:
+          - type: string
+            maxLength: 5000
+          - type: 'null'
+          title: Requirements Text
+          description: Текст вимог вакансії (FR-007, FR-003 розширення)
+          examples:
+          - 3+ роки Python, знання FastAPI
+        deadline:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Deadline
+          description: Дедлайн тестового завдання або співбесіди (FR-010)
+          examples:
+          - '2026-10-20T18:00:00Z'
+        notifications_enabled:
+          type: boolean
+          title: Notifications Enabled
+          description: Чи увімкнені нагадування для цієї картки (FR-018)
+          default: true
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: Ідентифікатор картки
+        board_id:
+          type: string
+          format: uuid
+          title: Board Id
+          description: Дошка, якій належить картка
+        stage_id:
+          type: string
+          format: uuid
+          title: Stage Id
+          description: Поточний етап картки
+        status:
+          $ref: '#/components/schemas/CardStatus'
+          description: 'Статус картки: активна або закрита (FR-006)'
+        position_index:
+          type: integer
+          minimum: 0.0
+          title: Position Index
+          description: Порядок картки в межах етапу (0 = перша зверху)
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Час створення
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+          description: Час останньої зміни
+      type: object
+      required:
+      - company
+      - position
+      - id
+      - board_id
+      - stage_id
+      - status
+      - position_index
+      - created_at
+      - updated_at
+      title: CardOut
+    CardStatus:
+      type: string
+      enum:
+      - active
+      - rejected
+      - offer_accepted
+      title: CardStatus
+    CardUpdate:
+      properties:
+        company:
+          anyOf:
+          - type: string
+            maxLength: 200
+            minLength: 1
+          - type: 'null'
+          title: Company
+          description: Нова назва компанії
+          examples:
+          - Acme Corp
+        position:
+          anyOf:
+          - type: string
+            maxLength: 200
+            minLength: 1
+          - type: 'null'
+          title: Position
+          description: Нова назва позиції
+          examples:
+          - Senior Backend Engineer
+        vacancy_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Vacancy Url
+          description: Нове посилання на вакансію
+          examples:
+          - https://acme.example.com/jobs/42
+        requirements_text:
+          anyOf:
+          - type: string
+            maxLength: 5000
+          - type: 'null'
+          title: Requirements Text
+          description: Новий текст вимог вакансії
+        deadline:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Deadline
+          description: Новий дедлайн (FR-010)
+          examples:
+          - '2026-10-20T18:00:00Z'
+        notifications_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Notifications Enabled
+          description: Увімкнути або вимкнути нагадування (FR-018)
+          examples:
+          - false
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/CardStatus'
+          - type: 'null'
+          description: 'Закриття картки: ''rejected'' або ''offer_accepted'' (FR-006)'
+          examples:
+          - rejected
+      type: object
+      title: CardUpdate
+      description: Часткове оновлення картки (PATCH, FR-008) — усі поля опційні.
+    ErrorBody:
+      properties:
+        code:
+          type: string
+          title: Code
+          description: Машиночитаний код помилки
+          examples:
+          - VALIDATION_ERROR
+        message:
+          type: string
+          title: Message
+          description: Людиночитане повідомлення про помилку
+        details:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Details
+          description: Деталі по кожному полю
+        request_id:
+          type: string
+          title: Request Id
+          description: Ідентифікатор запиту для пошуку в логах
+        documentation:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Documentation
+          description: Посилання на розділ документації з поясненням помилки
+      type: object
+      required:
+      - code
+      - message
+      - request_id
+      title: ErrorBody
+    ErrorDetail:
+      properties:
+        field:
+          type: string
+          title: Field
+          description: Назва поля, яке не пройшло валідацію
+        message:
+          type: string
+          title: Message
+          description: Людиночитане пояснення, що саме не так
+        provided_value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Provided Value
+          description: Значення, яке надіслав клієнт (якщо доречно)
+      type: object
+      required:
+      - field
+      - message
+      title: ErrorDetail
+    ErrorResponse:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+          description: Опис помилки
+      type: object
+      required:
+      - error
+      title: ErrorResponse
+      description: Єдиний каркас помилки для всіх кінцевих точок API.
+    PaginationMeta:
+      properties:
+        limit:
+          type: integer
+          maximum: 100.0
+          minimum: 1.0
+          title: Limit
+          description: Розмір сторінки (макс. 100)
+        offset:
+          type: integer
+          minimum: 0.0
+          title: Offset
+          description: Зсув від початку списку
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+          description: Загальна кількість елементів у ресурсі
+      type: object
+      required:
+      - limit
+      - offset
+      - total
+      title: PaginationMeta
