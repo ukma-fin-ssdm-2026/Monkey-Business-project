@@ -1,9 +1,30 @@
-name: CI Test
-on: [push]
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
 jobs:
-  build:
+  test-and-verify:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v7
-    - name: Run Hello World
-      run: echo "Hello, World!"
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Verify API integration and OpenAPI generation
+        env:
+          PYTHONPATH: .
+        run: |
+          python -m src.api.main
+          test -s docs/api/openapi-generated.yaml
