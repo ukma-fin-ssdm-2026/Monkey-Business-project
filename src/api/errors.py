@@ -19,7 +19,8 @@ from fastapi.responses import JSONResponse
 
 from .schemas import ErrorBody, ErrorDetail, ErrorResponse
 
-DOCS_BASE = "/docs/api/api-design.md#error-handling"
+# Absolute URL: the API does not serve the markdown docs, so a relative path would 404 for clients.
+DOCS_BASE = "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md"
 
 
 class ApiError(Exception):
@@ -71,7 +72,7 @@ def register_error_handlers(app: FastAPI) -> None:
                 message=exc.message,
                 details=[],
                 request_id=_request_id(request),
-                documentation=DOCS_BASE,
+                documentation=f"{DOCS_BASE}#error-handling",
             )
         )
         return JSONResponse(status_code=exc.status_code, content=body.model_dump(mode="json"))
