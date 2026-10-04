@@ -25,10 +25,14 @@ Code-First підходу.
 python -m src.api.mcp_server   # stdio-транспорт
 ```
 
-Підключення до Claude Code (з кореня репозиторію):
+Підключення до Claude Code (з кореня репозиторію). Агент запускає сервер окремим процесом,
+тому `python` має бути інтерпретатором зі встановленими залежностями — інакше процес падає
+на імпорті, а Claude Code показує лише `Failed to connect — Connection closed`:
 
 ```bash
-claude mcp add interview-board -- python -m src.api.mcp_server
+python -m venv .venv && .venv/bin/pip install -r requirements.txt
+claude mcp add interview-board -- "$PWD/.venv/bin/python" -m src.api.mcp_server
+claude mcp get interview-board   # Status: ✔ Connected
 ```
 
 Для Claude Desktop / Cursor — у конфігурацію MCP-серверів:
@@ -37,7 +41,7 @@ claude mcp add interview-board -- python -m src.api.mcp_server
 {
   "mcpServers": {
     "interview-board": {
-      "command": "python",
+      "command": "/шлях/до/Monkey-Business-project/.venv/bin/python",
       "args": ["-m", "src.api.mcp_server"],
       "cwd": "/шлях/до/Monkey-Business-project"
     }
