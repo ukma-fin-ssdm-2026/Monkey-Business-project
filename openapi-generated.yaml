@@ -4,7 +4,7 @@ info:
   description: REST API для трекера підготовки до технічних співбесід (Code-First).
   version: 0.1.0
 paths:
-  /boards/{board_id}/cards:
+  /v1/boards/{board_id}/cards:
     get:
       tags:
       - Cards
@@ -12,7 +12,7 @@ paths:
       description: Повертає картки дошки з опційною фільтрацією за етапом і статусом
         (FR-003, FR-006). Пагінація на основі зсуву (offset), бо дошка — обмежений
         набір карток (до ~100), а не безкінечна стрічка.
-      operationId: list_cards_boards__board_id__cards_get
+      operationId: list_cards_v1_boards__board_id__cards_get
       parameters:
       - name: board_id
         in: path
@@ -89,7 +89,7 @@ paths:
       - Cards
       summary: Створити картку вакансії
       description: Створює нову картку в зазначеному етапі дошки (FR-007).
-      operationId: create_card_boards__board_id__cards_post
+      operationId: create_card_v1_boards__board_id__cards_post
       parameters:
       - name: board_id
         in: path
@@ -125,13 +125,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /boards/{board_id}/cards/{card_id}:
+  /v1/boards/{board_id}/cards/{card_id}:
     get:
       tags:
       - Cards
       summary: Отримати картку за ідентифікатором
       description: Повертає одну картку вакансії з усіма полями (FR-007).
-      operationId: get_card_boards__board_id__cards__card_id__get
+      operationId: get_card_v1_boards__board_id__cards__card_id__get
       parameters:
       - name: board_id
         in: path
@@ -176,7 +176,7 @@ paths:
       summary: Частково оновити картку
       description: 'PATCH, а не PUT: клієнт надсилає лише змінені поля (FR-008). Також
         використовується для закриття картки (`status`, FR-006).'
-      operationId: update_card_boards__board_id__cards__card_id__patch
+      operationId: update_card_v1_boards__board_id__cards__card_id__patch
       parameters:
       - name: board_id
         in: path
@@ -227,7 +227,7 @@ paths:
       summary: Видалити картку
       description: Видаляє картку остаточно (FR-008). Повторний виклик — теж 404,
         а не помилка.
-      operationId: delete_card_boards__board_id__cards__card_id__delete
+      operationId: delete_card_v1_boards__board_id__cards__card_id__delete
       parameters:
       - name: board_id
         in: path
@@ -262,7 +262,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /boards/{board_id}/cards/{card_id}/move:
+  /v1/boards/{board_id}/cards/{card_id}/move:
     post:
       tags:
       - Cards
@@ -270,7 +270,7 @@ paths:
       description: 'Дія як під-ресурс, а не PATCH основного ресурсу: переміщення зачіпає
         позиції інших карток етапу (FR-004, FR-005), тобто це бізнес-операція, а не
         проста заміна поля.'
-      operationId: move_card_boards__board_id__cards__card_id__move_post
+      operationId: move_card_v1_boards__board_id__cards__card_id__move_post
       parameters:
       - name: board_id
         in: path
@@ -315,13 +315,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /boards/{board_id}/cards/{card_id}/links:
+  /v1/boards/{board_id}/cards/{card_id}/links:
     get:
       tags:
       - Card Links
       summary: Список посилань на тестові завдання картки
       description: Повертає всі посилання на тестові завдання, додані до картки (FR-009).
-      operationId: list_links_boards__board_id__cards__card_id__links_get
+      operationId: list_links_v1_boards__board_id__cards__card_id__links_get
       parameters:
       - name: board_id
         in: path
@@ -350,7 +350,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CardLinkOut'
-                title: Response List Links Boards  Board Id  Cards  Card Id  Links
+                title: Response List Links V1 Boards  Board Id  Cards  Card Id  Links
                   Get
         '404':
           description: Картку не знайдено
@@ -370,7 +370,7 @@ paths:
       summary: Додати посилання на тестове завдання
       description: Валідація URL відбувається на рівні типу Pydantic (`HttpUrl`) —
         рядок, що не є коректним URL, відхиляється з 422 (FR-009).
-      operationId: create_link_boards__board_id__cards__card_id__links_post
+      operationId: create_link_v1_boards__board_id__cards__card_id__links_post
       parameters:
       - name: board_id
         in: path
@@ -415,13 +415,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /boards/{board_id}/cards/{card_id}/links/{link_id}:
+  /v1/boards/{board_id}/cards/{card_id}/links/{link_id}:
     delete:
       tags:
       - Card Links
       summary: Видалити посилання
       description: Видаляє посилання з картки. Повторний виклик повертає 404.
-      operationId: delete_link_boards__board_id__cards__card_id__links__link_id__delete
+      operationId: delete_link_v1_boards__board_id__cards__card_id__links__link_id__delete
       parameters:
       - name: board_id
         in: path
@@ -479,6 +479,7 @@ paths:
           content:
             application/json:
               schema:
+                additionalProperties: true
                 type: object
                 title: Response Health Health Get
 components:
