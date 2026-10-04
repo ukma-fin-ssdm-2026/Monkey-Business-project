@@ -7,17 +7,23 @@
   - Mykola Vashchenko (GitHub: @MykolaVashchenko, електронна пошта НаУКМА: m.vashchenko@ukma.edu.ua)
   - Nikita Dyshlyuk (GitHub: @mytec0l, електронна пошта НаУКМА: n.dyshlyuk@ukma.edu.ua)
 ## 2. Ролі та відповідальності (Roles & Responsibilities)
-| Name | Core | Project Requirements | API Design |
-|---|---|---|---|
-| Nazar Sydorchuk | Issue Tracker Lead | Requirements Lead | Quality Lead |
-| Oleksii Volik | CI Maintainer | Quality Lead | Documentation Lead |
-| Mykola Vashchenko | Documentation Lead | Traceability Lead | Backend Lead / API Design Lead |
-| Nikita Dyshlyuk | Repo Maintainer | Documentation Lead | Integration Lead |
+| Name | Core | Project Requirements | Architecture | API Design |
+|---|---|---|---|---|
+| Nazar Sydorchuk | Issue Tracker Lead | Requirements Lead | UML Lead | Quality Lead |
+| Oleksii Volik | CI Maintainer | Quality Lead | Architecture Lead | Documentation Lead |
+| Mykola Vashchenko | Documentation Lead | Traceability Lead | Data & Threat Modeler / Documentation Lead | Backend Lead / API Design Lead |
+| Nikita Dyshlyuk | Repo Maintainer | Documentation Lead | Requirements-Architecture Mapper | Integration Lead |
 ### Відповідальність за артефакти вимог:
 - **Requirements Lead (Nazar Sydorchuk)**: написання та вдосконалення користувацьких історій (INVEST), ведення розділу функціональних вимог (FR) у `requirements.md`.
 - **Quality Lead (Oleksii Volik)**: визначення, вимірюваність та документування нефункціональних вимог (NFR) за категоріями ISO 25010 у `requirements.md`.
 - **Traceability Lead (Mykola Vashchenko)**: створення та підтримка матриці простежуваності `rtm.md` (US → FR → NFR → Test Cases).
 - **Documentation Lead (Nikita Dyshlyuk)**: організація файлів Markdown у `/docs/requirements/`, підтримка актуальності посилань у `README.md`, ведення структури артефактів та виконання комітів.
+### Відповідальність за артефакти архітектури:
+- **Architecture Lead (Oleksii Volik)**: координує вибір стилю та діаграму компонентів.
+- **Requirements-Architecture Mapper (Nikita Dyshlyuk)**: створює матрицю простежуваності вимог до компонентів.
+- **Data & Threat Modeler (Mykola Vashchenko)**: будує модель даних і веде STRIDE-аналіз діаграми розгортання.
+- **UML Lead (Nazar Sydorchuk)**: відповідає за коректність UML.
+- **Documentation Lead (Mykola Vashchenko)**: структурує Markdown та ADR.
 ### Відповідальність за артефакти API:
 - **Backend Lead (Mykola Vashchenko)**: написання основного коду API з анотаціями.
 - **API Design Lead (Mykola Vashchenko)**: ведення `/docs/api/api-design.md` (модель ресурсів, статус-коди, версіонування) і перевірка узгодженості кінцевих точок.
