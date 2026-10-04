@@ -20,6 +20,8 @@ def save_openapi_spec(app: FastAPI):
 
     SPEC_PATH.parent.mkdir(parents=True, exist_ok=True)
 
+    with SPEC_PATH.open("w", encoding="utf-8") as f:
+        yaml.dump(openapi_schema, f, sort_keys=False, allow_unicode=True)
     try:
         print(f"✅ OpenAPI специфікація автоматично згенерована у {SPEC_PATH}")
     except UnicodeEncodeError:
