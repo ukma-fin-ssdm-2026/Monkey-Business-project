@@ -1,13 +1,16 @@
 """
 Інструмент: Claude
-Застосування: Створення вкладених ендпоінтів для під-ресурсу Card Links з реалізацією валідації посилань (HttpUrl).
-Верифікація: Перевірено вручну логіку додавання та видалення посилань через Swagger UI, узгоджено командою.
+Застосування: Створення вкладених ендпоінтів для під-ресурсу Card Links
+з реалізацією валідації посилань (HttpUrl).
+Верифікація: Перевірено вручну логіку додавання та видалення посилань
+через Swagger UI, узгоджено командою.
 
 Ресурс: Card Links (`/boards/{board_id}/cards/{card_id}/links`).
 
 Вкладений під `cards`, бо посилання не мають самостійного сенсу поза карткою
 (FR-009: "до картки можна додати кілька посилань на тестові завдання").
 """
+
 from __future__ import annotations
 
 from uuid import UUID
@@ -19,10 +22,14 @@ from ..auth import CandidateOrAdmin, CurrentUser, require_board_access
 from ..errors import NotFoundError, error_responses
 from ..schemas import CardLinkCreate, CardLinkOut
 
-router = APIRouter(prefix="/boards/{board_id}/cards/{card_id}/links", tags=["Card Links"])
+router = APIRouter(
+    prefix="/boards/{board_id}/cards/{card_id}/links", tags=["Card Links"]
+)
 
 
-def _require_card(board_id: UUID, card_id: UUID, user: dict, *, write: bool = False) -> dict:
+def _require_card(
+    board_id: UUID, card_id: UUID, user: dict, *, write: bool = False
+) -> dict:
     if not store.board_exists(board_id):
         raise NotFoundError(f"Дошку {board_id} не знайдено")
     require_board_access(board_id, user, write=write)
@@ -37,7 +44,9 @@ def _require_card(board_id: UUID, card_id: UUID, user: dict, *, write: bool = Fa
     response_model=list[CardLinkOut],
     status_code=status.HTTP_200_OK,
     summary="Список посилань на тестові завдання картки",
-    description="Повертає всі посилання на тестові завдання, додані до картки (FR-009).",
+    description=(
+        "Повертає всі посилання на тестові завдання, " "додані до картки (FR-009)."
+    ),
     responses=error_responses("Картку не знайдено", "Некоректний ідентифікатор"),
 )
 def list_links(
@@ -77,7 +86,9 @@ def create_link(
     response_model=None,
     summary="Видалити посилання",
     description="Видаляє посилання з картки. Повторний виклик повертає 404.",
-    responses=error_responses("Посилання або картку не знайдено", "Некоректний ідентифікатор"),
+    responses=error_responses(
+        "Посилання або картку не знайдено", "Некоректний ідентифікатор"
+    ),
 )
 def delete_link(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),

@@ -1,7 +1,9 @@
 """
 Інструмент: Claude
-Застосування: Розробка in-memory сховища з хардкодними даними (заглушками) для демонстрації Code-First підходу без підключення БД.
-Верифікація: Перевірено вручну коректність роботи CRUD-операцій з тестовими даними, узгоджено командою.
+Застосування: Розробка in-memory сховища з хардкодними даними (заглушками) для
+демонстрації Code-First підходу без підключення БД.
+Верифікація: Перевірено вручну коректність роботи CRUD-операцій з тестовими даними,
+узгоджено командою.
 
 In-memory сховище-заглушка.
 
@@ -9,6 +11,7 @@ In-memory сховище-заглушка.
 (вимога "відповіді-заглушки для демонстрації"). Реальна інтеграція з PostgreSQL
 (ADR-002, data-model.md) буде додана окремо бекенд-командою.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -69,7 +72,11 @@ def get_user_by_email(email: str) -> Optional[dict]:
 
 
 def create_board(owner_id: UUID) -> dict:
-    board = {"id": uuid4(), "owner_id": owner_id, "created_at": datetime.now(timezone.utc)}
+    board = {
+        "id": uuid4(),
+        "owner_id": owner_id,
+        "created_at": datetime.now(timezone.utc),
+    }
     boards_db[board["id"]] = board
     return board
 
@@ -78,7 +85,11 @@ def get_board(board_id: UUID) -> Optional[dict]:
     if board_id == DEMO_BOARD_ID:
         return boards_db.setdefault(
             board_id,
-            {"id": board_id, "owner_id": None, "created_at": datetime.now(timezone.utc)},
+            {
+                "id": board_id,
+                "owner_id": None,
+                "created_at": datetime.now(timezone.utc),
+            },
         )
     return boards_db.get(board_id)
 
@@ -103,7 +114,9 @@ def get_card(card_id: UUID) -> Optional[dict]:
     return cards_db.get(card_id)
 
 
-def list_cards(board_id: UUID, stage_id: Optional[UUID], status_: Optional[str]) -> list[dict]:
+def list_cards(
+    board_id: UUID, stage_id: Optional[UUID], status_: Optional[str]
+) -> list[dict]:
     items = [c for c in cards_db.values() if c["board_id"] == board_id]
     if stage_id is not None:
         items = [c for c in items if c["stage_id"] == stage_id]

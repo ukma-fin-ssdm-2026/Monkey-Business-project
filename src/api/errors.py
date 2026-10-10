@@ -1,7 +1,9 @@
 """
 Інструмент: Claude
-Застосування: Реалізація єдиної структури обробки доменних помилок API (ApiError) та помилок валідації (RequestValidationError).
-Верифікація: Перевірено вручну формат відповідей для статус-кодів 404, 409 та 422, узгоджено командою.
+Застосування: Реалізація єдиної структури обробки доменних помилок API (ApiError)
+та помилок валідації (RequestValidationError).
+Верифікація: Перевірено вручну формат відповідей для статус-кодів 404,
+409 та 422, узгоджено командою.
 
 Узгоджена обробка помилок для всього API.
 
@@ -9,6 +11,7 @@
 код, людиночитане повідомлення, деталі по полях, request_id, посилання на docs.
 Це прибирає типовий антипатерн "різні формати помилок у різних кінцевих точках".
 """
+
 from __future__ import annotations
 
 import uuid
@@ -19,8 +22,12 @@ from fastapi.responses import JSONResponse
 
 from .schemas import ErrorBody, ErrorDetail, ErrorResponse
 
-# Absolute URL: the API does not serve the markdown docs, so a relative path would 404 for clients.
-DOCS_BASE = "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md"
+# Absolute URL: the API does not serve the markdown docs, so a
+# relative path would 404 for clients.
+DOCS_BASE = (
+    "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/"
+    "blob/main/docs/api/api-design.md"
+)
 
 
 class ApiError(Exception):
@@ -106,12 +113,16 @@ def register_error_handlers(app: FastAPI) -> None:
         )
 
     @app.exception_handler(RequestValidationError)
-    async def handle_validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:
+    async def handle_validation_error(
+        request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
         details = [
             ErrorDetail(
                 field=".".join(str(p) for p in err["loc"] if p != "body"),
                 message=err["msg"],
-                provided_value=str(err.get("input")) if err.get("input") is not None else None,
+                provided_value=(
+                    str(err.get("input")) if err.get("input") is not None else None
+                ),
             )
             for err in exc.errors()
         ]
