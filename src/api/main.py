@@ -10,6 +10,7 @@ import yaml
 from pathlib import Path
 
 from .errors import register_error_handlers
+from . import auth
 from .routers import card_links, cards
 
 SPEC_PATH = Path(__file__).resolve().parents[2] / "docs" / "api" / "openapi-generated.yaml"
@@ -47,6 +48,7 @@ register_error_handlers(app)
 
 app.include_router(cards.router, prefix="/v1")
 app.include_router(card_links.router, prefix="/v1")
+app.include_router(auth.router, prefix="/v1")
 
 @app.get(
     "/health",

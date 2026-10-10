@@ -38,18 +38,41 @@ class NotFoundError(ApiError):
         super().__init__(status.HTTP_404_NOT_FOUND, "NOT_FOUND", message)
 
 
+class UnauthorizedError(ApiError):
+    def __init__(self, message: str) -> None:
+        super().__init__(status.HTTP_401_UNAUTHORIZED, "UNAUTHORIZED", message)
+
+
+class ForbiddenError(ApiError):
+    def __init__(self, message: str) -> None:
+        super().__init__(status.HTTP_403_FORBIDDEN, "FORBIDDEN", message)
+
+
 class ConflictError(ApiError):
     def __init__(self, message: str) -> None:
         super().__init__(status.HTTP_409_CONFLICT, "CONFLICT", message)
 
 
-def error_responses(not_found: str, invalid: str = "Невалідні параметри запиту") -> dict:
+def error_responses(
+    not_found: str,
+    invalid: str = "Невалідні параметри запиту",
+    examples: dict | None = None,
+) -> dict:
     # Without an explicit 422 entry FastAPI documents its default HTTPValidationError,
     # which is not what handle_validation_error actually returns.
-    return {
+    responses = {
+        401: {"model": ErrorResponse, "description": "Потрібна автентифікація"},
+        403: {"model": ErrorResponse, "description": "Недостатньо прав"},
         404: {"model": ErrorResponse, "description": not_found},
         422: {"model": ErrorResponse, "description": invalid},
     }
+    if examples:
+        for code, response_examples in examples.items():
+            if code in responses:
+                responses[code]["content"] = {
+                    "application/json": {"examples": response_examples}
+                }
+    return responses
 
 
 def _request_id(request: Request) -> str:
@@ -75,7 +98,12 @@ def register_error_handlers(app: FastAPI) -> None:
                 documentation=f"{DOCS_BASE}#error-handling",
             )
         )
-        return JSONResponse(status_code=exc.status_code, content=body.model_dump(mode="json"))
+        headers = {"WWW-Authenticate": "Bearer"} if exc.status_code == 401 else None
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=body.model_dump(mode="json"),
+            headers=headers,
+        )
 
     @app.exception_handler(RequestValidationError)
     async def handle_validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:

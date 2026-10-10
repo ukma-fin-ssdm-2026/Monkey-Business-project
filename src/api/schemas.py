@@ -16,7 +16,7 @@ from enum import Enum
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, EmailStr, Field, HttpUrl, field_validator, model_validator
 
 
 # --------------------------------------------------------------------------- #
@@ -45,6 +45,37 @@ class ErrorResponse(BaseModel):
     """Єдиний каркас помилки для всіх кінцевих точок API."""
 
     error: ErrorBody = Field(..., description="Опис помилки")
+
+
+class UserRole(str, Enum):
+    candidate = "candidate"
+    mentor = "mentor"
+    admin = "admin"
+
+
+class RegisterRequest(BaseModel):
+    email: EmailStr = Field(..., examples=["candidate@example.com"])
+    password: str = Field(..., min_length=8, max_length=128, examples=["correct-horse-battery"])
+    role: UserRole = Field(default=UserRole.candidate, examples=["candidate"])
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr = Field(..., examples=["candidate@example.com"])
+    password: str = Field(..., min_length=1, max_length=128, examples=["correct-horse-battery"])
+
+
+class UserOut(BaseModel):
+    id: UUID
+    email: EmailStr
+    role: UserRole
+    is_active: bool
+
+
+class TokenResponse(BaseModel):
+    access_token: str = Field(..., description="JWT Bearer access token")
+    token_type: str = Field(default="bearer", examples=["bearer"])
+    expires_in: int = Field(..., ge=1, description="Token lifetime in seconds")
+    user: UserOut
 
 
 class PaginationMeta(BaseModel):
@@ -90,6 +121,13 @@ class CardBase(BaseModel):
         default=True, description="Чи увімкнені нагадування для цієї картки (FR-018)"
     )
 
+    @field_validator("company", "position")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("поле не може бути порожнім рядком")
+        return value
+
 
 class CardCreate(CardBase):
     """Тіло запиту на створення картки (FR-007)."""
@@ -129,12 +167,11 @@ class CardUpdate(BaseModel):
         examples=["rejected"],
     )
 
-    @field_validator("company", "position")
-    @classmethod
-    def not_blank(cls, value: Optional[str]) -> Optional[str]:
-        if value is not None and not value.strip():
-            raise ValueError("поле не може бути порожнім рядком")
-        return value
+    @model_validator(mode="after")
+    def require_change(self) -> "CardUpdate":
+        if not self.model_fields_set:
+            raise ValueError("потрібно вказати хоча б одне поле для оновлення")
+        return self
 
 
 class CardMove(BaseModel):
