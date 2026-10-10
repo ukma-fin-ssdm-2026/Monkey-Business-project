@@ -20,6 +20,11 @@ DEMO_STAGE_ID = UUID("22222222-2222-2222-2222-222222222222")
 
 _now = datetime.now(timezone.utc)
 
+users_db: dict[UUID, dict] = {}
+boards_db: dict[UUID, dict] = {}
+stages_db: dict[UUID, dict] = {}
+board_mentors_db: dict[tuple[UUID, UUID], dict] = {}
+
 cards_db: dict[UUID, dict] = {
     UUID("33333333-3333-3333-3333-333333333333"): {
         "id": UUID("33333333-3333-3333-3333-333333333333"),
@@ -41,8 +46,57 @@ cards_db: dict[UUID, dict] = {
 card_links_db: dict[UUID, dict] = {}
 
 
+def create_user(email: str, password_hash: str, role: str) -> dict:
+    user = {
+        "id": uuid4(),
+        "email": email.lower(),
+        "password_hash": password_hash,
+        "role": role,
+        "is_active": True,
+        "created_at": datetime.now(timezone.utc),
+    }
+    users_db[user["id"]] = user
+    return user
+
+
+def get_user(user_id: UUID) -> Optional[dict]:
+    return users_db.get(user_id)
+
+
+def get_user_by_email(email: str) -> Optional[dict]:
+    email = email.lower()
+    return next((user for user in users_db.values() if user["email"] == email), None)
+
+
+def create_board(owner_id: UUID) -> dict:
+    board = {"id": uuid4(), "owner_id": owner_id, "created_at": datetime.now(timezone.utc)}
+    boards_db[board["id"]] = board
+    return board
+
+
+def get_board(board_id: UUID) -> Optional[dict]:
+    if board_id == DEMO_BOARD_ID:
+        return boards_db.setdefault(
+            board_id,
+            {"id": board_id, "owner_id": None, "created_at": datetime.now(timezone.utc)},
+        )
+    return boards_db.get(board_id)
+
+
+def has_board_access(board_id: UUID, mentor_id: UUID) -> bool:
+    relation = board_mentors_db.get((board_id, mentor_id))
+    return relation is not None and relation["status"] == "accepted"
+
+
+def claim_demo_board(owner_id: UUID) -> dict:
+    board = get_board(DEMO_BOARD_ID)
+    if board is not None and board["owner_id"] is None:
+        board["owner_id"] = owner_id
+    return board
+
+
 def board_exists(board_id: UUID) -> bool:
-    return board_id == DEMO_BOARD_ID
+    return get_board(board_id) is not None
 
 
 def get_card(card_id: UUID) -> Optional[dict]:
