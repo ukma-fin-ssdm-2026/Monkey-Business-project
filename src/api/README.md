@@ -37,8 +37,23 @@ python -m src.api.main   # згенерувати docs/api/openapi-generated.yam
 кожна кінцева точка стає інструментом, який AI-агент (Claude Code, Claude Desktop, Cursor)
 може викликати. Назва інструмента — `operationId` (`list_cards`, `create_card`, `move_card`, ...),
 опис і параметри беруться з анотацій API. Окремо запускати uvicorn не потрібно — запити
-обробляються застосунком у тому ж процесі, але йому потрібна база даних: запустіть
-`docker compose up -d db` і передайте `DATABASE_URL`.
+обробляються застосунком у тому ж процесі, але йому потрібна база даних.
+
+Інструментами стають усі кінцеві точки, крім `/v1/auth/*`: картки, посилання, етапи, нотатки
+та `health`. Ендпоінти дошки вимагають JWT, тому MCP-сервер сам входить через `/v1/auth/login`
+від імені облікового запису з `MCP_USER_EMAIL` / `MCP_USER_PASSWORD` і додає Bearer-токен до
+кожного запиту (після закінчення 24-годинного токена — входить повторно). Агент має права
+цього користувача: кандидат — повний доступ до своєї дошки, ментор — лише читання.
+Без цих змінних працює тільки `health`, а решта інструментів повертає помилку з підказкою.
+
+Підготовка:
+
+1. Запустіть API та PostgreSQL: `docker compose up -d --build` (контейнер `api` застосовує міграції).
+2. Зареєструйте кандидата, від імені якого працюватиме агент: `POST /v1/auth/register`, наприклад
+   через Swagger UI (http://localhost:3000/api-docs). Разом з обліковим записом створюється його
+   дошка з чотирма стандартними етапами.
+3. Задайте змінні середовища: `DATABASE_URL` (як у розділі «Локально» вище), а також
+   `MCP_USER_EMAIL` і `MCP_USER_PASSWORD` — email і пароль цього кандидата.
 
 ```bash
 python -m src.api.mcp_server   # stdio-транспорт
@@ -50,9 +65,11 @@ python -m src.api.mcp_server   # stdio-транспорт
 
 ```bash
 python -m venv .venv && .venv/bin/pip install -r requirements.txt
-claude mcp add interview-board -e DATABASE_URL="$DATABASE_URL" -- "$PWD/.venv/bin/python" -m src.api.mcp_server
+claude mcp add interview-board -e DATABASE_URL="$DATABASE_URL" -e MCP_USER_EMAIL="$MCP_USER_EMAIL" -e MCP_USER_PASSWORD="$MCP_USER_PASSWORD" -- "$PWD/.venv/bin/python" -m src.api.mcp_server
 claude mcp get interview-board   # Status: ✔ Connected
 ```
+
+Якщо сервер уже додано без цих змінних, спершу видаліть його: `claude mcp remove interview-board -s local`.
 
 Для Claude Desktop / Cursor — у конфігурацію MCP-серверів:
 
@@ -63,15 +80,18 @@ claude mcp get interview-board   # Status: ✔ Connected
       "command": "/шлях/до/Monkey-Business-project/.venv/bin/python",
       "args": ["-m", "src.api.mcp_server"],
       "cwd": "/шлях/до/Monkey-Business-project",
-      "env": { "DATABASE_URL": "значення DATABASE_URL з розділу вище" }
+      "env": {
+        "DATABASE_URL": "значення DATABASE_URL з розділу вище",
+        "MCP_USER_EMAIL": "<email>",
+        "MCP_USER_PASSWORD": "<пароль>"
+      }
     }
   }
 }
 ```
 
-Для перевірки зареєструйте кандидата (`POST /v1/auth/register`): разом з обліковим
-записом створюється його дошка з чотирма стандартними етапами. Окремого ендпоінта для
-отримання `board_id` поки немає, тому його можна знайти в БД:
+Окремого ендпоінта для отримання `board_id` поки немає, тому ідентифікатор дошки кандидата
+можна знайти в БД:
 
 ```bash
 docker compose exec db psql -U interview_board -d interview_board \
