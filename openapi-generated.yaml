@@ -396,7 +396,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Дошку не знайдено
+          description: Дошку або етап не знайдено
           content:
             application/json:
               examples:
@@ -665,7 +665,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Картку або дошку не знайдено
+          description: Картку, дошку або етап не знайдено
           content:
             application/json:
               schema:
