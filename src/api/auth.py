@@ -11,8 +11,10 @@ import jwt
 from fastapi import APIRouter, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from . import store
+from .db import Repos
+from .domain import DEFAULT_STAGE_NAMES, Board, Stage, User
 from .errors import ConflictError, ForbiddenError, UnauthorizedError
+from .repositories.base import Repositories
 from .schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut, UserRole
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -41,19 +43,19 @@ def _verify_password(password: str, encoded: str) -> bool:
     return hmac.compare_digest(expected, digest_hex)
 
 
-def _public_user(user: dict) -> UserOut:
+def _public_user(user: User) -> UserOut:
     return UserOut(
-        id=user["id"],
-        email=user["email"],
-        role=user["role"],
-        is_active=user["is_active"],
+        id=user.id,
+        email=user.email,
+        role=user.role,
+        is_active=user.is_active,
     )
 
 
-def _issue_token(user: dict) -> TokenResponse:
+def _issue_token(user: User) -> TokenResponse:
     expires_at = datetime.now(timezone.utc) + TOKEN_TTL
     token = jwt.encode(
-        {"sub": str(user["id"]), "exp": expires_at, "role": user["role"]},
+        {"sub": str(user.id), "exp": expires_at, "role": user.role},
         _secret(),
         algorithm="HS256",
     )
@@ -70,15 +72,22 @@ def _issue_token(user: dict) -> TokenResponse:
     status_code=201,
     responses={409: {"description": "Email is already registered"}},
 )
-def register(payload: RegisterRequest) -> TokenResponse:
+def register(payload: RegisterRequest, repos: Repos) -> TokenResponse:
     if payload.role != UserRole.candidate:
         raise ForbiddenError("Реєстрація доступна лише для ролі кандидата")
-    if store.get_user_by_email(str(payload.email)) is not None:
+    email = str(payload.email).lower()
+    if repos.users.get_by_email(email) is not None:
         raise ConflictError("Користувач із таким email уже існує")
-    user = store.create_user(
-        str(payload.email), _hash_password(payload.password), payload.role.value
+    user = repos.users.add(
+        User(
+            email=email,
+            password_hash=_hash_password(payload.password),
+            role=payload.role.value,
+        )
     )
-    store.create_board(user["id"])
+    board = repos.boards.add(Board(owner_id=user.id))
+    for order_index, name in enumerate(DEFAULT_STAGE_NAMES):
+        repos.stages.add(Stage(board_id=board.id, name=name, order_index=order_index))
     return _issue_token(user)
 
 
@@ -87,12 +96,12 @@ def register(payload: RegisterRequest) -> TokenResponse:
     response_model=TokenResponse,
     responses={401: {"description": "Invalid credentials"}},
 )
-def login(payload: LoginRequest) -> TokenResponse:
-    user = store.get_user_by_email(str(payload.email))
+def login(payload: LoginRequest, repos: Repos) -> TokenResponse:
+    user = repos.users.get_by_email(str(payload.email).lower())
     if (
         user is None
-        or not user["is_active"]
-        or not _verify_password(payload.password, user["password_hash"])
+        or not user.is_active
+        or not _verify_password(payload.password, user.password_hash)
     ):
         raise UnauthorizedError("Невірний email або пароль")
     return _issue_token(user)
@@ -100,7 +109,8 @@ def login(payload: LoginRequest) -> TokenResponse:
 
 def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)],
-) -> dict:
+    repos: Repos,
+) -> User:
     if credentials is None or credentials.scheme.lower() != "bearer":
         raise UnauthorizedError("Потрібен Bearer-токен")
     try:
@@ -108,8 +118,8 @@ def get_current_user(
         user_id = UUID(payload["sub"])
     except (jwt.InvalidTokenError, KeyError, ValueError):
         raise UnauthorizedError("Недійсний або прострочений токен")
-    user = store.get_user(user_id)
-    if user is None or not user["is_active"]:
+    user = repos.users.get(user_id)
+    if user is None or not user.is_active:
         raise UnauthorizedError(
             "Користувача не знайдено або обліковий запис заблоковано"
         )
@@ -119,35 +129,34 @@ def get_current_user(
 def require_roles(*roles: UserRole):
     allowed = {role.value for role in roles}
 
-    def dependency(user: Annotated[dict, Depends(get_current_user)]) -> dict:
-        if user["role"] not in allowed:
+    def dependency(user: Annotated[User, Depends(get_current_user)]) -> User:
+        if user.role not in allowed:
             raise ForbiddenError("Недостатньо прав для виконання цієї дії")
         return user
 
     return dependency
 
 
-CurrentUser = Annotated[dict, Depends(get_current_user)]
+CurrentUser = Annotated[User, Depends(get_current_user)]
 CandidateOrAdmin = Annotated[
-    dict, Depends(require_roles(UserRole.candidate, UserRole.admin))
+    User, Depends(require_roles(UserRole.candidate, UserRole.admin))
 ]
 
 
-def require_board_access(board_id: UUID, user: dict, *, write: bool = False) -> None:
-    board = store.get_board(board_id)
+def require_board_access(
+    repos: Repositories, board_id: UUID, user: User, *, write: bool = False
+) -> None:
+    board = repos.boards.get(board_id)
     if board is None:
         raise ForbiddenError("Доступ до дошки заборонено")
-    if user["role"] == UserRole.admin.value:
+    if user.role == UserRole.admin.value:
         return
-    if board["owner_id"] is None and user["role"] == UserRole.candidate.value:
-        store.claim_demo_board(user["id"])
-        return
-    if board["owner_id"] == user["id"] and user["role"] == UserRole.candidate.value:
+    if board.owner_id == user.id and user.role == UserRole.candidate.value:
         return
     if (
-        user["role"] == UserRole.mentor.value
+        user.role == UserRole.mentor.value
         and not write
-        and store.has_board_access(board_id, user["id"])
+        and repos.boards.mentor_has_access(board_id, user.id)
     ):
         return
     raise ForbiddenError("Доступ до дошки заборонено")
