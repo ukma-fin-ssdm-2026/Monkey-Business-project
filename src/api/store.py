@@ -14,6 +14,7 @@ In-memory сховище-заглушка.
 
 from __future__ import annotations
 
+import hashlib
 from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID, uuid4
@@ -26,9 +27,9 @@ DEFAULT_STAGE_NAMES = ["Відгук", "Скринінг", "Технічне і�
 
 _now = datetime.now(timezone.utc)
 
-_demo_salt = "64656d6f5f73616c745f313233343536"
-_demo_digest = "a4dd4274787c86f531bbcc05aa2b09081ff14a2601d4d7c9e1e8d862bfb9e1d9"
-_demo_pw_hash = f"{_demo_salt}${_demo_digest}"
+_demo_salt = b"demo_salt_123456"
+_demo_digest = hashlib.pbkdf2_hmac("sha256", b"password123", _demo_salt, 210_000).hex()
+_demo_pw_hash = f"{_demo_salt.hex()}${_demo_digest}"
 
 users_db: dict[UUID, dict] = {
     DEMO_USER_ID: {
