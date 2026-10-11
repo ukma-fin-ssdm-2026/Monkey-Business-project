@@ -12,15 +12,15 @@
 
 ## Команда
 
-| Ім'я | GitHub | Роль (Lab 4) |
+| Ім'я | GitHub | Роль (Lab 5) |
 |---|---|---|
-| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Integration Lead |
-| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Quality Lead |
-| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Documentation Lead |
-| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Backend Lead / API Design Lead |
+| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Quality Lead |
+| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Documentation Lead |
+| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Code Reviewer |
+| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Security Analyst |
 
 ## Стратегія розробки
-Використовуємо GitHub Flow: зміни в `main` вносяться лише через Pull Request з проходженням CI та щонайменше одним схваленням.
+Використовуємо GitHub Flow: зміни в `main` вносяться лише через Pull Request з проходженням CI та щонайменше одним схваленням. Стандарт кодування, обов'язкові інструменти, кроки огляду коду та критерії готовності описано в [політиці якості та огляду коду](./TeamCharter.md#5-політика-якості-та-огляду-коду).
 
 ## Артефакти вимог
 - [Вимоги до системи (FR та NFR)](./docs/requirements/requirements.md) — функціональні та нефункціональні вимоги (ISO 25010)
@@ -49,6 +49,13 @@
 - [Атрибути якості](./docs/api/quality-attributes.md) — атрибути якості
 - [Swagger UI](./docs/api/index.html) — сторінка Swagger UI
 
+## Артефакти якості коду
+- [Звіт огляду коду](./docs/code-quality/review-report.md) — огляд коду команди Spectrum і порівняння з ШІ-оглядом
+- [Статичний аналіз](./docs/code-quality/static-analysis.md) — black, flake8, bandit, detect-secrets і Dependabot: результати, знахідки та рішення
+- [Прогрес реалізації](./docs/code-quality/progress.md) — структура коду та реалізовані компоненти бекенду
+- [Політика якості та огляду коду](./TeamCharter.md#5-політика-якості-та-огляду-коду) — стандарт кодування, обов'язкові інструменти, кроки огляду, Definition of Done
+- Конфігурація перевірок: [`.pre-commit-config.yaml`](./.pre-commit-config.yaml), [`.flake8`](./.flake8), [`pyproject.toml`](./pyproject.toml), [`static-analysis.yml`](./.github/workflows/static-analysis.yml)
+
 ## Документи
 - [TeamCharter.md](./TeamCharter.md) — командний статут
 - [Project-Description.md](./Project-Description.md) — опис проєкту
@@ -58,3 +65,8 @@
 - **Інструмент:** Gemini
 - **Застосування:** допомога у структуруванні розділів, оформленні Markdown-таблиць та підборі чітких, лаконічних формулювань для опису проєкту
 - **Верифікація:** посилання, ролі учасників та зміст опису повністю перевірені й затверджені командою вручну
+
+Оновлення для Лабораторної роботи 5:
+- **Інструмент:** Claude
+- **Застосування:** оновлення таблиці ролей і додавання розділу «Артефакти якості коду»
+- **Верифікація:** наявність усіх файлів за посиланнями перевірено в репозиторії; ролі звірено з авторством артефактів Лабораторної роботи 5
