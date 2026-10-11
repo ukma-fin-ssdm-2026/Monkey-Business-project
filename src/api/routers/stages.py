@@ -11,22 +11,34 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from uuid import UUID
 
 from fastapi import APIRouter, Path, status
 
-from .. import store
 from ..auth import CandidateOrAdmin, CurrentUser, require_board_access
+from ..db import Repos
+from ..domain import Stage, User
 from ..errors import ConflictError, NotFoundError, error_responses
+from ..repositories.base import Repositories
 from ..schemas import StageCreate, StageOut, StageUpdate
 
 router = APIRouter(prefix="/boards/{board_id}/stages", tags=["Stages"])
 
 
-def _require_board(board_id: UUID, user: dict, *, write: bool = False) -> None:
-    if not store.board_exists(board_id):
+def _require_board(
+    repos: Repositories, board_id: UUID, user: User, *, write: bool = False
+) -> None:
+    if repos.boards.get(board_id) is None:
         raise NotFoundError(f"Дошку {board_id} не знайдено")
-    require_board_access(board_id, user, write=write)
+    require_board_access(repos, board_id, user, write=write)
+
+
+def _require_stage(repos: Repositories, board_id: UUID, stage_id: UUID) -> Stage:
+    stage = repos.stages.get(stage_id)
+    if stage is None or stage.board_id != board_id:
+        raise NotFoundError(f"Етап {stage_id} на дошці {board_id} не знайдено")
+    return stage
 
 
 @router.get(
@@ -43,9 +55,10 @@ def _require_board(board_id: UUID, user: dict, *, write: bool = False) -> None:
 def list_stages(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     user: CurrentUser = None,
+    repos: Repos = None,
 ) -> list[StageOut]:
-    _require_board(board_id, user)
-    return [StageOut(**stage) for stage in store.list_stages(board_id)]
+    _require_board(repos, board_id, user)
+    return [StageOut.model_validate(s) for s in repos.stages.list_for_board(board_id)]
 
 
 @router.post(
@@ -66,14 +79,16 @@ def create_stage(
     payload: StageCreate,
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> StageOut:
-    _require_board(board_id, user, write=True)
-    record = store.create_stage(
-        board_id=board_id,
-        name=payload.name,
-        order_index=payload.order_index,
+    _require_board(repos, board_id, user, write=True)
+    order_index = payload.order_index
+    if order_index is None:
+        order_index = len(repos.stages.list_for_board(board_id))
+    stage = repos.stages.add(
+        Stage(board_id=board_id, name=payload.name, order_index=order_index)
     )
-    return StageOut(**record)
+    return StageOut.model_validate(stage)
 
 
 @router.patch(
@@ -95,14 +110,15 @@ def update_stage(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     stage_id: UUID = Path(..., description="Ідентифікатор етапу"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> StageOut:
-    _require_board(board_id, user, write=True)
-    stage = store.get_stage(stage_id)
-    if stage is None or stage["board_id"] != board_id:
-        raise NotFoundError(f"Етап {stage_id} на дошці {board_id} не знайдено")
-    changes = payload.model_dump(exclude_unset=True)
-    updated = store.update_stage(stage_id, changes)
-    return StageOut(**updated)
+    _require_board(repos, board_id, user, write=True)
+    stage = _require_stage(repos, board_id, stage_id)
+    changes = {
+        k: v for k, v in payload.model_dump(exclude_unset=True).items() if v is not None
+    }
+    stage = repos.stages.save(replace(stage, **changes))
+    return StageOut.model_validate(stage)
 
 
 @router.delete(
@@ -123,10 +139,10 @@ def delete_stage(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     stage_id: UUID = Path(..., description="Ідентифікатор етапу"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> None:
-    _require_board(board_id, user, write=True)
-    success, reason = store.delete_stage(board_id, stage_id)
-    if not success:
-        if reason == "Етап не знайдено":
-            raise NotFoundError(f"Етап {stage_id} на дошці {board_id} не знайдено")
-        raise ConflictError(reason or "Неможливо видалити етап")
+    _require_board(repos, board_id, user, write=True)
+    _require_stage(repos, board_id, stage_id)
+    if repos.stages.has_cards(stage_id):
+        raise ConflictError("Неможливо видалити етап, у якому є картки")
+    repos.stages.delete(stage_id)
