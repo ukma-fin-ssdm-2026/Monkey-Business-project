@@ -42,7 +42,12 @@ def _verify_password(password: str, encoded: str) -> bool:
 
 
 def _public_user(user: dict) -> UserOut:
-    return UserOut(id=user["id"], email=user["email"], role=user["role"], is_active=user["is_active"])
+    return UserOut(
+        id=user["id"],
+        email=user["email"],
+        role=user["role"],
+        is_active=user["is_active"],
+    )
 
 
 def _issue_token(user: dict) -> TokenResponse:
@@ -70,7 +75,9 @@ def register(payload: RegisterRequest) -> TokenResponse:
         raise ForbiddenError("Реєстрація доступна лише для ролі кандидата")
     if store.get_user_by_email(str(payload.email)) is not None:
         raise ConflictError("Користувач із таким email уже існує")
-    user = store.create_user(str(payload.email), _hash_password(payload.password), payload.role.value)
+    user = store.create_user(
+        str(payload.email), _hash_password(payload.password), payload.role.value
+    )
     store.create_board(user["id"])
     return _issue_token(user)
 
@@ -82,7 +89,11 @@ def register(payload: RegisterRequest) -> TokenResponse:
 )
 def login(payload: LoginRequest) -> TokenResponse:
     user = store.get_user_by_email(str(payload.email))
-    if user is None or not user["is_active"] or not _verify_password(payload.password, user["password_hash"]):
+    if (
+        user is None
+        or not user["is_active"]
+        or not _verify_password(payload.password, user["password_hash"])
+    ):
         raise UnauthorizedError("Невірний email або пароль")
     return _issue_token(user)
 
@@ -99,7 +110,9 @@ def get_current_user(
         raise UnauthorizedError("Недійсний або прострочений токен")
     user = store.get_user(user_id)
     if user is None or not user["is_active"]:
-        raise UnauthorizedError("Користувача не знайдено або обліковий запис заблоковано")
+        raise UnauthorizedError(
+            "Користувача не знайдено або обліковий запис заблоковано"
+        )
     return user
 
 
@@ -115,7 +128,9 @@ def require_roles(*roles: UserRole):
 
 
 CurrentUser = Annotated[dict, Depends(get_current_user)]
-CandidateOrAdmin = Annotated[dict, Depends(require_roles(UserRole.candidate, UserRole.admin))]
+CandidateOrAdmin = Annotated[
+    dict, Depends(require_roles(UserRole.candidate, UserRole.admin))
+]
 
 
 def require_board_access(board_id: UUID, user: dict, *, write: bool = False) -> None:

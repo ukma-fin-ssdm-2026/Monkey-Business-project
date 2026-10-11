@@ -1,0 +1,24 @@
+name: Static analysis
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - name: Format and style (black, flake8)
+        run: |
+          black --check src
+          flake8 src
+      - name: Security (bandit)
+        run: bandit -c pyproject.toml -r src
+      - name: Secrets (detect-secrets via pre-commit)
+        run: pre-commit run detect-secrets --all-files
