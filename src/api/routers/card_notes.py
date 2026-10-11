@@ -11,13 +11,16 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from uuid import UUID
 
 from fastapi import APIRouter, Path, status
 
-from .. import store
 from ..auth import CandidateOrAdmin, CurrentUser, require_board_access
+from ..db import Repos
+from ..domain import Card, CardNote, User, utcnow
 from ..errors import NotFoundError, error_responses
+from ..repositories.base import Repositories
 from ..schemas import CardNoteCreate, CardNoteOut, CardNoteUpdate
 
 router = APIRouter(
@@ -27,15 +30,27 @@ router = APIRouter(
 
 
 def _require_card(
-    board_id: UUID, card_id: UUID, user: dict, *, write: bool = False
-) -> dict:
-    if not store.board_exists(board_id):
+    repos: Repositories,
+    board_id: UUID,
+    card_id: UUID,
+    user: User,
+    *,
+    write: bool = False,
+) -> Card:
+    if repos.boards.get(board_id) is None:
         raise NotFoundError(f"Дошку {board_id} не знайдено")
-    require_board_access(board_id, user, write=write)
-    record = store.get_card(card_id)
-    if record is None or record["board_id"] != board_id:
+    require_board_access(repos, board_id, user, write=write)
+    card = repos.cards.get(card_id)
+    if card is None or card.board_id != board_id:
         raise NotFoundError(f"Картку {card_id} на дошці {board_id} не знайдено")
-    return record
+    return card
+
+
+def _require_note(repos: Repositories, card_id: UUID, note_id: UUID) -> CardNote:
+    note = repos.notes.get(note_id)
+    if note is None or note.card_id != card_id:
+        raise NotFoundError(f"Нотатку {note_id} для картки {card_id} не знайдено")
+    return note
 
 
 @router.get(
@@ -55,9 +70,10 @@ def list_notes(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     user: CurrentUser = None,
+    repos: Repos = None,
 ) -> list[CardNoteOut]:
-    _require_card(board_id, card_id, user)
-    return [CardNoteOut(**note) for note in store.list_card_notes(card_id)]
+    _require_card(repos, board_id, card_id, user)
+    return [CardNoteOut.model_validate(n) for n in repos.notes.list_for_card(card_id)]
 
 
 @router.post(
@@ -80,14 +96,13 @@ def create_note(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> CardNoteOut:
-    _require_card(board_id, card_id, user, write=True)
-    record = store.create_card_note(
-        card_id=card_id,
-        content=payload.content,
-        source=payload.source.value,
+    _require_card(repos, board_id, card_id, user, write=True)
+    note = repos.notes.add(
+        CardNote(card_id=card_id, content=payload.content, source=payload.source.value)
     )
-    return CardNoteOut(**record)
+    return CardNoteOut.model_validate(note)
 
 
 @router.patch(
@@ -107,13 +122,12 @@ def update_note(
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     note_id: UUID = Path(..., description="Ідентифікатор нотатки"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> CardNoteOut:
-    _require_card(board_id, card_id, user, write=True)
-    note = store.get_card_note(note_id)
-    if note is None or note["card_id"] != card_id:
-        raise NotFoundError(f"Нотатку {note_id} для картки {card_id} не знайдено")
-    updated = store.update_card_note(note_id, payload.content)
-    return CardNoteOut(**updated)
+    _require_card(repos, board_id, card_id, user, write=True)
+    note = _require_note(repos, card_id, note_id)
+    note = repos.notes.save(replace(note, content=payload.content, updated_at=utcnow()))
+    return CardNoteOut.model_validate(note)
 
 
 @router.delete(
@@ -132,7 +146,8 @@ def delete_note(
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     note_id: UUID = Path(..., description="Ідентифікатор нотатки"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> None:
-    _require_card(board_id, card_id, user, write=True)
-    if not store.delete_card_note(card_id, note_id):
-        raise NotFoundError(f"Нотатку {note_id} не знайдено")
+    _require_card(repos, board_id, card_id, user, write=True)
+    _require_note(repos, card_id, note_id)
+    repos.notes.delete(note_id)

@@ -1,8 +1,11 @@
 # Інструмент: Claude
 # Застосування: Визначення необхідних залежностей для FastAPI та автогенерації YAML.
 # Верифікація: Перевірено вручну успішним встановленням через pip install, узгоджено командою.
-fastapi[standard]>=0.115.0
+fastapi[standard]>=0.121.0
 pydantic>=2.9.2
 PyJWT>=2.9.0
 pyyaml
 fastmcp>=4.0
+SQLAlchemy>=2.0
+psycopg[binary]>=3.2
+alembic>=1.14

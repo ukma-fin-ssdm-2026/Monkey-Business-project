@@ -15,14 +15,17 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Path, Query, status
 
-from .. import store
 from ..auth import CandidateOrAdmin, CurrentUser, require_board_access
+from ..db import Repos
+from ..domain import Card, User, utcnow
 from ..errors import NotFoundError, error_responses
+from ..repositories.base import Repositories
 from ..schemas import (
     CardCreate,
     CardListResponse,
@@ -36,35 +39,27 @@ from ..schemas import (
 router = APIRouter(prefix="/boards/{board_id}/cards", tags=["Cards"])
 
 
-def _to_card_out(record: dict) -> CardOut:
-    return CardOut(
-        id=record["id"],
-        board_id=record["board_id"],
-        stage_id=record["stage_id"],
-        company=record["company"],
-        position=record["position"],
-        position_index=record["position_index"],
-        vacancy_url=record.get("vacancy_url"),
-        requirements_text=record.get("requirements_text"),
-        deadline=record.get("deadline"),
-        notifications_enabled=record["notifications_enabled"],
-        status=record["status"],
-        created_at=record["created_at"],
-        updated_at=record["updated_at"],
-    )
-
-
-def _require_board(board_id: UUID, user: dict, *, write: bool = False) -> None:
-    if not store.board_exists(board_id):
+def _require_board(
+    repos: Repositories, board_id: UUID, user: User, *, write: bool = False
+) -> None:
+    if repos.boards.get(board_id) is None:
         raise NotFoundError(f"Дошку {board_id} не знайдено")
-    require_board_access(board_id, user, write=write)
+    require_board_access(repos, board_id, user, write=write)
 
 
-def _require_card(board_id: UUID, card_id: UUID) -> dict:
-    record = store.get_card(card_id)
-    if record is None or record["board_id"] != board_id:
+def _require_card(repos: Repositories, board_id: UUID, card_id: UUID) -> Card:
+    card = repos.cards.get(card_id)
+    if card is None or card.board_id != board_id:
         raise NotFoundError(f"Картку {card_id} на дошці {board_id} не знайдено")
-    return record
+    return card
+
+
+def _require_stage(repos: Repositories, board_id: UUID, stage_id: UUID) -> None:
+    # Without this check an unknown stage_id fails the foreign key and
+    # surfaces as a 500 instead of a 404.
+    stage = repos.stages.get(stage_id)
+    if stage is None or stage.board_id != board_id:
+        raise NotFoundError(f"Етап {stage_id} на дошці {board_id} не знайдено")
 
 
 @router.get(
@@ -135,12 +130,15 @@ def list_cards(
     ),
     offset: int = Query(default=0, ge=0, description="Зсув від початку списку"),
     user: CurrentUser = None,
+    repos: Repos = None,
 ) -> CardListResponse:
-    _require_board(board_id, user)
-    all_items = store.list_cards(board_id, stage_id, status_.value if status_ else None)
+    _require_board(repos, board_id, user)
+    all_items = repos.cards.list_for_board(
+        board_id, stage_id, status_.value if status_ else None
+    )
     page = all_items[offset : offset + limit]
     return CardListResponse(
-        items=[_to_card_out(r) for r in page],
+        items=[CardOut.model_validate(card) for card in page],
         pagination=PaginationMeta(limit=limit, offset=offset, total=len(all_items)),
     )
 
@@ -152,7 +150,7 @@ def list_cards(
     summary="Створити картку вакансії",
     description="Створює нову картку в зазначеному етапі дошки (FR-007).",
     responses=error_responses(
-        "Дошку не знайдено",
+        "Дошку або етап не знайдено",
         "Порожнє обов'язкове поле або некоректний формат",
         examples={
             404: {
@@ -204,13 +202,21 @@ def create_card(
         ..., description="Ідентифікатор дошки, до якої додається картка"
     ),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> CardOut:
-    _require_board(board_id, user, write=True)
+    _require_board(repos, board_id, user, write=True)
+    _require_stage(repos, board_id, payload.stage_id)
     data = payload.model_dump()
     if data.get("vacancy_url") is not None:
         data["vacancy_url"] = str(data["vacancy_url"])
-    record = store.create_card(board_id, data)
-    return _to_card_out(record)
+    card = repos.cards.add(
+        Card(
+            board_id=board_id,
+            position_index=repos.cards.count_in_stage(payload.stage_id),
+            **data,
+        )
+    )
+    return CardOut.model_validate(card)
 
 
 @router.get(
@@ -227,10 +233,10 @@ def get_card(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     user: CurrentUser = None,
+    repos: Repos = None,
 ) -> CardOut:
-    _require_board(board_id, user)
-    record = _require_card(board_id, card_id)
-    return _to_card_out(record)
+    _require_board(repos, board_id, user)
+    return CardOut.model_validate(_require_card(repos, board_id, card_id))
 
 
 @router.patch(
@@ -251,14 +257,19 @@ def update_card(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> CardOut:
-    _require_board(board_id, user, write=True)
-    _require_card(board_id, card_id)
+    _require_board(repos, board_id, user, write=True)
+    card = _require_card(repos, board_id, card_id)
     changes = payload.model_dump(exclude_unset=True)
     if changes.get("vacancy_url") is not None:
         changes["vacancy_url"] = str(changes["vacancy_url"])
-    record = store.update_card(card_id, changes)
-    return _to_card_out(record)
+    if changes.get("status") is not None:
+        changes["status"] = changes["status"].value
+    # An explicit null is ignored, so optional fields cannot be cleared yet.
+    changes = {k: v for k, v in changes.items() if v is not None}
+    card = repos.cards.save(replace(card, **changes, updated_at=utcnow()))
+    return CardOut.model_validate(card)
 
 
 @router.delete(
@@ -278,10 +289,11 @@ def delete_card(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> None:
-    _require_board(board_id, user, write=True)
-    _require_card(board_id, card_id)
-    store.delete_card(card_id)
+    _require_board(repos, board_id, user, write=True)
+    _require_card(repos, board_id, card_id)
+    repos.cards.delete(card_id)
 
 
 @router.post(
@@ -295,7 +307,8 @@ def delete_card(
         "бізнес-операція, а не проста заміна поля."
     ),
     responses=error_responses(
-        "Картку або дошку не знайдено", "Некоректний stage_id або position_index"
+        "Картку, дошку або етап не знайдено",
+        "Некоректний stage_id або position_index",
     ),
 )
 def move_card(
@@ -303,8 +316,17 @@ def move_card(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> CardOut:
-    _require_board(board_id, user, write=True)
-    _require_card(board_id, card_id)
-    record = store.move_card(card_id, payload.stage_id, payload.position_index)
-    return _to_card_out(record)
+    _require_board(repos, board_id, user, write=True)
+    card = _require_card(repos, board_id, card_id)
+    _require_stage(repos, board_id, payload.stage_id)
+    card = repos.cards.save(
+        replace(
+            card,
+            stage_id=payload.stage_id,
+            position_index=payload.position_index,
+            updated_at=utcnow(),
+        )
+    )
+    return CardOut.model_validate(card)

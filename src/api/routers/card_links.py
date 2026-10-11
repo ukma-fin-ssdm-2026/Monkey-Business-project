@@ -17,9 +17,11 @@ from uuid import UUID
 
 from fastapi import APIRouter, Path, status
 
-from .. import store
 from ..auth import CandidateOrAdmin, CurrentUser, require_board_access
+from ..db import Repos
+from ..domain import Card, CardLink, User
 from ..errors import NotFoundError, error_responses
+from ..repositories.base import Repositories
 from ..schemas import CardLinkCreate, CardLinkOut
 
 router = APIRouter(
@@ -28,15 +30,20 @@ router = APIRouter(
 
 
 def _require_card(
-    board_id: UUID, card_id: UUID, user: dict, *, write: bool = False
-) -> dict:
-    if not store.board_exists(board_id):
+    repos: Repositories,
+    board_id: UUID,
+    card_id: UUID,
+    user: User,
+    *,
+    write: bool = False,
+) -> Card:
+    if repos.boards.get(board_id) is None:
         raise NotFoundError(f"Дошку {board_id} не знайдено")
-    require_board_access(board_id, user, write=write)
-    record = store.get_card(card_id)
-    if record is None or record["board_id"] != board_id:
+    require_board_access(repos, board_id, user, write=write)
+    card = repos.cards.get(card_id)
+    if card is None or card.board_id != board_id:
         raise NotFoundError(f"Картку {card_id} на дошці {board_id} не знайдено")
-    return record
+    return card
 
 
 @router.get(
@@ -53,9 +60,12 @@ def list_links(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     user: CurrentUser = None,
+    repos: Repos = None,
 ) -> list[CardLinkOut]:
-    _require_card(board_id, card_id, user)
-    return [CardLinkOut(**link) for link in store.list_links(card_id)]
+    _require_card(repos, board_id, card_id, user)
+    return [
+        CardLinkOut.model_validate(link) for link in repos.links.list_for_card(card_id)
+    ]
 
 
 @router.post(
@@ -74,10 +84,11 @@ def create_link(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> CardLinkOut:
-    _require_card(board_id, card_id, user, write=True)
-    record = store.create_link(card_id, str(payload.url))
-    return CardLinkOut(**record)
+    _require_card(repos, board_id, card_id, user, write=True)
+    link = repos.links.add(CardLink(card_id=card_id, url=str(payload.url)))
+    return CardLinkOut.model_validate(link)
 
 
 @router.delete(
@@ -95,7 +106,10 @@ def delete_link(
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
     link_id: UUID = Path(..., description="Ідентифікатор посилання"),
     user: CandidateOrAdmin = None,
+    repos: Repos = None,
 ) -> None:
-    _require_card(board_id, card_id, user, write=True)
-    if not store.delete_link(card_id, link_id):
+    _require_card(repos, board_id, card_id, user, write=True)
+    link = repos.links.get(link_id)
+    if link is None or link.card_id != card_id:
         raise NotFoundError(f"Посилання {link_id} не знайдено")
+    repos.links.delete(link_id)
