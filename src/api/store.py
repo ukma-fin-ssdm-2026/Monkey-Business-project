@@ -20,12 +20,63 @@ from uuid import UUID, uuid4
 
 DEMO_BOARD_ID = UUID("11111111-1111-1111-1111-111111111111")
 DEMO_STAGE_ID = UUID("22222222-2222-2222-2222-222222222222")
+DEMO_USER_ID = UUID("1a08b8c8-e8dd-452c-aa61-2448d36a4dd8")
+
+DEFAULT_STAGE_NAMES = ["Відгук", "Скринінг", "Технічне інтерв'ю", "Офер"]
 
 _now = datetime.now(timezone.utc)
 
-users_db: dict[UUID, dict] = {}
-boards_db: dict[UUID, dict] = {}
-stages_db: dict[UUID, dict] = {}
+_demo_salt = "64656d6f5f73616c745f313233343536"
+_demo_digest = "a4dd4274787c86f531bbcc05aa2b09081ff14a2601d4d7c9e1e8d862bfb9e1d9"
+_demo_pw_hash = f"{_demo_salt}${_demo_digest}"
+
+users_db: dict[UUID, dict] = {
+    DEMO_USER_ID: {
+        "id": DEMO_USER_ID,
+        "email": "candidate@example.com",
+        "password_hash": _demo_pw_hash,
+        "role": "candidate",
+        "is_active": True,
+        "created_at": _now,
+    }
+}
+boards_db: dict[UUID, dict] = {
+    DEMO_BOARD_ID: {
+        "id": DEMO_BOARD_ID,
+        "owner_id": DEMO_USER_ID,
+        "created_at": _now,
+    }
+}
+stages_db: dict[UUID, dict] = {
+    DEMO_STAGE_ID: {
+        "id": DEMO_STAGE_ID,
+        "board_id": DEMO_BOARD_ID,
+        "name": "Відгук",
+        "order_index": 0,
+        "created_at": _now,
+    },
+    UUID("22222222-2222-2222-2222-222222222223"): {
+        "id": UUID("22222222-2222-2222-2222-222222222223"),
+        "board_id": DEMO_BOARD_ID,
+        "name": "Скринінг",
+        "order_index": 1,
+        "created_at": _now,
+    },
+    UUID("22222222-2222-2222-2222-222222222224"): {
+        "id": UUID("22222222-2222-2222-2222-222222222224"),
+        "board_id": DEMO_BOARD_ID,
+        "name": "Технічне інтерв'ю",
+        "order_index": 2,
+        "created_at": _now,
+    },
+    UUID("22222222-2222-2222-2222-222222222225"): {
+        "id": UUID("22222222-2222-2222-2222-222222222225"),
+        "board_id": DEMO_BOARD_ID,
+        "name": "Офер",
+        "order_index": 3,
+        "created_at": _now,
+    },
+}
 board_mentors_db: dict[tuple[UUID, UUID], dict] = {}
 
 cards_db: dict[UUID, dict] = {
@@ -47,6 +98,16 @@ cards_db: dict[UUID, dict] = {
 }
 
 card_links_db: dict[UUID, dict] = {}
+card_notes_db: dict[UUID, dict] = {
+    UUID("44444444-4444-4444-4444-444444444444"): {
+        "id": UUID("44444444-4444-4444-4444-444444444444"),
+        "card_id": UUID("33333333-3333-3333-3333-333333333333"),
+        "content": "Скринінг пройдено успішно. Очікується технічне інтерв'ю.",
+        "source": "recruiter",
+        "created_at": _now,
+        "updated_at": _now,
+    }
+}
 
 
 def create_user(email: str, password_hash: str, role: str) -> dict:
@@ -71,13 +132,31 @@ def get_user_by_email(email: str) -> Optional[dict]:
     return next((user for user in users_db.values() if user["email"] == email), None)
 
 
+def init_default_stages(board_id: UUID) -> list[dict]:
+    created = []
+    for idx, name in enumerate(DEFAULT_STAGE_NAMES):
+        stage_id = uuid4()
+        stage = {
+            "id": stage_id,
+            "board_id": board_id,
+            "name": name,
+            "order_index": idx,
+            "created_at": datetime.now(timezone.utc),
+        }
+        stages_db[stage_id] = stage
+        created.append(stage)
+    return created
+
+
 def create_board(owner_id: UUID) -> dict:
+    board_id = uuid4()
     board = {
-        "id": uuid4(),
+        "id": board_id,
         "owner_id": owner_id,
         "created_at": datetime.now(timezone.utc),
     }
-    boards_db[board["id"]] = board
+    boards_db[board_id] = board
+    init_default_stages(board_id)
     return board
 
 
@@ -87,7 +166,7 @@ def get_board(board_id: UUID) -> Optional[dict]:
             board_id,
             {
                 "id": board_id,
-                "owner_id": None,
+                "owner_id": DEMO_USER_ID,
                 "created_at": datetime.now(timezone.utc),
             },
         )
@@ -185,4 +264,92 @@ def delete_link(card_id: UUID, link_id: UUID) -> bool:
     if link is None or link["card_id"] != card_id:
         return False
     del card_links_db[link_id]
+    return True
+
+
+def list_stages(board_id: UUID) -> list[dict]:
+    items = [s for s in stages_db.values() if s["board_id"] == board_id]
+    return sorted(items, key=lambda s: s["order_index"])
+
+
+def get_stage(stage_id: UUID) -> Optional[dict]:
+    return stages_db.get(stage_id)
+
+
+def create_stage(board_id: UUID, name: str, order_index: Optional[int] = None) -> dict:
+    stage_id = uuid4()
+    if order_index is None:
+        existing = list_stages(board_id)
+        order_index = len(existing)
+    record = {
+        "id": stage_id,
+        "board_id": board_id,
+        "name": name,
+        "order_index": order_index,
+        "created_at": datetime.now(timezone.utc),
+    }
+    stages_db[stage_id] = record
+    return record
+
+
+def update_stage(stage_id: UUID, changes: dict) -> Optional[dict]:
+    record = stages_db.get(stage_id)
+    if record is None:
+        return None
+    record.update({k: v for k, v in changes.items() if v is not None})
+    return record
+
+
+def stage_has_cards(stage_id: UUID) -> bool:
+    return any(c["stage_id"] == stage_id for c in cards_db.values())
+
+
+def delete_stage(board_id: UUID, stage_id: UUID) -> tuple[bool, Optional[str]]:
+    record = stages_db.get(stage_id)
+    if record is None or record["board_id"] != board_id:
+        return False, "Етап не знайдено"
+    if stage_has_cards(stage_id):
+        return False, "Неможливо видалити етап, у якому є картки"
+    del stages_db[stage_id]
+    return True, None
+
+
+def list_card_notes(card_id: UUID) -> list[dict]:
+    items = [n for n in card_notes_db.values() if n["card_id"] == card_id]
+    return sorted(items, key=lambda n: n["created_at"])
+
+
+def get_card_note(note_id: UUID) -> Optional[dict]:
+    return card_notes_db.get(note_id)
+
+
+def create_card_note(card_id: UUID, content: str, source: str) -> dict:
+    note_id = uuid4()
+    now = datetime.now(timezone.utc)
+    record = {
+        "id": note_id,
+        "card_id": card_id,
+        "content": content,
+        "source": source,
+        "created_at": now,
+        "updated_at": now,
+    }
+    card_notes_db[note_id] = record
+    return record
+
+
+def update_card_note(note_id: UUID, content: str) -> Optional[dict]:
+    record = card_notes_db.get(note_id)
+    if record is None:
+        return None
+    record["content"] = content
+    record["updated_at"] = datetime.now(timezone.utc)
+    return record
+
+
+def delete_card_note(card_id: UUID, note_id: UUID) -> bool:
+    record = card_notes_db.get(note_id)
+    if record is None or record["card_id"] != card_id:
+        return False
+    del card_notes_db[note_id]
     return True

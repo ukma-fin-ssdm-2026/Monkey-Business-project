@@ -4,6 +4,237 @@ info:
   description: REST API для трекера підготовки до технічних співбесід (Code-First).
   version: 0.1.0
 paths:
+  /v1/boards/{board_id}/stages:
+    get:
+      tags:
+      - Stages
+      summary: Список етапів Канбан-дошки
+      description: Повертає всі етапи вказаної дошки, відсортовані за порядком відображення
+        order_index (FR-003).
+      operationId: list_stages
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StageOut'
+                title: Response List Stages
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор дошки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Stages
+      summary: Створити новий етап дошки
+      description: Створює новий кастомний етап для вказаної дошки. Дозволено лише
+        кандидату-власнику дошки або адміністратору.
+      operationId: create_stage
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StageCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StageOut'
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідна назва етапу або параметри
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/boards/{board_id}/stages/{stage_id}:
+    patch:
+      tags:
+      - Stages
+      summary: Оновити етап дошки
+      description: Часткове оновлення назви етапу або його порядку сортування. Потрібно
+        передати хоча б одне поле для зміни.
+      operationId: update_stage
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: stage_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор етапу
+          title: Stage Id
+        description: Ідентифікатор етапу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StageUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StageOut'
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Дошку або етап не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідні дані оновлення
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - Stages
+      summary: Видалити етап дошки
+      description: Видаляє етап із дошки. Якщо в етапі присутні картки вакансій, операція
+        повертає 409 Conflict задля збереження цілісності даних.
+      operationId: delete_stage
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: stage_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор етапу
+          title: Stage Id
+        description: Ідентифікатор етапу
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Дошку або етап не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /v1/boards/{board_id}/cards:
     get:
       tags:
@@ -636,6 +867,272 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /v1/boards/{board_id}/cards/{card_id}/notes:
+    get:
+      tags:
+      - Card Notes
+      summary: Список нотаток та фідбеку до картки
+      description: Повертає всі нотатки та фідбек по картці у хронологічному порядку
+        їх створення (FR-011). Доступно кандидату-власнику, ментору та адміну.
+      operationId: list_notes
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CardNoteOut'
+                title: Response List Notes
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Картку або дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Card Notes
+      summary: Додати нотатку або фідбек
+      description: Додає нову нотатку до картки із зазначенням джерела (кандидат,
+        фідбек рекрутера або результат AI-асистента, FR-011, FR-022). Ментор не може
+        додавати нотатки (FR-014).
+      operationId: create_note
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardNoteCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardNoteOut'
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Картку або дошку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідний текст нотатки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/boards/{board_id}/cards/{card_id}/notes/{note_id}:
+    patch:
+      tags:
+      - Card Notes
+      summary: Оновити нотатку
+      description: Редагує текст раніше створеної нотатки (FR-011).
+      operationId: update_note
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      - name: note_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор нотатки
+          title: Note Id
+        description: Ідентифікатор нотатки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardNoteUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardNoteOut'
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Нотатку або картку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідний текст нотатки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - Card Notes
+      summary: Видалити нотатку
+      description: Видаляє нотатку з картки вакансії (FR-011).
+      operationId: delete_note
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      - name: note_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор нотатки
+          title: Note Id
+        description: Ідентифікатор нотатки
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Нотатку або картку не знайдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Некоректний ідентифікатор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /v1/auth/register:
     post:
       tags:
@@ -859,6 +1356,79 @@ components:
       - position_index
       title: CardMove
       description: Переміщення картки між етапами методом drag-and-drop (FR-004, FR-005).
+    CardNoteCreate:
+      properties:
+        content:
+          type: string
+          maxLength: 3000
+          minLength: 1
+          title: Content
+          description: Текст нотатки або фідбеку (FR-011)
+          examples:
+          - Скринінг пройдено. Запропонували технічне завдання до п'ятниці.
+        source:
+          $ref: '#/components/schemas/NoteSource'
+          description: 'Джерело нотатки: кандидат, фідбек рекрутера або AI (FR-011,
+            FR-022)'
+          default: candidate
+          examples:
+          - recruiter
+      type: object
+      required:
+      - content
+      title: CardNoteCreate
+    CardNoteOut:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: Ідентифікатор нотатки
+        card_id:
+          type: string
+          format: uuid
+          title: Card Id
+          description: Картка, до якої належить нотатка
+        content:
+          type: string
+          title: Content
+          description: Текст нотатки або фідбеку
+        source:
+          $ref: '#/components/schemas/NoteSource'
+          description: Джерело нотатки
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Час створення нотатки
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+          description: Час останньої зміни нотатки
+      type: object
+      required:
+      - id
+      - card_id
+      - content
+      - source
+      - created_at
+      - updated_at
+      title: CardNoteOut
+    CardNoteUpdate:
+      properties:
+        content:
+          type: string
+          maxLength: 3000
+          minLength: 1
+          title: Content
+          description: Оновлений текст нотатки
+          examples:
+          - 'Уточнено дедлайн: понеділок 18:00.'
+      type: object
+      required:
+      - content
+      title: CardNoteUpdate
     CardOut:
       properties:
         company:
@@ -1124,6 +1694,13 @@ components:
       - email
       - password
       title: LoginRequest
+    NoteSource:
+      type: string
+      enum:
+      - candidate
+      - recruiter
+      - ai
+      title: NoteSource
     PaginationMeta:
       properties:
         limit:
@@ -1173,6 +1750,90 @@ components:
       - email
       - password
       title: RegisterRequest
+    StageCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Name
+          description: Назва етапу (FR-003)
+          examples:
+          - Технічне інтерв'ю
+        order_index:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Order Index
+          description: Порядок сортування етапу на дошці
+          examples:
+          - 4
+      type: object
+      required:
+      - name
+      title: StageCreate
+    StageOut:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Name
+          description: Назва етапу (FR-003)
+          examples:
+          - Технічне інтерв'ю
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: Ідентифікатор етапу
+        board_id:
+          type: string
+          format: uuid
+          title: Board Id
+          description: Дошка, якій належить етап
+        order_index:
+          type: integer
+          minimum: 0.0
+          title: Order Index
+          description: Порядок сортування етапу на дошці
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Час створення етапу
+      type: object
+      required:
+      - name
+      - id
+      - board_id
+      - order_index
+      - created_at
+      title: StageOut
+    StageUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+          - type: 'null'
+          title: Name
+          description: Нова назва етапу
+          examples:
+          - Фінальна бесіда
+        order_index:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Order Index
+          description: Новий порядок сортування етапу
+          examples:
+          - 2
+      type: object
+      title: StageUpdate
     TokenResponse:
       properties:
         access_token:

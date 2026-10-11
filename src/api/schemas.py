@@ -278,3 +278,133 @@ class CardLinkOut(BaseModel):
     created_at: datetime = Field(..., description="Час додавання")
 
     model_config = {"from_attributes": True}
+
+
+# --------------------------------------------------------------------------- #
+# Stages (FR-003, FR-024)
+# --------------------------------------------------------------------------- #
+
+
+class StageBase(BaseModel):
+    name: str = Field(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="Назва етапу (FR-003)",
+        examples=["Технічне інтерв'ю"],
+    )
+
+    @field_validator("name")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("назва етапу не може бути порожнім рядком")
+        return value.strip()
+
+
+class StageCreate(StageBase):
+    order_index: Optional[int] = Field(
+        default=None,
+        ge=0,
+        description="Порядок сортування етапу на дошці",
+        examples=[4],
+    )
+
+
+class StageUpdate(BaseModel):
+    name: Optional[str] = Field(
+        default=None,
+        min_length=1,
+        max_length=100,
+        description="Нова назва етапу",
+        examples=["Фінальна бесіда"],
+    )
+    order_index: Optional[int] = Field(
+        default=None,
+        ge=0,
+        description="Новий порядок сортування етапу",
+        examples=[2],
+    )
+
+    @field_validator("name")
+    @classmethod
+    def not_blank(cls, value: Optional[str]) -> Optional[str]:
+        if value is not None and not value.strip():
+            raise ValueError("назва етапу не може бути порожнім рядком")
+        return value.strip() if value is not None else None
+
+    @model_validator(mode="after")
+    def require_change(self) -> "StageUpdate":
+        if not self.model_fields_set:
+            raise ValueError("потрібно вказати хоча б одне поле для оновлення")
+        return self
+
+
+class StageOut(StageBase):
+    id: UUID = Field(..., description="Ідентифікатор етапу")
+    board_id: UUID = Field(..., description="Дошка, якій належить етап")
+    order_index: int = Field(..., ge=0, description="Порядок сортування етапу на дошці")
+    created_at: datetime = Field(..., description="Час створення етапу")
+
+    model_config = {"from_attributes": True}
+
+
+# --------------------------------------------------------------------------- #
+# Card Notes (FR-011, FR-022)
+# --------------------------------------------------------------------------- #
+
+
+class NoteSource(str, Enum):
+    candidate = "candidate"
+    recruiter = "recruiter"
+    ai = "ai"
+
+
+class CardNoteCreate(BaseModel):
+    content: str = Field(
+        ...,
+        min_length=1,
+        max_length=3000,
+        description="Текст нотатки або фідбеку (FR-011)",
+        examples=["Скринінг пройдено. Запропонували технічне завдання до п'ятниці."],
+    )
+    source: NoteSource = Field(
+        default=NoteSource.candidate,
+        description="Джерело нотатки: кандидат, фідбек рекрутера або AI (FR-011, FR-022)",
+        examples=["recruiter"],
+    )
+
+    @field_validator("content")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("вміст нотатки не може бути порожнім рядком")
+        return value.strip()
+
+
+class CardNoteUpdate(BaseModel):
+    content: str = Field(
+        ...,
+        min_length=1,
+        max_length=3000,
+        description="Оновлений текст нотатки",
+        examples=["Уточнено дедлайн: понеділок 18:00."],
+    )
+
+    @field_validator("content")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("вміст нотатки не може бути порожнім рядком")
+        return value.strip()
+
+
+class CardNoteOut(BaseModel):
+    id: UUID = Field(..., description="Ідентифікатор нотатки")
+    card_id: UUID = Field(..., description="Картка, до якої належить нотатка")
+    content: str = Field(..., description="Текст нотатки або фідбеку")
+    source: NoteSource = Field(..., description="Джерело нотатки")
+    created_at: datetime = Field(..., description="Час створення нотатки")
+    updated_at: datetime = Field(..., description="Час останньої зміни нотатки")
+
+    model_config = {"from_attributes": True}

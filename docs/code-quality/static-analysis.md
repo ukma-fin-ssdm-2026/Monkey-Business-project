@@ -26,7 +26,7 @@ pre-commit run --all-files # усе разом + пошук секретів
 
 ## Покриття
 
-Аналізується весь Python-код у `src/` (`bandit -r src`): `src/api/main.py`, `errors.py`, `schemas.py`, `mcp_server.py`, `store.py`, `routers/cards.py`, `routers/card_links.py`. Виключені лише `tests` і `.venv` (`exclude_dirs`). Перший прогін: **682 рядків коду, 0 пропущених (`#nosec`), 0 вимкнених правил**.
+Аналізується весь Python-код у `src/` (`bandit -r src`): `src/api/main.py`, `errors.py`, `schemas.py`, `mcp_server.py`, `store.py`, `routers/cards.py`, `routers/card_links.py`, `routers/stages.py`, `routers/card_notes.py`. Виключені лише `tests` і `.venv` (`exclude_dirs`). Покриття: **1500 рядків коду, 0 пропущених (`#nosec`), 0 вимкнених правил**.
 
 ## Результати
 
