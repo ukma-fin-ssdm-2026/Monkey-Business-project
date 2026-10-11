@@ -3,5 +3,6 @@
 # Верифікація: Перевірено вручну успішним встановленням через pip install, узгоджено командою.
 fastapi[standard]>=0.115.0
 pydantic>=2.9.2
+PyJWT>=2.9.0
 pyyaml
 fastmcp>=4.0

@@ -1,7 +1,9 @@
 """
 Інструмент: Claude
-Застосування: Написання ендпоінтів для ресурсу Cards із забезпеченням REST-семантики (HTTP-методи, статус-коди) та OpenAPI анотацій.
-Верифікація: Перевірено вручну через Swagger UI працездатність усіх ендпоінтів та формат відповідей, узгоджено командою.
+Застосування: Написання ендпоінтів для ресурсу Cards із забезпеченням REST-семантики
+(HTTP-методи, статус-коди) та OpenAPI анотацій.
+Верифікація: Перевірено вручну через Swagger UI працездатність усіх ендпоінтів та
+формат відповідей, узгоджено командою.
 
 Ресурс: Vacancy Cards (`/boards/{board_id}/cards`).
 
@@ -10,6 +12,7 @@
 дія "move" — як під-ресурс (POST .../move), бо це не проста заміна полів,
 а бізнес-операція з побічними ефектами (перерахунок позицій інших карток).
 """
+
 from __future__ import annotations
 
 from typing import Optional
@@ -18,6 +21,7 @@ from uuid import UUID
 from fastapi import APIRouter, Path, Query, status
 
 from .. import store
+from ..auth import CandidateOrAdmin, CurrentUser, require_board_access
 from ..errors import NotFoundError, error_responses
 from ..schemas import (
     CardCreate,
@@ -50,9 +54,10 @@ def _to_card_out(record: dict) -> CardOut:
     )
 
 
-def _require_board(board_id: UUID) -> None:
+def _require_board(board_id: UUID, user: dict, *, write: bool = False) -> None:
     if not store.board_exists(board_id):
         raise NotFoundError(f"Дошку {board_id} не знайдено")
+    require_board_access(board_id, user, write=write)
 
 
 def _require_card(board_id: UUID, card_id: UUID) -> dict:
@@ -72,7 +77,52 @@ def _require_card(board_id: UUID, card_id: UUID) -> dict:
         "(FR-003, FR-006). Пагінація на основі зсуву (offset), бо дошка — "
         "обмежений набір карток (до ~100), а не безкінечна стрічка."
     ),
-    responses=error_responses("Дошку не знайдено", "Невалідний фільтр або параметри пагінації"),
+    responses=error_responses(
+        "Дошку не знайдено",
+        "Невалідний фільтр або параметри пагінації",
+        examples={
+            404: {
+                "board_not_found": {
+                    "summary": "Дошку не знайдено",
+                    "value": {
+                        "error": {
+                            "code": "NOT_FOUND",
+                            "message": "Дошку не знайдено",
+                            "details": [],
+                            "request_id": "req_example",
+                            "documentation": (
+                                "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-"
+                                "project/blob/main/docs/api/api-design.md#error-handling"
+                            ),
+                        }
+                    },
+                }
+            },
+            422: {
+                "invalid_query": {
+                    "summary": "Невалідні параметри",
+                    "value": {
+                        "error": {
+                            "code": "VALIDATION_ERROR",
+                            "message": "Запит містить невалідні поля",
+                            "details": [
+                                {
+                                    "field": "query.limit",
+                                    "message": "Input should be less than or equal to 100",
+                                    "provided_value": "500",
+                                }
+                            ],
+                            "request_id": "req_example",
+                            "documentation": (
+                                "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob"
+                                "/main/docs/api/api-design.md#validation"
+                            ),
+                        }
+                    },
+                }
+            },
+        },
+    ),
 )
 def list_cards(
     board_id: UUID = Path(..., description="Ідентифікатор дошки-власника карток"),
@@ -80,10 +130,13 @@ def list_cards(
     status_: Optional[CardStatus] = Query(
         default=None, alias="status", description="Фільтр за статусом картки"
     ),
-    limit: int = Query(default=20, ge=1, le=100, description="Розмір сторінки (макс. 100)"),
+    limit: int = Query(
+        default=20, ge=1, le=100, description="Розмір сторінки (макс. 100)"
+    ),
     offset: int = Query(default=0, ge=0, description="Зсув від початку списку"),
+    user: CurrentUser = None,
 ) -> CardListResponse:
-    _require_board(board_id)
+    _require_board(board_id, user)
     all_items = store.list_cards(board_id, stage_id, status_.value if status_ else None)
     page = all_items[offset : offset + limit]
     return CardListResponse(
@@ -98,13 +151,61 @@ def list_cards(
     status_code=status.HTTP_201_CREATED,
     summary="Створити картку вакансії",
     description="Створює нову картку в зазначеному етапі дошки (FR-007).",
-    responses=error_responses("Дошку не знайдено", "Порожнє обов'язкове поле або некоректний формат"),
+    responses=error_responses(
+        "Дошку не знайдено",
+        "Порожнє обов'язкове поле або некоректний формат",
+        examples={
+            404: {
+                "board_not_found": {
+                    "summary": "Дошку не знайдено",
+                    "value": {
+                        "error": {
+                            "code": "NOT_FOUND",
+                            "message": "Дошку не знайдено",
+                            "details": [],
+                            "request_id": "req_example",
+                            "documentation": (
+                                "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/"
+                                "docs/api/api-design.md#error-handling"
+                            ),
+                        }
+                    },
+                }
+            },
+            422: {
+                "invalid_body": {
+                    "summary": "Невалідне тіло запиту",
+                    "value": {
+                        "error": {
+                            "code": "VALIDATION_ERROR",
+                            "message": "Запит містить невалідні поля",
+                            "details": [
+                                {
+                                    "field": "company",
+                                    "message": "String should have at least 1 character",
+                                    "provided_value": "",
+                                }
+                            ],
+                            "request_id": "req_example",
+                            "documentation": (
+                                "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/"
+                                "main/docs/api/api-design.md#validation"
+                            ),
+                        }
+                    },
+                }
+            },
+        },
+    ),
 )
 def create_card(
     payload: CardCreate,
-    board_id: UUID = Path(..., description="Ідентифікатор дошки, до якої додається картка"),
+    board_id: UUID = Path(
+        ..., description="Ідентифікатор дошки, до якої додається картка"
+    ),
+    user: CandidateOrAdmin = None,
 ) -> CardOut:
-    _require_board(board_id)
+    _require_board(board_id, user, write=True)
     data = payload.model_dump()
     if data.get("vacancy_url") is not None:
         data["vacancy_url"] = str(data["vacancy_url"])
@@ -118,13 +219,16 @@ def create_card(
     status_code=status.HTTP_200_OK,
     summary="Отримати картку за ідентифікатором",
     description="Повертає одну картку вакансії з усіма полями (FR-007).",
-    responses=error_responses("Картку або дошку не знайдено", "Некоректний ідентифікатор"),
+    responses=error_responses(
+        "Картку або дошку не знайдено", "Некоректний ідентифікатор"
+    ),
 )
 def get_card(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
+    user: CurrentUser = None,
 ) -> CardOut:
-    _require_board(board_id)
+    _require_board(board_id, user)
     record = _require_card(board_id, card_id)
     return _to_card_out(record)
 
@@ -138,14 +242,17 @@ def get_card(
         "PATCH, а не PUT: клієнт надсилає лише змінені поля (FR-008). "
         "Також використовується для закриття картки (`status`, FR-006)."
     ),
-    responses=error_responses("Картку або дошку не знайдено", "Невалідне значення поля"),
+    responses=error_responses(
+        "Картку або дошку не знайдено", "Невалідне значення поля"
+    ),
 )
 def update_card(
     payload: CardUpdate,
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
+    user: CandidateOrAdmin = None,
 ) -> CardOut:
-    _require_board(board_id)
+    _require_board(board_id, user, write=True)
     _require_card(board_id, card_id)
     changes = payload.model_dump(exclude_unset=True)
     if changes.get("vacancy_url") is not None:
@@ -159,14 +266,20 @@ def update_card(
     status_code=status.HTTP_204_NO_CONTENT,
     response_model=None,
     summary="Видалити картку",
-    description="Видаляє картку остаточно (FR-008). Повторний виклик — теж 404, а не помилка.",
-    responses=error_responses("Картку або дошку не знайдено", "Некоректний ідентифікатор"),
+    description=(
+        "Видаляє картку остаточно (FR-008). Повторний "
+        "виклик — теж 404, а не помилка."
+    ),
+    responses=error_responses(
+        "Картку або дошку не знайдено", "Некоректний ідентифікатор"
+    ),
 )
 def delete_card(
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
+    user: CandidateOrAdmin = None,
 ) -> None:
-    _require_board(board_id)
+    _require_board(board_id, user, write=True)
     _require_card(board_id, card_id)
     store.delete_card(card_id)
 
@@ -181,14 +294,17 @@ def delete_card(
         "зачіпає позиції інших карток етапу (FR-004, FR-005), тобто це "
         "бізнес-операція, а не проста заміна поля."
     ),
-    responses=error_responses("Картку або дошку не знайдено", "Некоректний stage_id або position_index"),
+    responses=error_responses(
+        "Картку або дошку не знайдено", "Некоректний stage_id або position_index"
+    ),
 )
 def move_card(
     payload: CardMove,
     board_id: UUID = Path(..., description="Ідентифікатор дошки"),
     card_id: UUID = Path(..., description="Ідентифікатор картки"),
+    user: CandidateOrAdmin = None,
 ) -> CardOut:
-    _require_board(board_id)
+    _require_board(board_id, user, write=True)
     _require_card(board_id, card_id)
     record = store.move_card(card_id, payload.stage_id, payload.position_index)
     return _to_card_out(record)

@@ -28,3 +28,6 @@ jobs:
         run: |
           python -m src.api.main
           test -s docs/api/openapi-generated.yaml
+
+      - name: Check for spec drift
+        run: git diff --exit-code docs/api/

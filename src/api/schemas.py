@@ -1,7 +1,9 @@
 """
 Інструмент: Claude
-Застосування: Створення Pydantic-схем для валідації вхідних даних, генерації OpenAPI моделей та стандартизації повідомлень про помилки.
-Верифікація: Усі типи даних та обмеження (Field) перевірені вручну на відповідність вимогам проєкту, узгоджено командою.
+Застосування: Створення Pydantic-схем для валідації вхідних даних,
+генерації OpenAPI моделей та стандартизації повідомлень про помилки.
+Верифікація: Усі типи даних та обмеження (Field) перевірені вручну на
+відповідність вимогам проєкту, узгоджено командою.
 
 Pydantic-схеми API.
 
@@ -9,6 +11,7 @@ Pydantic-схеми API.
 `card_links`). Структура помилок — за довідником курсу "Узгоджена структура
 помилок" (код + повідомлення + деталі полів + request_id + посилання на docs).
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -16,12 +19,20 @@ from enum import Enum
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    Field,
+    HttpUrl,
+    field_validator,
+    model_validator,
+)
 
 
 # --------------------------------------------------------------------------- #
 # Спільні схеми (помилки, пагінація)
 # --------------------------------------------------------------------------- #
+
 
 class ErrorDetail(BaseModel):
     field: str = Field(..., description="Назва поля, яке не пройшло валідацію")
@@ -32,12 +43,17 @@ class ErrorDetail(BaseModel):
 
 
 class ErrorBody(BaseModel):
-    code: str = Field(..., examples=["VALIDATION_ERROR"], description="Машиночитаний код помилки")
+    code: str = Field(
+        ..., examples=["VALIDATION_ERROR"], description="Машиночитаний код помилки"
+    )
     message: str = Field(..., description="Людиночитане повідомлення про помилку")
-    details: list[ErrorDetail] = Field(default_factory=list, description="Деталі по кожному полю")
+    details: list[ErrorDetail] = Field(
+        default_factory=list, description="Деталі по кожному полю"
+    )
     request_id: str = Field(..., description="Ідентифікатор запиту для пошуку в логах")
     documentation: Optional[str] = Field(
-        default=None, description="Посилання на розділ документації з поясненням помилки"
+        default=None,
+        description="Посилання на розділ документації з поясненням помилки",
     )
 
 
@@ -45,6 +61,41 @@ class ErrorResponse(BaseModel):
     """Єдиний каркас помилки для всіх кінцевих точок API."""
 
     error: ErrorBody = Field(..., description="Опис помилки")
+
+
+class UserRole(str, Enum):
+    candidate = "candidate"
+    mentor = "mentor"
+    admin = "admin"
+
+
+class RegisterRequest(BaseModel):
+    email: EmailStr = Field(..., examples=["candidate@example.com"])
+    password: str = Field(
+        ..., min_length=8, max_length=128, examples=["correct-horse-battery"]
+    )
+    role: UserRole = Field(default=UserRole.candidate, examples=["candidate"])
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr = Field(..., examples=["candidate@example.com"])
+    password: str = Field(
+        ..., min_length=1, max_length=128, examples=["correct-horse-battery"]
+    )
+
+
+class UserOut(BaseModel):
+    id: UUID
+    email: EmailStr
+    role: UserRole
+    is_active: bool
+
+
+class TokenResponse(BaseModel):
+    access_token: str = Field(..., description="JWT Bearer access token")
+    token_type: str = Field(default="bearer", examples=["bearer"])
+    expires_in: int = Field(..., ge=1, description="Token lifetime in seconds")
+    user: UserOut
 
 
 class PaginationMeta(BaseModel):
@@ -57,6 +108,7 @@ class PaginationMeta(BaseModel):
 # Cards (FR-006 – FR-010)
 # --------------------------------------------------------------------------- #
 
+
 class CardStatus(str, Enum):
     active = "active"
     rejected = "rejected"
@@ -65,37 +117,53 @@ class CardStatus(str, Enum):
 
 class CardBase(BaseModel):
     company: str = Field(
-        ..., min_length=1, max_length=200,
+        ...,
+        min_length=1,
+        max_length=200,
         description="Назва компанії (обов'язкове поле, FR-007)",
         examples=["Acme Corp"],
     )
     position: str = Field(
-        ..., min_length=1, max_length=200,
+        ...,
+        min_length=1,
+        max_length=200,
         description="Назва позиції (обов'язкове поле, FR-007)",
         examples=["Backend Engineer"],
     )
     vacancy_url: Optional[HttpUrl] = Field(
-        default=None, description="Посилання на оригінальну вакансію",
+        default=None,
+        description="Посилання на оригінальну вакансію",
         examples=["https://acme.example.com/jobs/42"],
     )
     requirements_text: Optional[str] = Field(
-        default=None, max_length=5000, description="Текст вимог вакансії (FR-007, FR-003 розширення)",
+        default=None,
+        max_length=5000,
+        description="Текст вимог вакансії (FR-007, FR-003 розширення)",
         examples=["3+ роки Python, знання FastAPI"],
     )
     deadline: Optional[datetime] = Field(
-        default=None, description="Дедлайн тестового завдання або співбесіди (FR-010)",
+        default=None,
+        description="Дедлайн тестового завдання або співбесіди (FR-010)",
         examples=["2026-10-20T18:00:00Z"],
     )
     notifications_enabled: bool = Field(
         default=True, description="Чи увімкнені нагадування для цієї картки (FR-018)"
     )
 
+    @field_validator("company", "position")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("поле не може бути порожнім рядком")
+        return value
+
 
 class CardCreate(CardBase):
     """Тіло запиту на створення картки (FR-007)."""
 
     stage_id: UUID = Field(
-        ..., description="Етап, у якому створюється картка",
+        ...,
+        description="Етап, у якому створюється картка",
         examples=["22222222-2222-2222-2222-222222222222"],
     )
 
@@ -104,48 +172,65 @@ class CardUpdate(BaseModel):
     """Часткове оновлення картки (PATCH, FR-008) — усі поля опційні."""
 
     company: Optional[str] = Field(
-        default=None, min_length=1, max_length=200, description="Нова назва компанії",
+        default=None,
+        min_length=1,
+        max_length=200,
+        description="Нова назва компанії",
         examples=["Acme Corp"],
     )
     position: Optional[str] = Field(
-        default=None, min_length=1, max_length=200, description="Нова назва позиції",
+        default=None,
+        min_length=1,
+        max_length=200,
+        description="Нова назва позиції",
         examples=["Senior Backend Engineer"],
     )
     vacancy_url: Optional[HttpUrl] = Field(
-        default=None, description="Нове посилання на вакансію",
+        default=None,
+        description="Нове посилання на вакансію",
         examples=["https://acme.example.com/jobs/42"],
     )
     requirements_text: Optional[str] = Field(
-        default=None, max_length=5000, description="Новий текст вимог вакансії",
+        default=None,
+        max_length=5000,
+        description="Новий текст вимог вакансії",
     )
     deadline: Optional[datetime] = Field(
-        default=None, description="Новий дедлайн (FR-010)", examples=["2026-10-20T18:00:00Z"],
+        default=None,
+        description="Новий дедлайн (FR-010)",
+        examples=["2026-10-20T18:00:00Z"],
     )
     notifications_enabled: Optional[bool] = Field(
-        default=None, description="Увімкнути або вимкнути нагадування (FR-018)", examples=[False],
+        default=None,
+        description="Увімкнути або вимкнути нагадування (FR-018)",
+        examples=[False],
     )
     status: Optional[CardStatus] = Field(
-        default=None, description="Закриття картки: 'rejected' або 'offer_accepted' (FR-006)",
+        default=None,
+        description="Закриття картки: 'rejected' або 'offer_accepted' (FR-006)",
         examples=["rejected"],
     )
 
-    @field_validator("company", "position")
-    @classmethod
-    def not_blank(cls, value: Optional[str]) -> Optional[str]:
-        if value is not None and not value.strip():
-            raise ValueError("поле не може бути порожнім рядком")
-        return value
+    @model_validator(mode="after")
+    def require_change(self) -> "CardUpdate":
+        if not self.model_fields_set:
+            raise ValueError("потрібно вказати хоча б одне поле для оновлення")
+        return self
 
 
 class CardMove(BaseModel):
     """Переміщення картки між етапами методом drag-and-drop (FR-004, FR-005)."""
 
     stage_id: UUID = Field(
-        ..., description="Ідентифікатор цільового етапу",
+        ...,
+        description="Ідентифікатор цільового етапу",
         examples=["22222222-2222-2222-2222-222222222222"],
     )
     position_index: int = Field(
-        ..., ge=0, description="Порядок картки в межах етапу (0 = перша зверху)", examples=[0],
+        ...,
+        ge=0,
+        description="Порядок картки в межах етапу (0 = перша зверху)",
+        examples=[0],
     )
 
 
@@ -153,9 +238,13 @@ class CardOut(CardBase):
     id: UUID = Field(..., description="Ідентифікатор картки")
     board_id: UUID = Field(..., description="Дошка, якій належить картка")
     stage_id: UUID = Field(..., description="Поточний етап картки")
-    status: CardStatus = Field(..., description="Статус картки: активна або закрита (FR-006)")
+    status: CardStatus = Field(
+        ..., description="Статус картки: активна або закрита (FR-006)"
+    )
     # Not "position": that name is the job title inherited from CardBase (FR-007).
-    position_index: int = Field(..., ge=0, description="Порядок картки в межах етапу (0 = перша зверху)")
+    position_index: int = Field(
+        ..., ge=0, description="Порядок картки в межах етапу (0 = перша зверху)"
+    )
     created_at: datetime = Field(..., description="Час створення")
     updated_at: datetime = Field(..., description="Час останньої зміни")
 
@@ -164,16 +253,20 @@ class CardOut(CardBase):
 
 class CardListResponse(BaseModel):
     items: list[CardOut] = Field(..., description="Картки поточної сторінки")
-    pagination: PaginationMeta = Field(..., description="Параметри пагінації та загальна кількість")
+    pagination: PaginationMeta = Field(
+        ..., description="Параметри пагінації та загальна кількість"
+    )
 
 
 # --------------------------------------------------------------------------- #
 # Card links (FR-009)
 # --------------------------------------------------------------------------- #
 
+
 class CardLinkCreate(BaseModel):
     url: HttpUrl = Field(
-        ..., description="Посилання на тестове завдання (валідний URL)",
+        ...,
+        description="Посилання на тестове завдання (валідний URL)",
         examples=["https://github.com/acme/test-task"],
     )
 
@@ -183,5 +276,135 @@ class CardLinkOut(BaseModel):
     card_id: UUID = Field(..., description="Картка, до якої додано посилання")
     url: HttpUrl = Field(..., description="Посилання на тестове завдання")
     created_at: datetime = Field(..., description="Час додавання")
+
+    model_config = {"from_attributes": True}
+
+
+# --------------------------------------------------------------------------- #
+# Stages (FR-003, FR-024)
+# --------------------------------------------------------------------------- #
+
+
+class StageBase(BaseModel):
+    name: str = Field(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="Назва етапу (FR-003)",
+        examples=["Технічне інтерв'ю"],
+    )
+
+    @field_validator("name")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("назва етапу не може бути порожнім рядком")
+        return value.strip()
+
+
+class StageCreate(StageBase):
+    order_index: Optional[int] = Field(
+        default=None,
+        ge=0,
+        description="Порядок сортування етапу на дошці",
+        examples=[4],
+    )
+
+
+class StageUpdate(BaseModel):
+    name: Optional[str] = Field(
+        default=None,
+        min_length=1,
+        max_length=100,
+        description="Нова назва етапу",
+        examples=["Фінальна бесіда"],
+    )
+    order_index: Optional[int] = Field(
+        default=None,
+        ge=0,
+        description="Новий порядок сортування етапу",
+        examples=[2],
+    )
+
+    @field_validator("name")
+    @classmethod
+    def not_blank(cls, value: Optional[str]) -> Optional[str]:
+        if value is not None and not value.strip():
+            raise ValueError("назва етапу не може бути порожнім рядком")
+        return value.strip() if value is not None else None
+
+    @model_validator(mode="after")
+    def require_change(self) -> "StageUpdate":
+        if not self.model_fields_set:
+            raise ValueError("потрібно вказати хоча б одне поле для оновлення")
+        return self
+
+
+class StageOut(StageBase):
+    id: UUID = Field(..., description="Ідентифікатор етапу")
+    board_id: UUID = Field(..., description="Дошка, якій належить етап")
+    order_index: int = Field(..., ge=0, description="Порядок сортування етапу на дошці")
+    created_at: datetime = Field(..., description="Час створення етапу")
+
+    model_config = {"from_attributes": True}
+
+
+# --------------------------------------------------------------------------- #
+# Card Notes (FR-011, FR-022)
+# --------------------------------------------------------------------------- #
+
+
+class NoteSource(str, Enum):
+    candidate = "candidate"
+    recruiter = "recruiter"
+    ai = "ai"
+
+
+class CardNoteCreate(BaseModel):
+    content: str = Field(
+        ...,
+        min_length=1,
+        max_length=3000,
+        description="Текст нотатки або фідбеку (FR-011)",
+        examples=["Скринінг пройдено. Запропонували технічне завдання до п'ятниці."],
+    )
+    source: NoteSource = Field(
+        default=NoteSource.candidate,
+        description="Джерело нотатки: кандидат, фідбек рекрутера або AI (FR-011, FR-022)",
+        examples=["recruiter"],
+    )
+
+    @field_validator("content")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("вміст нотатки не може бути порожнім рядком")
+        return value.strip()
+
+
+class CardNoteUpdate(BaseModel):
+    content: str = Field(
+        ...,
+        min_length=1,
+        max_length=3000,
+        description="Оновлений текст нотатки",
+        examples=["Уточнено дедлайн: понеділок 18:00."],
+    )
+
+    @field_validator("content")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("вміст нотатки не може бути порожнім рядком")
+        return value.strip()
+
+
+class CardNoteOut(BaseModel):
+    id: UUID = Field(..., description="Ідентифікатор нотатки")
+    card_id: UUID = Field(..., description="Картка, до якої належить нотатка")
+    content: str = Field(..., description="Текст нотатки або фідбеку")
+    source: NoteSource = Field(..., description="Джерело нотатки")
+    created_at: datetime = Field(..., description="Час створення нотатки")
+    updated_at: datetime = Field(..., description="Час останньої зміни нотатки")
 
     model_config = {"from_attributes": True}
