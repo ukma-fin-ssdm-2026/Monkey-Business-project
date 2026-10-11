@@ -13,7 +13,12 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from .db import Repos
 from .domain import DEFAULT_STAGE_NAMES, Board, Stage, User
-from .errors import ConflictError, ForbiddenError, UnauthorizedError
+from .errors import (
+    ConflictError,
+    ForbiddenError,
+    UnauthorizedError,
+    auth_error_responses,
+)
 from .repositories.base import Repositories
 from .schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut, UserRole
 
@@ -70,7 +75,10 @@ def _issue_token(user: User) -> TokenResponse:
     "/register",
     response_model=TokenResponse,
     status_code=201,
-    responses={409: {"description": "Email is already registered"}},
+    responses=auth_error_responses(
+        conflict="Користувач із таким email уже існує",
+        forbidden="Реєстрація доступна лише для ролі кандидата",
+    ),
 )
 def register(payload: RegisterRequest, repos: Repos) -> TokenResponse:
     if payload.role != UserRole.candidate:
@@ -94,7 +102,7 @@ def register(payload: RegisterRequest, repos: Repos) -> TokenResponse:
 @router.post(
     "/login",
     response_model=TokenResponse,
-    responses={401: {"description": "Invalid credentials"}},
+    responses=auth_error_responses(),
 )
 def login(payload: LoginRequest, repos: Repos) -> TokenResponse:
     user = repos.users.get_by_email(str(payload.email).lower())

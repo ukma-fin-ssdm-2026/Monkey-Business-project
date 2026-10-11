@@ -64,21 +64,115 @@ def error_responses(
     not_found: str,
     invalid: str = "Невалідні параметри запиту",
     examples: dict | None = None,
+    conflict: str | None = None,
 ) -> dict:
     # Without an explicit 422 entry FastAPI documents its default HTTPValidationError,
     # which is not what handle_validation_error actually returns.
     responses = {
-        401: {"model": ErrorResponse, "description": "Потрібна автентифікація"},
-        403: {"model": ErrorResponse, "description": "Недостатньо прав"},
-        404: {"model": ErrorResponse, "description": not_found},
-        422: {"model": ErrorResponse, "description": invalid},
+        401: _error_response(
+            "Потрібна автентифікація",
+            "UNAUTHORIZED",
+            "Потрібен Bearer-токен",
+            "#error-handling",
+        ),
+        403: _error_response(
+            "Недостатньо прав",
+            "FORBIDDEN",
+            "Недостатньо прав для виконання цієї дії",
+            "#error-handling",
+        ),
+        404: _error_response(
+            not_found,
+            "NOT_FOUND",
+            not_found,
+            "#error-handling",
+        ),
+        422: _error_response(
+            invalid,
+            "VALIDATION_ERROR",
+            "Запит містить невалідні поля",
+            "#validation",
+        ),
     }
-    if examples:
-        for code, response_examples in examples.items():
-            if code in responses:
-                responses[code]["content"] = {
-                    "application/json": {"examples": response_examples}
+    for code, response_examples in (examples or {}).items():
+        if code in responses:
+            responses[code]["content"]["application/json"]["examples"].update(
+                response_examples
+            )
+    if conflict is not None:
+        responses[409] = _error_response(
+            "Конфлікт із поточним станом ресурсу",
+            "CONFLICT",
+            conflict,
+            "#error-handling",
+        )
+    return responses
+
+
+def _error_response(
+    description: str,
+    code: str,
+    message: str,
+    documentation_fragment: str,
+) -> dict:
+    return {
+        "model": ErrorResponse,
+        "description": description,
+        "content": {
+            "application/json": {
+                "examples": {
+                    code.lower(): {
+                        "summary": message,
+                        "value": {
+                            "error": {
+                                "code": code,
+                                "message": message,
+                                "details": [],
+                                "request_id": "req_example",
+                                "documentation": f"{DOCS_BASE}{documentation_fragment}",
+                            }
+                        },
+                    }
                 }
+            }
+        },
+    }
+
+
+def auth_error_responses(
+    *,
+    unauthorized: str = "Невірний email або пароль",
+    conflict: str | None = None,
+    forbidden: str | None = None,
+) -> dict:
+    responses = {
+        401: _error_response(
+            "Невірні облікові дані",
+            "UNAUTHORIZED",
+            unauthorized,
+            "#error-handling",
+        )
+    }
+    if conflict is not None:
+        responses[409] = _error_response(
+            "Email уже зареєстровано",
+            "CONFLICT",
+            conflict,
+            "#error-handling",
+        )
+    if forbidden is not None:
+        responses[403] = _error_response(
+            "Недостатньо прав",
+            "FORBIDDEN",
+            forbidden,
+            "#error-handling",
+        )
+    responses[422] = _error_response(
+        "Невалідні дані запиту",
+        "VALIDATION_ERROR",
+        "Запит містить невалідні поля",
+        "#validation",
+    )
     return responses
 
 

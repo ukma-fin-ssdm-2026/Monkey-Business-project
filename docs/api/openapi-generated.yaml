@@ -38,24 +38,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Дошку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Дошку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Некоректний ідентифікатор дошки
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     post:
@@ -94,24 +134,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Дошку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Дошку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Невалідна назва етапу або параметри
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /v1/boards/{board_id}/stages/{stage_id}:
@@ -160,24 +240,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Дошку або етап не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Дошку або етап не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Дошку або етап не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Невалідні дані оновлення
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     delete:
@@ -215,24 +335,80 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Дошку або етап не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Дошку або етап не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Дошку або етап не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Некоректний ідентифікатор
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Конфлікт із поточним станом ресурсу
+          content:
+            application/json:
+              examples:
+                conflict:
+                  summary: Неможливо видалити етап, у якому є картки
+                  value:
+                    error:
+                      code: CONFLICT
+                      message: Неможливо видалити етап, у якому є картки
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /v1/boards/{board_id}/cards:
@@ -309,12 +485,32 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
@@ -322,6 +518,15 @@ paths:
           content:
             application/json:
               examples:
+                not_found:
+                  summary: Дошку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
                 board_not_found:
                   summary: Дошку не знайдено
                   value:
@@ -338,6 +543,15 @@ paths:
           content:
             application/json:
               examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
                 invalid_query:
                   summary: Невалідні параметри
                   value:
@@ -387,12 +601,32 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
@@ -400,6 +634,15 @@ paths:
           content:
             application/json:
               examples:
+                not_found:
+                  summary: Дошку або етап не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Дошку або етап не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
                 board_not_found:
                   summary: Дошку не знайдено
                   value:
@@ -416,6 +659,15 @@ paths:
           content:
             application/json:
               examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
                 invalid_body:
                   summary: Невалідне тіло запиту
                   value:
@@ -469,24 +721,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Картку або дошку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Картку або дошку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Картку або дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Некоректний ідентифікатор
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     patch:
@@ -534,24 +826,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Картку або дошку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Картку або дошку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Картку або дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Невалідне значення поля
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     delete:
@@ -589,24 +921,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Картку або дошку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Картку або дошку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Картку або дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Некоректний ідентифікатор
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /v1/boards/{board_id}/cards/{card_id}/move:
@@ -656,24 +1028,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Картку, дошку або етап не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Картку, дошку або етап не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Картку, дошку або етап не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Некоректний stage_id або position_index
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /v1/boards/{board_id}/cards/{card_id}/links:
@@ -718,24 +1130,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Картку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Картку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Картку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Некоректний ідентифікатор
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     post:
@@ -783,24 +1235,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Картку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Картку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Картку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Рядок не є коректним URL
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /v1/boards/{board_id}/cards/{card_id}/links/{link_id}:
@@ -847,24 +1339,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Посилання або картку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Посилання або картку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Посилання або картку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Некоректний ідентифікатор
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /v1/boards/{board_id}/cards/{card_id}/notes:
@@ -910,24 +1442,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Картку або дошку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Картку або дошку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Картку або дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Некоректний ідентифікатор
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     post:
@@ -976,24 +1548,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Картку або дошку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Картку або дошку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Картку або дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Невалідний текст нотатки
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /v1/boards/{board_id}/cards/{card_id}/notes/{note_id}:
@@ -1050,24 +1662,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Нотатку або картку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Нотатку або картку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Нотатку або картку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Невалідний текст нотатки
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     delete:
@@ -1113,24 +1765,64 @@ paths:
           description: Потрібна автентифікація
           content:
             application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Недостатньо прав
           content:
             application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Нотатку або картку не знайдено
           content:
             application/json:
+              examples:
+                not_found:
+                  summary: Нотатку або картку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Нотатку або картку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Некоректний ідентифікатор
           content:
             application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /v1/auth/register:
@@ -1152,14 +1844,70 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
-        '409':
-          description: Email is already registered
-        '422':
-          description: Validation Error
+        '401':
+          description: Невірні облікові дані
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Невірний email або пароль
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Невірний email або пароль
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+        '409':
+          description: Email уже зареєстровано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                conflict:
+                  summary: Користувач із таким email уже існує
+                  value:
+                    error:
+                      code: CONFLICT
+                      message: Користувач із таким email уже існує
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbidden:
+                  summary: Реєстрація доступна лише для ролі кандидата
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Реєстрація доступна лише для ролі кандидата
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+        '422':
+          description: Невалідні дані запиту
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
   /v1/auth/login:
     post:
       tags:
@@ -1180,13 +1928,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
         '401':
-          description: Invalid credentials
-        '422':
-          description: Validation Error
+          description: Невірні облікові дані
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Невірний email або пароль
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Невірний email або пароль
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+        '422':
+          description: Невалідні дані запиту
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
   /health:
     get:
       tags:
@@ -1665,15 +2437,6 @@ components:
       - error
       title: ErrorResponse
       description: Єдиний каркас помилки для всіх кінцевих точок API.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     LoginRequest:
       properties:
         email:
@@ -1888,32 +2651,6 @@ components:
       - mentor
       - admin
       title: UserRole
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
   securitySchemes:
     HTTPBearer:
       type: http

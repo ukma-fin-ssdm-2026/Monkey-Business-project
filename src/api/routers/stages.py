@@ -133,6 +133,7 @@ def update_stage(
     responses=error_responses(
         "Дошку або етап не знайдено",
         "Некоректний ідентифікатор",
+        conflict="Неможливо видалити етап, у якому є картки",
     ),
 )
 def delete_stage(
