@@ -22,3 +22,6 @@ build/
 
 # Logs
 *.log
+
+# Tests
+.pytest_cache/
