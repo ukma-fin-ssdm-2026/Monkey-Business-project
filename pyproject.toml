@@ -4,3 +4,8 @@ target-version = ["py312"]
 
 [tool.bandit]
 exclude_dirs = ["tests", ".venv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# The API is imported as the src.api package, the same way CI runs src.api.main.
+pythonpath = ["."]
