@@ -20,7 +20,30 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run tests with coverage
+        run: pytest --cov --cov-report=term-missing --cov-report=html --cov-report=xml
+
+      - name: Add coverage summary to job summary
+        if: always()
+        run: |
+          echo "### Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          coverage report >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload coverage report artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: |
+            htmlcov/
+            coverage.xml
+
 
       - name: Verify API integration and OpenAPI generation
         env:
