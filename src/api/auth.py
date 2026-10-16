@@ -174,6 +174,8 @@ def require_board_access(
 def change_password(payload: ChangePasswordRequest, user: CurrentUser, repos: Repos) -> TokenResponse:
     if not _verify_password(payload.current_password, user.password_hash):
         raise UnauthorizedError('Невірний пароль')
+    if payload.current_password == payload.new_password:
+        raise ConflictError('Новий пароль не може дорівнювати поточному')
     
     user.password_hash = _hash_password(payload.new_password)
     repos.users.save(user)
