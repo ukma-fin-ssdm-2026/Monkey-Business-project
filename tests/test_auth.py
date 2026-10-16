@@ -26,7 +26,7 @@ from src.api import auth
 from src.api.domain import DEFAULT_STAGE_NAMES, Board, User
 from src.api.errors import ConflictError, ForbiddenError, UnauthorizedError
 from src.api.repositories.base import Repositories
-from src.api.schemas import LoginRequest, RegisterRequest, UserOut, UserRole
+from src.api.schemas import LoginRequest, RegisterRequest, UserOut, UserRole, ChangePasswordRequest
 
 TEST_SECRET = "unit-test-jwt-secret-at-least-32-bytes"  # pragma: allowlist secret
 OTHER_SECRET = "some-other-jwt-secret-at-least-32-bytes"  # pragma: allowlist secret
@@ -467,3 +467,10 @@ def test_require_board_access_skips_invitation_lookup_for_non_mentors(boards, ro
     auth.require_board_access(_repositories(boards=boards), uuid4(), user, write=True)
 
     boards.mentor_has_access.assert_not_called()
+
+def test_change_password_success(repos, make_user):
+    user = make_user(email="user@example.com")
+    payload = ChangePasswordRequest(current_password=PASSWORD, new_password="abcd12345")
+    response = auth.change_password(payload, user, repos)
+    assert response.user.id == user.id
+    assert auth._verify_password("abcd12345", user.password_hash)
