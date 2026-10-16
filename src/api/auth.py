@@ -20,7 +20,7 @@ from .errors import (
     auth_error_responses,
 )
 from .repositories.base import Repositories
-from .schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut, UserRole
+from .schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut, UserRole, ChangePasswordRequest
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 bearer = HTTPBearer(auto_error=False)
@@ -168,3 +168,9 @@ def require_board_access(
     ):
         return
     raise ForbiddenError("Доступ до дошки заборонено")
+
+@router.post("/change-password", response_model=TokenResponse)
+def change_password(payload: ChangePasswordRequest, user: CurrentUser, repos: Repos) -> TokenResponse:
+    user.password_hash = _hash_password(payload.new_password)
+    repos.users.save(user)
+    return _issue_token(user)

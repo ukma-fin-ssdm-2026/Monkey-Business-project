@@ -45,6 +45,10 @@ class InMemoryRepository:
     def get(self, entity_id):
         return self.items.get(entity_id)
 
+    def save(self, entity):
+            self.items[entity.id] = entity
+            return entity
+
 
 class InMemoryUserRepository(InMemoryRepository):
     def get_by_email(self, email: str):
@@ -472,5 +476,6 @@ def test_change_password_success(repos, make_user):
     user = make_user(email="user@example.com")
     payload = ChangePasswordRequest(current_password=PASSWORD, new_password="abcd12345")
     response = auth.change_password(payload, user, repos)
+    
     assert response.user.id == user.id
     assert auth._verify_password("abcd12345", user.password_hash)
