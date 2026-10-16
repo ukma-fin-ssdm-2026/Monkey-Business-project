@@ -169,7 +169,7 @@ def require_board_access(
         return
     raise ForbiddenError("Доступ до дошки заборонено")
 
-@router.post("/change-password", response_model=TokenResponse)
+@router.post("/change-password", response_model=TokenResponse, responses=auth_error_responses())
 def change_password(payload: ChangePasswordRequest, user: CurrentUser, repos: Repos) -> TokenResponse:
     user.password_hash = _hash_password(payload.new_password)
     repos.users.save(user)
