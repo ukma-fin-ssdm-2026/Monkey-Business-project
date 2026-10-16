@@ -169,6 +169,7 @@ def require_board_access(
         return
     raise ForbiddenError("Доступ до дошки заборонено")
 
+# TDD - User password change after confirming current password
 @router.post("/change-password", response_model=TokenResponse, responses=auth_error_responses())
 def change_password(payload: ChangePasswordRequest, user: CurrentUser, repos: Repos) -> TokenResponse:
     if not _verify_password(payload.current_password, user.password_hash):
