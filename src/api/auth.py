@@ -171,6 +171,9 @@ def require_board_access(
 
 @router.post("/change-password", response_model=TokenResponse, responses=auth_error_responses())
 def change_password(payload: ChangePasswordRequest, user: CurrentUser, repos: Repos) -> TokenResponse:
+    if not _verify_password(payload.current_password, user.password_hash):
+        raise UnauthorizedError('Невірний пароль')
+    
     user.password_hash = _hash_password(payload.new_password)
     repos.users.save(user)
     return _issue_token(user)
