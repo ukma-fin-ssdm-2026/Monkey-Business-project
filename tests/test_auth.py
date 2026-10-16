@@ -479,3 +479,9 @@ def test_change_password_success(repos, make_user):
     
     assert response.user.id == user.id
     assert auth._verify_password("abcd12345", user.password_hash)
+
+def test_change_password_rejects_wrong_current_password(repos, make_user):
+    user = make_user(email="user@example.com")
+    payload = ChangePasswordRequest(current_password="wrong_password", new_password="abcd12345")
+    with pytest.raises(UnauthorizedError, match="Невірний пароль"):
+        auth.change_password(payload, user, repos)
