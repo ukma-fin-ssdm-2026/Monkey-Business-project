@@ -20,7 +20,7 @@ from .errors import (
     auth_error_responses,
 )
 from .repositories.base import Repositories
-from .schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut, UserRole
+from .schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut, UserRole, ChangePasswordRequest
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 bearer = HTTPBearer(auto_error=False)
@@ -168,3 +168,15 @@ def require_board_access(
     ):
         return
     raise ForbiddenError("Доступ до дошки заборонено")
+
+# TDD - User password change after confirming current password and check for the same password
+@router.post("/change-password", response_model=TokenResponse, responses=auth_error_responses(conflict="Новий пароль не може дорівнювати поточному"))
+def change_password(payload: ChangePasswordRequest, user: CurrentUser, repos: Repos) -> TokenResponse:
+    if not _verify_password(payload.current_password, user.password_hash):
+        raise UnauthorizedError('Невірний пароль')
+    if payload.current_password == payload.new_password:
+        raise ConflictError('Новий пароль не може дорівнювати поточному')
+    
+    user.password_hash = _hash_password(payload.new_password)
+    repos.users.save(user)
+    return _issue_token(user)
