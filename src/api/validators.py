@@ -6,6 +6,8 @@ from __future__ import annotations
 
 
 def validate_vacancy_url(url: str | None) -> bool:
-    if not url or not isinstance(url, str) or not url.strip():
+    """Перевіряє коректність посилання на вакансію або тестове завдання."""
+    if not url or not isinstance(url, str):
         return False
-    return True
+    cleaned = url.strip()
+    return bool(cleaned)
