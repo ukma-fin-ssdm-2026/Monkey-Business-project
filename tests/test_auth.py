@@ -508,3 +508,12 @@ def test_login_rejects_locked_account_even_with_correct_password(repos, make_use
 
     with pytest.raises(ForbiddenError, match="заблоковано"):
         auth.login(LoginRequest(email=user.email, password=PASSWORD), repos)
+
+def test_login_resets_failed_attempts_on_success(repos, make_user):
+    user = make_user(email="user@example.com")
+    user.failed_login_attempts = 3
+    repos.users.save(user)
+
+    auth.login(LoginRequest(email=user.email, password=PASSWORD), repos)
+
+    assert repos.users.get(user.id).failed_login_attempts == 0
