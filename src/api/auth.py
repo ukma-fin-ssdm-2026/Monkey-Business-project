@@ -25,6 +25,9 @@ from .schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut, User
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 bearer = HTTPBearer(auto_error=False)
 TOKEN_TTL = timedelta(hours=24)
+
+# Simple brute-force protection: block login attempts once a user has
+# accumulated MAX_FAILED_ATTEMPTS consecutive wrong passwords.
 MAX_FAILED_ATTEMPTS = 5
 
 
