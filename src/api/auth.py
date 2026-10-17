@@ -124,6 +124,9 @@ def login(payload: LoginRequest, repos: Repos) -> TokenResponse:
             user.failed_login_attempts += 1
             repos.users.save(user)
         raise UnauthorizedError("Невірний email або пароль")
+    if user.failed_login_attempts:
+        user.failed_login_attempts = 0
+        repos.users.save(user)
     return _issue_token(user)
 
 
