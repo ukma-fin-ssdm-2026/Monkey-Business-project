@@ -31,6 +31,7 @@ class User:
     is_active: bool = True
     id: UUID = field(default_factory=uuid4)
     created_at: datetime = field(default_factory=utcnow)
+    failed_login_attempts: int = 0
 
 
 @dataclass(kw_only=True)

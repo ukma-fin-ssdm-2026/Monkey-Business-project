@@ -491,3 +491,12 @@ def test_change_password_rejects_same_password(repos, make_user):
     payload = ChangePasswordRequest(current_password=PASSWORD, new_password=PASSWORD)
     with pytest.raises(ConflictError, match="Новий пароль не може дорівнювати поточному"):
         auth.change_password(payload, user, repos)
+
+
+def test_login_increments_failed_attempts_on_wrong_password(repos, make_user):
+    user = make_user(email="user@example.com")
+
+    with pytest.raises(UnauthorizedError):
+        auth.login(LoginRequest(email=user.email, password="wrong"), repos)
+
+    assert repos.users.get(user.id).failed_login_attempts == 1      
