@@ -6,6 +6,8 @@ from __future__ import annotations
 
 from urllib.parse import urlparse
 
+ALLOWED_SCHEMES = frozenset({"http", "https"})
+
 
 def validate_vacancy_url(url: str | None) -> bool:
     """Перевіряє коректність посилання на вакансію або тестове завдання."""
@@ -14,6 +16,6 @@ def validate_vacancy_url(url: str | None) -> bool:
     cleaned = url.strip()
     try:
         parsed = urlparse(cleaned)
-        return parsed.scheme in ("http", "https") and bool(parsed.netloc)
+        return parsed.scheme.lower() in ALLOWED_SCHEMES and bool(parsed.netloc)
     except Exception:
         return False
