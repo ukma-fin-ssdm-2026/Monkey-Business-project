@@ -106,6 +106,11 @@ def register(payload: RegisterRequest, repos: Repos) -> TokenResponse:
 )
 def login(payload: LoginRequest, repos: Repos) -> TokenResponse:
     user = repos.users.get_by_email(str(payload.email).lower())
+    if user is not None and user.is_active and not _verify_password(
+        payload.password, user.password_hash
+    ):
+        user.failed_login_attempts += 1
+        repos.users.save(user)
     if (
         user is None
         or not user.is_active
