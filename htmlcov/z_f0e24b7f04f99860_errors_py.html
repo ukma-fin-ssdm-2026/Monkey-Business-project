@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for src/api/errors.py: 60%</title>
+    <title>Coverage for src/api/errors.py: 71%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_c827f16f.png">
     <link rel="stylesheet" href="style_cb_4667309f.css" type="text/css">
     <script src="coverage_html_cb_15cffcd0.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>src<span class="sep">/</span>api<span class="sep">/</span>errors.py</b>:
-            <span class="pc_cov">60%</span>
+            <span class="pc_cov">71%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">62 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">37<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">25<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">44<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">18<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_f0e24b7f04f99860_main_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.16.2">coverage.py v7.16.2</a>,
-            created at 2026-10-17 17:13 +0300
+            created at 2026-10-17 22:22 +0300
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -150,45 +150,45 @@
     <p class="run run2"><span class="n"><a id="t68" href="#t68">68</a></span><span class="t"><span class="op">)</span> <span class="op">-&gt;</span> <span class="nam">dict</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t69" href="#t69">69</a></span><span class="t">    <span class="com"># Without an explicit 422 entry FastAPI documents its default HTTPValidationError,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t70" href="#t70">70</a></span><span class="t">    <span class="com"># which is not what handle_validation_error actually returns.</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t71" href="#t71">71</a></span><span class="t">    <span class="nam">responses</span> <span class="op">=</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t72" href="#t72">72</a></span><span class="t">        <span class="num">401</span><span class="op">:</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t73" href="#t73">73</a></span><span class="t">            <span class="str">&quot;&#1055;&#1086;&#1090;&#1088;&#1110;&#1073;&#1085;&#1072; &#1072;&#1074;&#1090;&#1077;&#1085;&#1090;&#1080;&#1092;&#1110;&#1082;&#1072;&#1094;&#1110;&#1103;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t74" href="#t74">74</a></span><span class="t">            <span class="str">&quot;UNAUTHORIZED&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t75" href="#t75">75</a></span><span class="t">            <span class="str">&quot;&#1055;&#1086;&#1090;&#1088;&#1110;&#1073;&#1077;&#1085; Bearer-&#1090;&#1086;&#1082;&#1077;&#1085;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t76" href="#t76">76</a></span><span class="t">            <span class="str">&quot;#error-handling&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t77" href="#t77">77</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t78" href="#t78">78</a></span><span class="t">        <span class="num">403</span><span class="op">:</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t79" href="#t79">79</a></span><span class="t">            <span class="str">&quot;&#1053;&#1077;&#1076;&#1086;&#1089;&#1090;&#1072;&#1090;&#1085;&#1100;&#1086; &#1087;&#1088;&#1072;&#1074;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t80" href="#t80">80</a></span><span class="t">            <span class="str">&quot;FORBIDDEN&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t81" href="#t81">81</a></span><span class="t">            <span class="str">&quot;&#1053;&#1077;&#1076;&#1086;&#1089;&#1090;&#1072;&#1090;&#1085;&#1100;&#1086; &#1087;&#1088;&#1072;&#1074; &#1076;&#1083;&#1103; &#1074;&#1080;&#1082;&#1086;&#1085;&#1072;&#1085;&#1085;&#1103; &#1094;&#1110;&#1108;&#1111; &#1076;&#1110;&#1111;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t82" href="#t82">82</a></span><span class="t">            <span class="str">&quot;#error-handling&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t83" href="#t83">83</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t84" href="#t84">84</a></span><span class="t">        <span class="num">404</span><span class="op">:</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t85" href="#t85">85</a></span><span class="t">            <span class="nam">not_found</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t86" href="#t86">86</a></span><span class="t">            <span class="str">&quot;NOT_FOUND&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t87" href="#t87">87</a></span><span class="t">            <span class="nam">not_found</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t88" href="#t88">88</a></span><span class="t">            <span class="str">&quot;#error-handling&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t89" href="#t89">89</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t90" href="#t90">90</a></span><span class="t">        <span class="num">422</span><span class="op">:</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t91" href="#t91">91</a></span><span class="t">            <span class="nam">invalid</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t92" href="#t92">92</a></span><span class="t">            <span class="str">&quot;VALIDATION_ERROR&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t93" href="#t93">93</a></span><span class="t">            <span class="str">&quot;&#1047;&#1072;&#1087;&#1080;&#1090; &#1084;&#1110;&#1089;&#1090;&#1080;&#1090;&#1100; &#1085;&#1077;&#1074;&#1072;&#1083;&#1110;&#1076;&#1085;&#1110; &#1087;&#1086;&#1083;&#1103;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t94" href="#t94">94</a></span><span class="t">            <span class="str">&quot;#validation&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t95" href="#t95">95</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t96" href="#t96">96</a></span><span class="t">    <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t97" href="#t97">97</a></span><span class="t">    <span class="key">for</span> <span class="nam">code</span><span class="op">,</span> <span class="nam">response_examples</span> <span class="key">in</span> <span class="op">(</span><span class="nam">examples</span> <span class="key">or</span> <span class="op">{</span><span class="op">}</span><span class="op">)</span><span class="op">.</span><span class="nam">items</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t98" href="#t98">98</a></span><span class="t">        <span class="key">if</span> <span class="nam">code</span> <span class="key">in</span> <span class="nam">responses</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t99" href="#t99">99</a></span><span class="t">            <span class="nam">responses</span><span class="op">[</span><span class="nam">code</span><span class="op">]</span><span class="op">[</span><span class="str">&quot;content&quot;</span><span class="op">]</span><span class="op">[</span><span class="str">&quot;application/json&quot;</span><span class="op">]</span><span class="op">[</span><span class="str">&quot;examples&quot;</span><span class="op">]</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t100" href="#t100">100</a></span><span class="t">                <span class="nam">response_examples</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t101" href="#t101">101</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t102" href="#t102">102</a></span><span class="t">    <span class="key">if</span> <span class="nam">conflict</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t103" href="#t103">103</a></span><span class="t">        <span class="nam">responses</span><span class="op">[</span><span class="num">409</span><span class="op">]</span> <span class="op">=</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t104" href="#t104">104</a></span><span class="t">            <span class="str">&quot;&#1050;&#1086;&#1085;&#1092;&#1083;&#1110;&#1082;&#1090; &#1110;&#1079; &#1087;&#1086;&#1090;&#1086;&#1095;&#1085;&#1080;&#1084; &#1089;&#1090;&#1072;&#1085;&#1086;&#1084; &#1088;&#1077;&#1089;&#1091;&#1088;&#1089;&#1091;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t105" href="#t105">105</a></span><span class="t">            <span class="str">&quot;CONFLICT&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t106" href="#t106">106</a></span><span class="t">            <span class="nam">conflict</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t107" href="#t107">107</a></span><span class="t">            <span class="str">&quot;#error-handling&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">    <span class="key">return</span> <span class="nam">responses</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t71" href="#t71">71</a></span><span class="t">    <span class="nam">responses</span> <span class="op">=</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t72" href="#t72">72</a></span><span class="t">        <span class="num">401</span><span class="op">:</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t73" href="#t73">73</a></span><span class="t">            <span class="str">&quot;&#1055;&#1086;&#1090;&#1088;&#1110;&#1073;&#1085;&#1072; &#1072;&#1074;&#1090;&#1077;&#1085;&#1090;&#1080;&#1092;&#1110;&#1082;&#1072;&#1094;&#1110;&#1103;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t74" href="#t74">74</a></span><span class="t">            <span class="str">&quot;UNAUTHORIZED&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t75" href="#t75">75</a></span><span class="t">            <span class="str">&quot;&#1055;&#1086;&#1090;&#1088;&#1110;&#1073;&#1077;&#1085; Bearer-&#1090;&#1086;&#1082;&#1077;&#1085;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t76" href="#t76">76</a></span><span class="t">            <span class="str">&quot;#error-handling&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t77" href="#t77">77</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t78" href="#t78">78</a></span><span class="t">        <span class="num">403</span><span class="op">:</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t79" href="#t79">79</a></span><span class="t">            <span class="str">&quot;&#1053;&#1077;&#1076;&#1086;&#1089;&#1090;&#1072;&#1090;&#1085;&#1100;&#1086; &#1087;&#1088;&#1072;&#1074;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t80" href="#t80">80</a></span><span class="t">            <span class="str">&quot;FORBIDDEN&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t81" href="#t81">81</a></span><span class="t">            <span class="str">&quot;&#1053;&#1077;&#1076;&#1086;&#1089;&#1090;&#1072;&#1090;&#1085;&#1100;&#1086; &#1087;&#1088;&#1072;&#1074; &#1076;&#1083;&#1103; &#1074;&#1080;&#1082;&#1086;&#1085;&#1072;&#1085;&#1085;&#1103; &#1094;&#1110;&#1108;&#1111; &#1076;&#1110;&#1111;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t82" href="#t82">82</a></span><span class="t">            <span class="str">&quot;#error-handling&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t83" href="#t83">83</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t84" href="#t84">84</a></span><span class="t">        <span class="num">404</span><span class="op">:</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t85" href="#t85">85</a></span><span class="t">            <span class="nam">not_found</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t86" href="#t86">86</a></span><span class="t">            <span class="str">&quot;NOT_FOUND&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t87" href="#t87">87</a></span><span class="t">            <span class="nam">not_found</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t88" href="#t88">88</a></span><span class="t">            <span class="str">&quot;#error-handling&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t89" href="#t89">89</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t90" href="#t90">90</a></span><span class="t">        <span class="num">422</span><span class="op">:</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t91" href="#t91">91</a></span><span class="t">            <span class="nam">invalid</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t92" href="#t92">92</a></span><span class="t">            <span class="str">&quot;VALIDATION_ERROR&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t93" href="#t93">93</a></span><span class="t">            <span class="str">&quot;&#1047;&#1072;&#1087;&#1080;&#1090; &#1084;&#1110;&#1089;&#1090;&#1080;&#1090;&#1100; &#1085;&#1077;&#1074;&#1072;&#1083;&#1110;&#1076;&#1085;&#1110; &#1087;&#1086;&#1083;&#1103;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t94" href="#t94">94</a></span><span class="t">            <span class="str">&quot;#validation&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t95" href="#t95">95</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t96" href="#t96">96</a></span><span class="t">    <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t97" href="#t97">97</a></span><span class="t">    <span class="key">for</span> <span class="nam">code</span><span class="op">,</span> <span class="nam">response_examples</span> <span class="key">in</span> <span class="op">(</span><span class="nam">examples</span> <span class="key">or</span> <span class="op">{</span><span class="op">}</span><span class="op">)</span><span class="op">.</span><span class="nam">items</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t98" href="#t98">98</a></span><span class="t">        <span class="key">if</span> <span class="nam">code</span> <span class="key">in</span> <span class="nam">responses</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t99" href="#t99">99</a></span><span class="t">            <span class="nam">responses</span><span class="op">[</span><span class="nam">code</span><span class="op">]</span><span class="op">[</span><span class="str">&quot;content&quot;</span><span class="op">]</span><span class="op">[</span><span class="str">&quot;application/json&quot;</span><span class="op">]</span><span class="op">[</span><span class="str">&quot;examples&quot;</span><span class="op">]</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t100" href="#t100">100</a></span><span class="t">                <span class="nam">response_examples</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t101" href="#t101">101</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t102" href="#t102">102</a></span><span class="t">    <span class="key">if</span> <span class="nam">conflict</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t103" href="#t103">103</a></span><span class="t">        <span class="nam">responses</span><span class="op">[</span><span class="num">409</span><span class="op">]</span> <span class="op">=</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t104" href="#t104">104</a></span><span class="t">            <span class="str">&quot;&#1050;&#1086;&#1085;&#1092;&#1083;&#1110;&#1082;&#1090; &#1110;&#1079; &#1087;&#1086;&#1090;&#1086;&#1095;&#1085;&#1080;&#1084; &#1089;&#1090;&#1072;&#1085;&#1086;&#1084; &#1088;&#1077;&#1089;&#1091;&#1088;&#1089;&#1091;&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t105" href="#t105">105</a></span><span class="t">            <span class="str">&quot;CONFLICT&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t106" href="#t106">106</a></span><span class="t">            <span class="nam">conflict</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t107" href="#t107">107</a></span><span class="t">            <span class="str">&quot;#error-handling&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">    <span class="key">return</span> <span class="nam">responses</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t"><span class="key">def</span> <span class="nam">_error_response</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
@@ -324,7 +324,7 @@
             <a class="nav" href="z_f0e24b7f04f99860_main_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.16.2">coverage.py v7.16.2</a>,
-            created at 2026-10-17 17:13 +0300
+            created at 2026-10-17 22:22 +0300
         </p>
     </div>
 </footer>
