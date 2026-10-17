@@ -13,7 +13,7 @@ from pathlib import Path
 
 from .errors import register_error_handlers
 from . import auth
-from .routers import card_links, card_notes, cards, stages
+from .routers import card_links, card_notes, cards, comments, mentors, stages
 
 SPEC_PATH = (
     Path(__file__).resolve().parents[2] / "docs" / "api" / "openapi-generated.yaml"
@@ -59,6 +59,9 @@ app.include_router(stages.router, prefix="/v1")
 app.include_router(cards.router, prefix="/v1")
 app.include_router(card_links.router, prefix="/v1")
 app.include_router(card_notes.router, prefix="/v1")
+app.include_router(comments.router, prefix="/v1")
+app.include_router(mentors.mentors_router, prefix="/v1")
+app.include_router(mentors.invitations_router, prefix="/v1")
 app.include_router(auth.router, prefix="/v1")
 
 

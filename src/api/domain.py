@@ -90,3 +90,23 @@ class CardNote:
     def __post_init__(self) -> None:
         if self.updated_at is None:
             self.updated_at = self.created_at
+
+
+@dataclass(kw_only=True)
+class BoardMentor:
+    board_id: UUID
+    mentor_id: UUID
+    invite_token: str
+    status: str = "pending"
+    invited_at: datetime = field(default_factory=utcnow)
+    accepted_at: Optional[datetime] = None
+    id: UUID = field(default_factory=uuid4)
+
+
+@dataclass(kw_only=True)
+class Comment:
+    card_id: UUID
+    author_id: UUID
+    content: str
+    id: UUID = field(default_factory=uuid4)
+    created_at: datetime = field(default_factory=utcnow)

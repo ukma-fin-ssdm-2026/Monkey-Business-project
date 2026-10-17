@@ -412,3 +412,105 @@ class CardNoteOut(BaseModel):
     updated_at: datetime = Field(..., description="Час останньої зміни нотатки")
 
     model_config = {"from_attributes": True}
+
+
+# --------------------------------------------------------------------------- #
+# Ментори та запрошення (FR-012, US-002)
+# --------------------------------------------------------------------------- #
+
+
+class MentorStatus(str, Enum):
+    pending = "pending"
+    accepted = "accepted"
+    revoked = "revoked"
+
+
+class InviteMentorRequest(BaseModel):
+    email: EmailStr = Field(
+        ...,
+        examples=["mentor@example.com"],
+        description="Email ментора, якого запрошують до перегляду дошки",
+    )
+
+
+class BoardMentorOut(BaseModel):
+    id: UUID = Field(..., description="Ідентифікатор запрошення/зв'язку")
+    board_id: UUID = Field(..., description="Ідентифікатор дошки")
+    mentor_id: UUID = Field(..., description="Ідентифікатор користувача-ментора")
+    email: EmailStr = Field(..., description="Email ментора")
+    status: MentorStatus = Field(
+        ..., description="Поточний статус запрошення (pending, accepted, revoked)"
+    )
+    invite_token: str = Field(
+        ...,
+        examples=["k7X9vL2mQ8n4P1z0R3t5Y6u7I8o9W0e1"],
+        description="Одноразовий токен запрошення",
+    )
+    invited_at: datetime = Field(..., description="Дата і час надсилання запрошення")
+    accepted_at: Optional[datetime] = Field(
+        default=None, description="Дата і час прийняття запрошення"
+    )
+
+    model_config = {"from_attributes": True}
+
+
+class AcceptInvitationRequest(BaseModel):
+    password: Optional[str] = Field(
+        default=None,
+        min_length=8,
+        max_length=128,
+        examples=["correct-horse-battery"],
+        description="Пароль для активації нового облікового запису ментора",
+    )
+
+
+class AcceptInvitationResponse(BaseModel):
+    message: str = Field(..., examples=["Запрошення успішно прийнято"])
+    board_id: UUID = Field(
+        ...,
+        examples=["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
+        description="Ідентифікатор дошки, до якої надано доступ",
+    )
+    status: MentorStatus = Field(
+        default=MentorStatus.accepted,
+        examples=["accepted"],
+        description="Новий статус запрошення",
+    )
+    access_token: Optional[str] = Field(
+        default=None,
+        examples=["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."],
+        description="JWT токен, якщо під час прийняття було активовано акаунт із паролем",
+    )
+    token_type: str = Field(default="bearer", examples=["bearer"])
+
+
+# --------------------------------------------------------------------------- #
+# Коментарі ментора до карток (FR-013, US-002)
+# --------------------------------------------------------------------------- #
+
+
+class CommentCreate(BaseModel):
+    content: str = Field(
+        ...,
+        min_length=1,
+        max_length=3000,
+        description="Текст коментаря (1–3000 символів)",
+        examples=["Зверніть увагу на вимоги до Go, варто підготуватись."],
+    )
+
+    @field_validator("content")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("вміст коментаря не може бути порожнім рядком")
+        return value.strip()
+
+
+class CommentOut(BaseModel):
+    id: UUID = Field(..., description="Ідентифікатор коментаря")
+    card_id: UUID = Field(..., description="Картка, до якої належить коментар")
+    author_id: UUID = Field(..., description="Ідентифікатор автора коментаря")
+    content: str = Field(..., description="Текст коментаря")
+    created_at: datetime = Field(..., description="Дата і час створення коментаря")
+
+    model_config = {"from_attributes": True}
