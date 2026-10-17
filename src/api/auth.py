@@ -103,12 +103,22 @@ def register(payload: RegisterRequest, repos: Repos) -> TokenResponse:
     return _issue_token(user)
 
 
+def _register_failed_attempt(user: User, repos: Repositories) -> None:
+    user.failed_login_attempts += 1
+    repos.users.save(user)
+
+
+def _reset_failed_attempts(user: User, repos: Repositories) -> None:
+    if user.failed_login_attempts:
+        user.failed_login_attempts = 0
+        repos.users.save(user)
+
+
 @router.post(
     "/login",
     response_model=TokenResponse,
     responses=auth_error_responses(),
 )
-
 
 def login(payload: LoginRequest, repos: Repos) -> TokenResponse:
     user = repos.users.get_by_email(str(payload.email).lower())
@@ -121,12 +131,9 @@ def login(payload: LoginRequest, repos: Repos) -> TokenResponse:
     )
     if not valid:
         if user is not None and user.is_active:
-            user.failed_login_attempts += 1
-            repos.users.save(user)
+            _register_failed_attempt(user, repos)
         raise UnauthorizedError("Невірний email або пароль")
-    if user.failed_login_attempts:
-        user.failed_login_attempts = 0
-        repos.users.save(user)
+    _reset_failed_attempts(user, repos)
     return _issue_token(user)
 
 
