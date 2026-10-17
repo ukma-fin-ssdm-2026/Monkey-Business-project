@@ -412,3 +412,73 @@ class CardNoteOut(BaseModel):
     updated_at: datetime = Field(..., description="Час останньої зміни нотатки")
 
     model_config = {"from_attributes": True}
+
+
+# --------------------------------------------------------------------------- #
+# Ментори та запрошення (FR-012, US-002)
+# --------------------------------------------------------------------------- #
+
+
+class MentorStatus(str, Enum):
+    pending = "pending"
+    accepted = "accepted"
+    revoked = "revoked"
+
+
+class InviteMentorRequest(BaseModel):
+    email: EmailStr = Field(
+        ...,
+        examples=["mentor@example.com"],
+        description="Email ментора, якого запрошують до перегляду дошки",
+    )
+
+
+class BoardMentorOut(BaseModel):
+    id: UUID = Field(..., description="Ідентифікатор запрошення/зв'язку")
+    board_id: UUID = Field(..., description="Ідентифікатор дошки")
+    mentor_id: UUID = Field(..., description="Ідентифікатор користувача-ментора")
+    email: EmailStr = Field(..., description="Email ментора")
+    status: MentorStatus = Field(
+        ..., description="Поточний статус запрошення (pending, accepted, revoked)"
+    )
+    invite_token: str = Field(
+        ...,
+        examples=["k7X9vL2mQ8n4P1z0R3t5Y6u7I8o9W0e1"],
+        description="Одноразовий токен запрошення",
+    )
+    invited_at: datetime = Field(..., description="Дата і час надсилання запрошення")
+    accepted_at: Optional[datetime] = Field(
+        default=None, description="Дата і час прийняття запрошення"
+    )
+
+    model_config = {"from_attributes": True}
+
+
+class AcceptInvitationRequest(BaseModel):
+    password: Optional[str] = Field(
+        default=None,
+        min_length=8,
+        max_length=128,
+        examples=["correct-horse-battery"],
+        description="Пароль для активації нового облікового запису ментора",
+    )
+
+
+class AcceptInvitationResponse(BaseModel):
+    message: str = Field(..., examples=["Запрошення успішно прийнято"])
+    board_id: UUID = Field(
+        ...,
+        examples=["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
+        description="Ідентифікатор дошки, до якої надано доступ",
+    )
+    status: MentorStatus = Field(
+        default=MentorStatus.accepted,
+        examples=["accepted"],
+        description="Новий статус запрошення",
+    )
+    access_token: Optional[str] = Field(
+        default=None,
+        examples=["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."],
+        description="JWT токен, якщо під час прийняття було активовано акаунт із паролем",
+    )
+    token_type: str = Field(default="bearer", examples=["bearer"])

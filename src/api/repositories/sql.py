@@ -36,7 +36,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
-from ..domain import Board, Card, CardLink, CardNote, Stage, User
+from ..domain import Board, BoardMentor, Card, CardLink, CardNote, Stage, User
 from .base import Repositories
 
 
@@ -299,6 +299,44 @@ class SqlCardNoteRepository(_SqlRepository[CardNote]):
         return [self._to_entity(row) for row in rows]
 
 
+class SqlBoardMentorRepository(_SqlRepository[BoardMentor]):
+    row_type = BoardMentorRow
+    entity_type = BoardMentor
+
+    def get_by_token(self, token: str) -> Optional[BoardMentor]:
+        row = self._session.scalar(
+            select(BoardMentorRow).where(BoardMentorRow.invite_token == token)
+        )
+        return None if row is None else self._to_entity(row)
+
+    def get_by_board_and_mentor(
+        self, board_id: UUID, mentor_id: UUID
+    ) -> Optional[BoardMentor]:
+        row = self._session.scalar(
+            select(BoardMentorRow).where(
+                BoardMentorRow.board_id == board_id,
+                BoardMentorRow.mentor_id == mentor_id,
+            )
+        )
+        return None if row is None else self._to_entity(row)
+
+    def list_for_board(self, board_id: UUID) -> list[BoardMentor]:
+        rows = self._session.scalars(
+            select(BoardMentorRow)
+            .where(BoardMentorRow.board_id == board_id)
+            .order_by(BoardMentorRow.invited_at)
+        )
+        return [self._to_entity(row) for row in rows]
+
+    def list_for_mentor(self, mentor_id: UUID) -> list[BoardMentor]:
+        rows = self._session.scalars(
+            select(BoardMentorRow)
+            .where(BoardMentorRow.mentor_id == mentor_id)
+            .order_by(BoardMentorRow.invited_at)
+        )
+        return [self._to_entity(row) for row in rows]
+
+
 def build_repositories(session: Session) -> Repositories:
     return Repositories(
         users=SqlUserRepository(session),
@@ -307,4 +345,5 @@ def build_repositories(session: Session) -> Repositories:
         cards=SqlCardRepository(session),
         links=SqlCardLinkRepository(session),
         notes=SqlCardNoteRepository(session),
+        mentors=SqlBoardMentorRepository(session),
     )
