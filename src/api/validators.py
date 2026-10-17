@@ -7,6 +7,7 @@ from __future__ import annotations
 from urllib.parse import urlparse
 
 ALLOWED_SCHEMES = frozenset({"http", "https"})
+BLOCKED_HOSTNAMES = frozenset({"localhost", "127.0.0.1", "0.0.0.0"})
 
 
 def validate_vacancy_url(url: str | None) -> bool:
@@ -16,6 +17,11 @@ def validate_vacancy_url(url: str | None) -> bool:
     cleaned = url.strip()
     try:
         parsed = urlparse(cleaned)
-        return parsed.scheme.lower() in ALLOWED_SCHEMES and bool(parsed.netloc)
+        if parsed.scheme.lower() not in ALLOWED_SCHEMES:
+            return False
+        hostname = (parsed.hostname or "").lower()
+        if not hostname or hostname in BLOCKED_HOSTNAMES:
+            return False
+        return True
     except Exception:
         return False
