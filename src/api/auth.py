@@ -26,6 +26,10 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 bearer = HTTPBearer(auto_error=False)
 TOKEN_TTL = timedelta(hours=24)
 
+# Simple brute-force protection: block login attempts once a user has
+# accumulated MAX_FAILED_ATTEMPTS consecutive wrong passwords.
+MAX_FAILED_ATTEMPTS = 5
+
 
 def _secret() -> str:
     return os.getenv("JWT_SECRET", "development-only-change-me-32-bytes!")
@@ -99,19 +103,37 @@ def register(payload: RegisterRequest, repos: Repos) -> TokenResponse:
     return _issue_token(user)
 
 
+def _register_failed_attempt(user: User, repos: Repositories) -> None:
+    user.failed_login_attempts += 1
+    repos.users.save(user)
+
+
+def _reset_failed_attempts(user: User, repos: Repositories) -> None:
+    if user.failed_login_attempts:
+        user.failed_login_attempts = 0
+        repos.users.save(user)
+
+
 @router.post(
     "/login",
     response_model=TokenResponse,
     responses=auth_error_responses(),
 )
+
 def login(payload: LoginRequest, repos: Repos) -> TokenResponse:
     user = repos.users.get_by_email(str(payload.email).lower())
-    if (
-        user is None
-        or not user.is_active
-        or not _verify_password(payload.password, user.password_hash)
-    ):
+    if user is not None and user.failed_login_attempts >= MAX_FAILED_ATTEMPTS:
+        raise ForbiddenError("Обліковий запис тимчасово заблоковано")
+    valid = (
+        user is not None
+        and user.is_active
+        and _verify_password(payload.password, user.password_hash)
+    )
+    if not valid:
+        if user is not None and user.is_active:
+            _register_failed_attempt(user, repos)
         raise UnauthorizedError("Невірний email або пароль")
+    _reset_failed_attempts(user, repos)
     return _issue_token(user)
 
 

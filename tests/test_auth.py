@@ -491,3 +491,29 @@ def test_change_password_rejects_same_password(repos, make_user):
     payload = ChangePasswordRequest(current_password=PASSWORD, new_password=PASSWORD)
     with pytest.raises(ConflictError, match="Новий пароль не може дорівнювати поточному"):
         auth.change_password(payload, user, repos)
+
+
+def test_login_increments_failed_attempts_on_wrong_password(repos, make_user):
+    user = make_user(email="user@example.com")
+
+    with pytest.raises(UnauthorizedError):
+        auth.login(LoginRequest(email=user.email, password="wrong"), repos)
+
+    assert repos.users.get(user.id).failed_login_attempts == 1      
+
+def test_login_rejects_locked_account_even_with_correct_password(repos, make_user):
+    user = make_user(email="user@example.com")
+    user.failed_login_attempts = auth.MAX_FAILED_ATTEMPTS
+    repos.users.save(user)
+
+    with pytest.raises(ForbiddenError, match="заблоковано"):
+        auth.login(LoginRequest(email=user.email, password=PASSWORD), repos)
+
+def test_login_resets_failed_attempts_on_success(repos, make_user):
+    user = make_user(email="user@example.com")
+    user.failed_login_attempts = 3
+    repos.users.save(user)
+
+    auth.login(LoginRequest(email=user.email, password=PASSWORD), repos)
+
+    assert repos.users.get(user.id).failed_login_attempts == 0
