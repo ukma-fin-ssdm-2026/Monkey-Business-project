@@ -10,6 +10,14 @@ ALLOWED_SCHEMES = frozenset({"http", "https"})
 BLOCKED_HOSTNAMES = frozenset({"localhost", "127.0.0.1", "0.0.0.0"})
 
 
+def _is_safe_host(hostname: str | None) -> bool:
+    """Перевіряє, чи не є хост внутрішньою або забороненою локальною адресою."""
+    if not hostname:
+        return False
+    normalized = hostname.strip().lower()
+    return normalized not in BLOCKED_HOSTNAMES
+
+
 def validate_vacancy_url(url: str | None) -> bool:
     """Перевіряє коректність посилання на вакансію або тестове завдання."""
     if not url or not isinstance(url, str):
@@ -19,9 +27,6 @@ def validate_vacancy_url(url: str | None) -> bool:
         parsed = urlparse(cleaned)
         if parsed.scheme.lower() not in ALLOWED_SCHEMES:
             return False
-        hostname = (parsed.hostname or "").lower()
-        if not hostname or hostname in BLOCKED_HOSTNAMES:
-            return False
-        return True
+        return _is_safe_host(parsed.hostname)
     except Exception:
         return False
