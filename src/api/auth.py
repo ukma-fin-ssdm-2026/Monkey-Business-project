@@ -25,6 +25,7 @@ from .schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut, User
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 bearer = HTTPBearer(auto_error=False)
 TOKEN_TTL = timedelta(hours=24)
+MAX_FAILED_ATTEMPTS = 5
 
 
 def _secret() -> str:
@@ -104,8 +105,12 @@ def register(payload: RegisterRequest, repos: Repos) -> TokenResponse:
     response_model=TokenResponse,
     responses=auth_error_responses(),
 )
+
+
 def login(payload: LoginRequest, repos: Repos) -> TokenResponse:
     user = repos.users.get_by_email(str(payload.email).lower())
+    if user is not None and user.failed_login_attempts >= MAX_FAILED_ATTEMPTS:
+        raise ForbiddenError("Обліковий запис тимчасово заблоковано")
     valid = (
         user is not None
         and user.is_active
