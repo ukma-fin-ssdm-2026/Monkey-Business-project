@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from typing import Optional, Protocol, TypeVar
 from uuid import UUID
 
-from ..domain import Board, BoardMentor, Card, CardLink, CardNote, Stage, User
+from ..domain import Board, BoardMentor, Card, CardLink, CardNote, Comment, Stage, User
 
 E = TypeVar("E")
 
@@ -76,6 +76,10 @@ class BoardMentorRepository(Repository[BoardMentor], Protocol):
     def list_for_mentor(self, mentor_id: UUID) -> list[BoardMentor]: ...
 
 
+class CommentRepository(Repository[Comment], Protocol):
+    def list_for_card(self, card_id: UUID) -> list[Comment]: ...
+
+
 @dataclass(frozen=True)
 class Repositories:
     """Набір репозиторіїв, що працюють в одній транзакції запиту."""
@@ -87,3 +91,4 @@ class Repositories:
     links: CardLinkRepository
     notes: CardNoteRepository
     mentors: Optional[BoardMentorRepository] = None
+    comments: Optional[CommentRepository] = None

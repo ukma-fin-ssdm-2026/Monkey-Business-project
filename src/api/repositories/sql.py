@@ -36,7 +36,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
-from ..domain import Board, BoardMentor, Card, CardLink, CardNote, Stage, User
+from ..domain import Board, BoardMentor, Card, CardLink, CardNote, Comment, Stage, User
 from .base import Repositories
 
 
@@ -162,6 +162,18 @@ class BoardMentorRow(Base):
     )
     invited_at: Mapped[datetime]
     accepted_at: Mapped[Optional[datetime]]
+
+
+class CommentRow(Base):
+    __tablename__ = "comments"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True)
+    card_id: Mapped[UUID] = mapped_column(
+        ForeignKey("cards.id", ondelete="CASCADE"), index=True
+    )
+    author_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    content: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime]
 
 
 E = TypeVar("E")
@@ -337,6 +349,19 @@ class SqlBoardMentorRepository(_SqlRepository[BoardMentor]):
         return [self._to_entity(row) for row in rows]
 
 
+class SqlCommentRepository(_SqlRepository[Comment]):
+    row_type = CommentRow
+    entity_type = Comment
+
+    def list_for_card(self, card_id: UUID) -> list[Comment]:
+        rows = self._session.scalars(
+            select(CommentRow)
+            .where(CommentRow.card_id == card_id)
+            .order_by(CommentRow.created_at)
+        )
+        return [self._to_entity(row) for row in rows]
+
+
 def build_repositories(session: Session) -> Repositories:
     return Repositories(
         users=SqlUserRepository(session),
@@ -346,4 +371,5 @@ def build_repositories(session: Session) -> Repositories:
         links=SqlCardLinkRepository(session),
         notes=SqlCardNoteRepository(session),
         mentors=SqlBoardMentorRepository(session),
+        comments=SqlCommentRepository(session),
     )

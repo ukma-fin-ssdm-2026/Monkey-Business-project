@@ -276,3 +276,32 @@ def accept_invitation(
         status=MentorStatus.accepted,
         access_token=access_token,
     )
+
+
+@mentors_router.delete(
+    "/{mentor_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
+    summary="Відкликати доступ ментора до дошки",
+    description=(
+        "Кандидат або адмін відкликає доступ ментора до дошки (FR-015, US-002). "
+        "Після відкликання ментор отримає 403 при будь-якому зверненні до дошки. "
+        "Якщо ментора не знайдено серед запрошених — повертає 404."
+    ),
+    responses=error_responses(
+        not_found="Ментора серед запрошених для цієї дошки не знайдено",
+    ),
+)
+def revoke_mentor(
+    board_id: UUID = Path(..., description="Ідентифікатор дошки"),
+    mentor_id: UUID = Path(..., description="Ідентифікатор ментора"),
+    user: CandidateOrAdmin = None,
+    repos: Repos = None,
+) -> None:
+    _require_board(repos, board_id, user, write=True)
+    invitation = repos.mentors.get_by_board_and_mentor(board_id, mentor_id)
+    if invitation is None:
+        raise NotFoundError("Ментора серед запрошених для цієї дошки не знайдено")
+    invitation.status = MentorStatus.revoked.value
+    invitation.accepted_at = None
+    repos.mentors.save(invitation)

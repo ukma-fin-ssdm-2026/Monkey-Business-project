@@ -482,3 +482,35 @@ class AcceptInvitationResponse(BaseModel):
         description="JWT токен, якщо під час прийняття було активовано акаунт із паролем",
     )
     token_type: str = Field(default="bearer", examples=["bearer"])
+
+
+# --------------------------------------------------------------------------- #
+# Коментарі ментора до карток (FR-013, US-002)
+# --------------------------------------------------------------------------- #
+
+
+class CommentCreate(BaseModel):
+    content: str = Field(
+        ...,
+        min_length=1,
+        max_length=3000,
+        description="Текст коментаря (1–3000 символів)",
+        examples=["Зверніть увагу на вимоги до Go, варто підготуватись."],
+    )
+
+    @field_validator("content")
+    @classmethod
+    def not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("вміст коментаря не може бути порожнім рядком")
+        return value.strip()
+
+
+class CommentOut(BaseModel):
+    id: UUID = Field(..., description="Ідентифікатор коментаря")
+    card_id: UUID = Field(..., description="Картка, до якої належить коментар")
+    author_id: UUID = Field(..., description="Ідентифікатор автора коментаря")
+    content: str = Field(..., description="Текст коментаря")
+    created_at: datetime = Field(..., description="Дата і час створення коментаря")
+
+    model_config = {"from_attributes": True}

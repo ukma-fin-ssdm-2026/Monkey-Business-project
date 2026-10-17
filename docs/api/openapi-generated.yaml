@@ -1825,6 +1825,319 @@ paths:
                       documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /v1/boards/{board_id}/cards/{card_id}/comments:
+    get:
+      tags:
+      - Comments
+      summary: Список коментарів до картки
+      description: Повертає всі коментарі до картки у хронологічному порядку (FR-013,
+        US-002). Доступно кандидату-власнику, ментору з доступом та адміну.
+      operationId: list_comments
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentOut'
+                title: Response List Comments
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Картку або дошку не знайдено
+          content:
+            application/json:
+              examples:
+                not_found:
+                  summary: Картку або дошку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Картку або дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідні параметри запиту
+          content:
+            application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Comments
+      summary: Додати коментар до картки
+      description: Додає новий коментар до картки вакансії (FR-013, US-002). Доступно
+        будь-якому користувачу з доступом до дошки — кандидату, ментору або адміну.
+      operationId: create_comment
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentOut'
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Картку або дошку не знайдено
+          content:
+            application/json:
+              examples:
+                not_found:
+                  summary: Картку або дошку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Картку або дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідний текст коментаря
+          content:
+            application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/boards/{board_id}/cards/{card_id}/comments/{comment_id}:
+    delete:
+      tags:
+      - Comments
+      summary: Видалити коментар
+      description: Видаляє коментар до картки (FR-013, US-002). Видалити може лише
+        автор коментаря або адмін.
+      operationId: delete_comment
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор картки
+          title: Card Id
+        description: Ідентифікатор картки
+      - name: comment_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор коментаря
+          title: Comment Id
+        description: Ідентифікатор коментаря
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Коментар або картку не знайдено
+          content:
+            application/json:
+              examples:
+                not_found:
+                  summary: Коментар або картку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Коментар або картку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Недостатньо прав для видалення коментаря
+          content:
+            application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /v1/boards/{board_id}/mentors:
     post:
       tags:
@@ -2010,6 +2323,103 @@ paths:
                     error:
                       code: NOT_FOUND
                       message: Дошку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідні параметри запиту
+          content:
+            application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/boards/{board_id}/mentors/{mentor_id}:
+    delete:
+      tags:
+      - Mentors
+      summary: Відкликати доступ ментора до дошки
+      description: Кандидат або адмін відкликає доступ ментора до дошки (FR-015, US-002).
+        Після відкликання ментор отримає 403 при будь-якому зверненні до дошки. Якщо
+        ментора не знайдено серед запрошених — повертає 404.
+      operationId: revoke_mentor
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор дошки
+          title: Board Id
+        description: Ідентифікатор дошки
+      - name: mentor_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Ідентифікатор ментора
+          title: Mentor Id
+        description: Ідентифікатор ментора
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ментора серед запрошених для цієї дошки не знайдено
+          content:
+            application/json:
+              examples:
+                not_found:
+                  summary: Ментора серед запрошених для цієї дошки не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Ментора серед запрошених для цієї дошки не знайдено
                       details: []
                       request_id: req_example
                       documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
@@ -2958,6 +3368,54 @@ components:
       - current_password
       - new_password
       title: ChangePasswordRequest
+    CommentCreate:
+      properties:
+        content:
+          type: string
+          maxLength: 3000
+          minLength: 1
+          title: Content
+          description: Текст коментаря (1–3000 символів)
+          examples:
+          - Зверніть увагу на вимоги до Go, варто підготуватись.
+      type: object
+      required:
+      - content
+      title: CommentCreate
+    CommentOut:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: Ідентифікатор коментаря
+        card_id:
+          type: string
+          format: uuid
+          title: Card Id
+          description: Картка, до якої належить коментар
+        author_id:
+          type: string
+          format: uuid
+          title: Author Id
+          description: Ідентифікатор автора коментаря
+        content:
+          type: string
+          title: Content
+          description: Текст коментаря
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Дата і час створення коментаря
+      type: object
+      required:
+      - id
+      - card_id
+      - author_id
+      - content
+      - created_at
+      title: CommentOut
     ErrorBody:
       properties:
         code:

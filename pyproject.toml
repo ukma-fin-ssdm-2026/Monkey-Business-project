@@ -9,11 +9,17 @@ exclude_dirs = ["tests", ".venv"]
 testpaths = ["tests"]
 # The API is imported as the src.api package, the same way CI runs src.api.main.
 pythonpath = ["."]
-addopts = "--cov --cov-report=term-missing"
+addopts = "--cov --cov-report=term-missing --cov-report=html"
 
 
 [tool.coverage.run]
 source = ["src/api"]
+omit = [
+    "*/__init__.py",
+    "src/api/__init__.py",
+    "schemas.py",
+    "base.py"
+]
 
 [tool.coverage.report]
 show_missing = true

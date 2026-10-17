@@ -101,3 +101,12 @@ class BoardMentor:
     invited_at: datetime = field(default_factory=utcnow)
     accepted_at: Optional[datetime] = None
     id: UUID = field(default_factory=uuid4)
+
+
+@dataclass(kw_only=True)
+class Comment:
+    card_id: UUID
+    author_id: UUID
+    content: str
+    id: UUID = field(default_factory=uuid4)
+    created_at: datetime = field(default_factory=utcnow)
