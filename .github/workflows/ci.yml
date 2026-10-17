@@ -25,7 +25,7 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Run tests with coverage
-        run: pytest --cov --cov-report=term-missing --cov-report=html --cov-report=xml
+        run: pytest --cov --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=70
 
       - name: Add coverage summary to job summary
         if: always()
