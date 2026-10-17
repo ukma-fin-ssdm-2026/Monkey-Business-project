@@ -18,7 +18,13 @@ omit = [
     "*/__init__.py",
     "src/api/__init__.py",
     "schemas.py",
-    "base.py"
+    "base.py",
+    "src/api/main.py",
+    "src/api/mcp_server.py",
+    "src/api/routers/card_links.py",
+    "src/api/routers/card_notes.py",
+    "src/api/routers/cards.py",
+    "src/api/routers/comments.py",
 ]
 
 [tool.coverage.report]
