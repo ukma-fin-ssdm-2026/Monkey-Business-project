@@ -500,3 +500,11 @@ def test_login_increments_failed_attempts_on_wrong_password(repos, make_user):
         auth.login(LoginRequest(email=user.email, password="wrong"), repos)
 
     assert repos.users.get(user.id).failed_login_attempts == 1      
+
+def test_login_rejects_locked_account_even_with_correct_password(repos, make_user):
+    user = make_user(email="user@example.com")
+    user.failed_login_attempts = auth.MAX_FAILED_ATTEMPTS
+    repos.users.save(user)
+
+    with pytest.raises(ForbiddenError, match="заблоковано"):
+        auth.login(LoginRequest(email=user.email, password=PASSWORD), repos)
