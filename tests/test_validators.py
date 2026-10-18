@@ -30,23 +30,26 @@ def test_validate_vacancy_url_rejects_localhost_and_internal_ips():
     assert validate_vacancy_url("https://dou.ua/vacancies/senior-python") is True
 
 
-def test_validate_vacancy_url_rejects_private_and_loopback_ips():
-    assert validate_vacancy_url("http://[::1]/admin") is False
-    assert validate_vacancy_url("http://10.0.0.5/") is False
-    assert validate_vacancy_url("http://172.16.0.1/") is False
-    assert validate_vacancy_url("http://192.168.1.10/") is False
-    assert validate_vacancy_url("http://169.254.169.254/latest/meta-data/") is False
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://[::1]/admin",
+        "http://10.0.0.5/",
+        "http://172.16.0.1/",
+        "http://192.168.1.10/",
+        "http://169.254.169.254/latest/meta-data/",
+        "http://admin.localhost/",
+        "http://api.LOCALHOST:8000/jobs",
+        "http://localhost./admin",
+        "http://admin.localhost./",
+    ],
+)
+def test_validate_vacancy_url_rejects_internal_hosts(url):
+    assert validate_vacancy_url(url) is False
+
+
+def test_validate_vacancy_url_allows_public_ip():
     assert validate_vacancy_url("http://8.8.8.8/jobs") is True
-
-
-def test_validate_vacancy_url_rejects_localhost_subdomains():
-    assert validate_vacancy_url("http://admin.localhost/") is False
-    assert validate_vacancy_url("http://api.LOCALHOST:8000/jobs") is False
-
-
-def test_validate_vacancy_url_rejects_trailing_dot_hosts():
-    assert validate_vacancy_url("http://localhost./admin") is False
-    assert validate_vacancy_url("http://admin.localhost./") is False
 
 
 # Три тести нижче вбивають мутантів, що вижили після mutmut на validators.py
