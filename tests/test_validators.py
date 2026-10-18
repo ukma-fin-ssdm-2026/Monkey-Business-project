@@ -44,6 +44,11 @@ def test_validate_vacancy_url_rejects_localhost_subdomains():
     assert validate_vacancy_url("http://api.LOCALHOST:8000/jobs") is False
 
 
+def test_validate_vacancy_url_rejects_trailing_dot_hosts():
+    assert validate_vacancy_url("http://localhost./admin") is False
+    assert validate_vacancy_url("http://admin.localhost./") is False
+
+
 # Три тести нижче вбивають мутантів, що вижили після mutmut на validators.py
 # (див. docs/testing/testing-strategy.md, розділ «Бонуси»).
 def test_validate_vacancy_url_rejects_truthy_non_string():
