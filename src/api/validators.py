@@ -24,7 +24,11 @@ def _is_safe_host(hostname: str | None) -> bool:
     if not hostname:
         return False
     normalized = hostname.strip().lower()
-    return not _is_private_ip(normalized) and normalized not in BLOCKED_HOSTNAMES
+    return (
+        not _is_private_ip(normalized)
+        and normalized not in BLOCKED_HOSTNAMES
+        and not normalized.endswith(".localhost")
+    )
 
 
 def validate_vacancy_url(url: str | None) -> bool:
