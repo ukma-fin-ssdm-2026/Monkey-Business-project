@@ -8,7 +8,11 @@ import ipaddress
 from urllib.parse import urlparse
 
 ALLOWED_SCHEMES = frozenset({"http", "https"})
-BLOCKED_HOSTNAMES = frozenset({"localhost"})
+
+
+def _is_localhost_name(host: str) -> bool:
+    """RFC 6761: localhost і всі його піддомени вказують на loopback."""
+    return host == "localhost" or host.endswith(".localhost")
 
 
 def _is_private_ip(host: str) -> bool:
@@ -24,11 +28,7 @@ def _is_safe_host(hostname: str | None) -> bool:
     if not hostname:
         return False
     normalized = hostname.strip().lower()
-    return (
-        not _is_private_ip(normalized)
-        and normalized not in BLOCKED_HOSTNAMES
-        and not normalized.endswith(".localhost")
-    )
+    return not (_is_private_ip(normalized) or _is_localhost_name(normalized))
 
 
 def validate_vacancy_url(url: str | None) -> bool:
