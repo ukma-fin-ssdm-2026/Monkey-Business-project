@@ -7,7 +7,8 @@ from __future__ import annotations
 from urllib.parse import urlparse
 
 ALLOWED_SCHEMES = frozenset({"http", "https"})
-BLOCKED_HOSTNAMES = frozenset({"localhost", "127.0.0.1", "0.0.0.0"})
+# These are rejected hosts, not network bind addresses.
+BLOCKED_HOSTNAMES = frozenset({"localhost", "127.0.0.1", "0.0.0.0"})  # nosec B104
 
 
 def _is_safe_host(hostname: str | None) -> bool:

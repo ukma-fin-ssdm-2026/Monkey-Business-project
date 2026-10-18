@@ -13,6 +13,8 @@ def test_validate_vacancy_url_rejects_empty_and_non_string():
     assert validate_vacancy_url(None) is False
     assert validate_vacancy_url("") is False
     assert validate_vacancy_url("   ") is False
+    assert validate_vacancy_url(123) is False
+    assert validate_vacancy_url([]) is False
 
 
 def test_validate_vacancy_url_requires_http_or_https_scheme():

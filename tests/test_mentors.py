@@ -368,29 +368,50 @@ def test_list_board_mentors_returns_emails_and_statuses(
     ]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=ValidationError,
-    reason=(
-        "Знайдений дефект: mentors._to_mentor_out підставляє email='' для "
-        "відсутнього користувача, але BoardMentorOut.email має тип EmailStr, "
-        "тому замість порожнього email виникає ValidationError (500). "
-        "Коли дефект буде виправлено, цей тест стане XPASS і впаде (strict) — "
-        "тоді треба прибрати xfail."
-    ),
-)
-def test_list_board_mentors_uses_empty_email_for_deleted_mentor(
-    repos, board, candidate, make_invitation
+def test_list_board_mentors_skips_deleted_mentor(
+    repos, board, candidate, mentor, make_invitation
 ):
     # Arrange: запрошення посилається на користувача, якого немає в базі
     ghost = User(email="ghost@example.com", password_hash="", role="mentor")
     make_invitation(ghost, MentorStatus.pending)
+    make_invitation(mentor, MentorStatus.accepted, token="valid")
 
     # Act
-    [item] = mentors.list_board_mentors(board_id=board.id, user=candidate, repos=repos)
+    result = mentors.list_board_mentors(board_id=board.id, user=candidate, repos=repos)
 
     # Assert
-    assert item.email == ""
+    assert [(item.mentor_id, item.email) for item in result] == [
+        (mentor.id, mentor.email)
+    ]
+
+
+def test_get_invitation_rejects_deleted_mentor(repos, make_invitation):
+    ghost = User(email="ghost@example.com", password_hash="", role="mentor")
+    invitation = make_invitation(ghost, MentorStatus.pending)
+
+    with pytest.raises(NotFoundError):
+        mentors.get_invitation(token=invitation.invite_token, repos=repos)
+
+
+@pytest.mark.parametrize("use_bearer", [False, True], ids=["password", "bearer"])
+def test_accept_invitation_rejects_deleted_mentor(
+    repos, mentor, make_invitation, use_bearer
+):
+    ghost = User(email="ghost@example.com", password_hash="", role="mentor")
+    invitation = make_invitation(ghost, MentorStatus.pending)
+    payload = None if use_bearer else AcceptInvitationRequest(password=MENTOR_PASSWORD)
+    credentials = _bearer(mentor) if use_bearer else None
+
+    with pytest.raises(ForbiddenError):
+        mentors.accept_invitation(
+            token=invitation.invite_token,
+            payload=payload,
+            credentials=credentials,
+            repos=repos,
+        )
+
+    assert invitation.status == MentorStatus.pending.value
+    assert invitation.mentor_id == ghost.id
 
 
 def test_get_invitation_returns_pending_invitation(repos, mentor, make_invitation):

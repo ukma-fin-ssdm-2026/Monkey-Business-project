@@ -11,6 +11,8 @@ API проти PostgreSQL у Docker Compose.
 часовою зоною, Enum як VARCHAR + CHECK), тож модуль не залежить від
 специфічних типів PostgreSQL. Запити будуються через ORM і завжди
 параметризовані (ризик R3 у threat-model.md).
+
+Доповнення Лаб06: Codex — регресійні тести та виправлення виявленого дефекту.
 """
 
 from __future__ import annotations
@@ -72,6 +74,7 @@ class UserRow(Base):
     )
     is_active: Mapped[bool]
     created_at: Mapped[datetime]
+    failed_login_attempts: Mapped[int] = mapped_column(default=0, server_default="0")
 
 
 class BoardRow(Base):

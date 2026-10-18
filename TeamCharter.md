@@ -13,6 +13,10 @@
 | Oleksii Volik | CI Maintainer | Quality Lead | Architecture Lead | Documentation Lead | Code Reviewer |
 | Mykola Vashchenko | Documentation Lead | Traceability Lead | Data & Threat Modeler / Documentation Lead | Backend Lead / API Design Lead | Security Analyst |
 | Nikita Dyshlyuk | Repo Maintainer | Documentation Lead | Requirements-Architecture Mapper | Integration Lead | Quality Lead |
+### Відповідальність за тестування (Лаб06)
+- **Керівник тестування (Nikita Dyshlyuk)**: набір `tests/`, модульні тести щонайменше двох модулів, звіт `htmlcov/`, аналіз рядків і гілок, фікстури, моки та граничні випадки (команда з чотирьох учасників).
+- Усі результати Лаб06 подаються до початку Лаб07. Кожен учасник додає власні TDD-відео та відео внеску в `Labs/Lab06/video_[ім’я].txt`, по одному посиланню на рядок.
+
 ### Відповідальність за артефакти вимог:
 - **Requirements Lead (Nazar Sydorchuk)**: написання та вдосконалення користувацьких історій (INVEST), ведення розділу функціональних вимог (FR) у `requirements.md`.
 - **Quality Lead (Oleksii Volik)**: визначення, вимірюваність та документування нефункціональних вимог (NFR) за категоріями ISO 25010 у `requirements.md`.
@@ -85,7 +89,7 @@
 ### Критерії готовності коду (Definition of Done)
 Зміна готова до злиття, якщо:
 - **Форматування:** `pre-commit run --all-files` проходить без зауважень (black, flake8, bandit, detect-secrets).
-- **Тести:** нова або змінена логіка покрита автоматизованими тестами (pytest), що проходять у CI. До появи тестового набору (Лабораторна робота 6) зміну перевіряють вручну через Swagger UI, а кроки перевірки описують у PR.
+- **Тести:** нова або змінена логіка покрита автоматизованими тестами (pytest), що проходять у CI. У Лаб06 набір уже наявний: зміни перевіряють через `python -m pytest`, звіт покриття додають до репозиторію; ручна перевірка Swagger UI доповнює автоматизовані тести.
 - **Документація:** OpenAPI-анотації оновлено, перегенеровану `docs/api/openapi-generated.yaml` закомічено, змінені рішення відображено в документах (`docs/api/api-design.md`, ADR, `README.md`), використання ШІ позначено.
 - **Безпека:** немає нових знахідок bandit рівня Medium/High і секретів; вхідні дані валідуються Pydantic-схемами; мутуючі ендпоінти захищені перевіркою ролі та доступу до дошки.
 - **Процес:** PR посилається на issue, має щонайменше одне схвалення, CI зелений.
