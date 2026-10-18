@@ -8,7 +8,15 @@ import ipaddress
 from urllib.parse import urlparse
 
 ALLOWED_SCHEMES = frozenset({"http", "https"})
-BLOCKED_HOSTNAMES = frozenset({"localhost", "127.0.0.1", "0.0.0.0"})
+BLOCKED_HOSTNAMES = frozenset({"localhost"})
+
+
+def _is_private_ip(host: str) -> bool:
+    """is_private охоплює також loopback (127.0.0.1, ::1), 0.0.0.0 і link-local."""
+    try:
+        return ipaddress.ip_address(host).is_private
+    except ValueError:
+        return False
 
 
 def _is_safe_host(hostname: str | None) -> bool:
@@ -16,12 +24,7 @@ def _is_safe_host(hostname: str | None) -> bool:
     if not hostname:
         return False
     normalized = hostname.strip().lower()
-    try:
-        if ipaddress.ip_address(normalized).is_private:
-            return False
-    except ValueError:
-        pass
-    return normalized not in BLOCKED_HOSTNAMES
+    return not _is_private_ip(normalized) and normalized not in BLOCKED_HOSTNAMES
 
 
 def validate_vacancy_url(url: str | None) -> bool:
