@@ -28,3 +28,19 @@ def test_validate_vacancy_url_rejects_localhost_and_internal_ips():
     assert validate_vacancy_url("http://127.0.0.1:8000/internal") is False
     assert validate_vacancy_url("http://0.0.0.0/secret") is False
     assert validate_vacancy_url("https://dou.ua/vacancies/senior-python") is True
+
+
+# Три тести нижче вбивають мутантів, що вижили після mutmut на validators.py
+# (див. docs/testing/testing-strategy.md, розділ «Бонуси»).
+def test_validate_vacancy_url_rejects_truthy_non_string():
+    assert validate_vacancy_url(12345) is False
+    assert validate_vacancy_url(["https://example.com"]) is False
+
+
+def test_validate_vacancy_url_rejects_url_without_host():
+    assert validate_vacancy_url("https://") is False
+    assert validate_vacancy_url("http:///path/only") is False
+
+
+def test_validate_vacancy_url_rejects_unparseable_url():
+    assert validate_vacancy_url("http://[::1") is False
