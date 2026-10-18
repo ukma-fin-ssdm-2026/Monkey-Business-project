@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import ipaddress
 from urllib.parse import urlparse
 
 ALLOWED_SCHEMES = frozenset({"http", "https"})
@@ -15,6 +16,11 @@ def _is_safe_host(hostname: str | None) -> bool:
     if not hostname:
         return False
     normalized = hostname.strip().lower()
+    try:
+        if ipaddress.ip_address(normalized).is_private:
+            return False
+    except ValueError:
+        pass
     return normalized not in BLOCKED_HOSTNAMES
 
 
