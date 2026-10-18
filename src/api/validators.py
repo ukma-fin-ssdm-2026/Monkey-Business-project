@@ -4,19 +4,31 @@
 
 from __future__ import annotations
 
+import ipaddress
 from urllib.parse import urlparse
 
 ALLOWED_SCHEMES = frozenset({"http", "https"})
-# These are rejected hosts, not network bind addresses.
-BLOCKED_HOSTNAMES = frozenset({"localhost", "127.0.0.1", "0.0.0.0"})  # nosec B104
+
+
+def _is_localhost_name(host: str) -> bool:
+    """RFC 6761: localhost і всі його піддомени вказують на loopback."""
+    return host == "localhost" or host.endswith(".localhost")
+
+
+def _is_private_ip(host: str) -> bool:
+    """is_private охоплює також loopback (127.0.0.1, ::1), 0.0.0.0 і link-local."""
+    try:
+        return ipaddress.ip_address(host).is_private
+    except ValueError:
+        return False
 
 
 def _is_safe_host(hostname: str | None) -> bool:
     """Перевіряє, чи не є хост внутрішньою або забороненою локальною адресою."""
     if not hostname:
         return False
-    normalized = hostname.strip().lower()
-    return normalized not in BLOCKED_HOSTNAMES
+    normalized = hostname.strip().lower().rstrip(".")
+    return not (_is_private_ip(normalized) or _is_localhost_name(normalized))
 
 
 def validate_vacancy_url(url: str | None) -> bool:

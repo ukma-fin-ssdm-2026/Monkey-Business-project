@@ -48,3 +48,41 @@ def test_validate_vacancy_url_returns_false_for_unparsable_url():
 
 def test_validate_vacancy_url_ignores_surrounding_whitespace():
     assert validate_vacancy_url("  https://dou.ua/vacancies/1  ") is True
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://[::1]/admin",
+        "http://10.0.0.5/",
+        "http://172.16.0.1/",
+        "http://192.168.1.10/",
+        "http://169.254.169.254/latest/meta-data/",
+        "http://admin.localhost/",
+        "http://api.LOCALHOST:8000/jobs",
+        "http://localhost./admin",
+        "http://admin.localhost./",
+    ],
+)
+def test_validate_vacancy_url_rejects_internal_hosts(url):
+    assert validate_vacancy_url(url) is False
+
+
+def test_validate_vacancy_url_allows_public_ip():
+    assert validate_vacancy_url("http://8.8.8.8/jobs") is True
+
+
+# Три тести нижче вбивають мутантів, що вижили після mutmut на validators.py
+# (див. docs/testing/testing-strategy.md, розділ «Бонуси»).
+def test_validate_vacancy_url_rejects_truthy_non_string():
+    assert validate_vacancy_url(12345) is False
+    assert validate_vacancy_url(["https://example.com"]) is False
+
+
+def test_validate_vacancy_url_rejects_url_without_host():
+    assert validate_vacancy_url("https://") is False
+    assert validate_vacancy_url("http:///path/only") is False
+
+
+def test_validate_vacancy_url_rejects_unparseable_url():
+    assert validate_vacancy_url("http://[::1") is False

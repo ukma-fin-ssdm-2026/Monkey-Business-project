@@ -27,3 +27,5 @@ build/
 .pytest_cache/
 .coverage
 .coverage.*
+.mutmut-cache
+mutants/
