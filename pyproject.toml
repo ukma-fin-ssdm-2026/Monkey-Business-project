@@ -30,3 +30,7 @@ omit = [
 [tool.coverage.report]
 show_missing = true
 
+[tool.mutmut]
+paths_to_mutate = "src/api/validators.py"
+tests_dir = "tests/"
+runner = "python -m pytest -x -q --no-cov -p no:cacheprovider tests/test_validators.py"
