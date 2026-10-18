@@ -1,9 +1,11 @@
 """
 Інструмент: Claude
 Застосування: Реалізація єдиної структури обробки доменних помилок API (ApiError)
-та помилок валідації (RequestValidationError).
+та помилок валідації (RequestValidationError); виправлення витоку тіла запиту
+й секретів у provided_value (CWE-209).
 Верифікація: Перевірено вручну формат відповідей для статус-кодів 404,
-409 та 422, узгоджено командою.
+409 та 422, узгоджено командою; CWE-209 — регресійні тести tests/test_errors.py,
+які падали до виправлення.
 
 Узгоджена обробка помилок для всього API.
 
@@ -28,6 +30,9 @@ DOCS_BASE = (
     "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/"
     "blob/main/docs/api/api-design.md"
 )
+
+SENSITIVE_FIELD_MARKERS = ("password", "token", "secret")
+MAX_PROVIDED_VALUE_LENGTH = 100
 
 
 class ApiError(Exception):
@@ -176,6 +181,19 @@ def auth_error_responses(
     return responses
 
 
+def _safe_provided_value(err: dict) -> str | None:
+    """Значення для provided_value без витоку тіла запиту та секретів (CWE-209)."""
+    value = err.get("input")
+    # For `missing` errors Pydantic puts the whole parent object into `input`,
+    # so dicts and lists can carry other fields such as the password.
+    if value is None or err["type"] == "missing" or isinstance(value, (dict, list)):
+        return None
+    field = str(err["loc"][-1]).lower() if err["loc"] else ""
+    if any(marker in field for marker in SENSITIVE_FIELD_MARKERS):
+        return None
+    return str(value)[:MAX_PROVIDED_VALUE_LENGTH]
+
+
 def _request_id(request: Request) -> str:
     return getattr(request.state, "request_id", f"req_{uuid.uuid4().hex[:10]}")
 
@@ -214,9 +232,7 @@ def register_error_handlers(app: FastAPI) -> None:
             ErrorDetail(
                 field=".".join(str(p) for p in err["loc"] if p != "body"),
                 message=err["msg"],
-                provided_value=(
-                    str(err.get("input")) if err.get("input") is not None else None
-                ),
+                provided_value=_safe_provided_value(err),
             )
             for err in exc.errors()
         ]
