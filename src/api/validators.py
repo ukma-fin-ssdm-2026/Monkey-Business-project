@@ -27,7 +27,7 @@ def _is_safe_host(hostname: str | None) -> bool:
     """Перевіряє, чи не є хост внутрішньою або забороненою локальною адресою."""
     if not hostname:
         return False
-    normalized = hostname.strip().lower()
+    normalized = hostname.strip().lower().rstrip(".")
     return not (_is_private_ip(normalized) or _is_localhost_name(normalized))
 
 
