@@ -20,7 +20,14 @@ from .errors import (
     auth_error_responses,
 )
 from .repositories.base import Repositories
-from .schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut, UserRole, ChangePasswordRequest
+from .schemas import (
+    LoginRequest,
+    RegisterRequest,
+    TokenResponse,
+    UserOut,
+    UserRole,
+    ChangePasswordRequest,
+)
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 bearer = HTTPBearer(auto_error=False)
@@ -119,7 +126,6 @@ def _reset_failed_attempts(user: User, repos: Repositories) -> None:
     response_model=TokenResponse,
     responses=auth_error_responses(),
 )
-
 def login(payload: LoginRequest, repos: Repos) -> TokenResponse:
     user = repos.users.get_by_email(str(payload.email).lower())
     if user is not None and user.failed_login_attempts >= MAX_FAILED_ATTEMPTS:

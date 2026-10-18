@@ -69,10 +69,7 @@ def list_comments(
     repos: Repos = None,
 ) -> list[CommentOut]:
     _require_card(repos, board_id, card_id, user)
-    return [
-        CommentOut.model_validate(c)
-        for c in repos.comments.list_for_card(card_id)
-    ]
+    return [CommentOut.model_validate(c) for c in repos.comments.list_for_card(card_id)]
 
 
 @router.post(

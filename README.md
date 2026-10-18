@@ -56,6 +56,12 @@
 - [Політика якості та огляду коду](./TeamCharter.md#5-політика-якості-та-огляду-коду) — стандарт кодування, обов'язкові інструменти, кроки огляду, Definition of Done
 - Конфігурація перевірок: [`.pre-commit-config.yaml`](./.pre-commit-config.yaml), [`.flake8`](./.flake8), [`pyproject.toml`](./pyproject.toml), [`static-analysis.yml`](./.github/workflows/static-analysis.yml)
 
+## Тестування — Лаб06
+
+- [Модульні тести](./tests/) і [HTML-звіт покриття](./htmlcov/index.html).
+- [Стратегія тестування](./docs/testing/testing-strategy.md) та [журнал налагодження](./docs/testing/debugging-log.md).
+- Запуск із кореня: `python -m pytest`; генерує HTML/XML і перевіряє поріг 70% для всього `src/api` з урахуванням гілок.
+
 ## Документи
 - [TeamCharter.md](./TeamCharter.md) — командний статут
 - [Project-Description.md](./Project-Description.md) — опис проєкту

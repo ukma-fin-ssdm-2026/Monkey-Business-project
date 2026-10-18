@@ -8,6 +8,8 @@
 - Mentors (`/boards/{board_id}/mentors`): надсилання запрошень кандидатом та перегляд списку менторів.
 - Invitations (`/invitations`): перегляд та прийняття запрошення ментором.
 Покриває FR-012 (запрошення ментора за email із посиланням, доступ «перегляд і коментарі»).
+
+Доповнення Лаб06: Codex — регресійні тести та виправлення виявленого дефекту.
 """
 
 from __future__ import annotations
@@ -114,7 +116,8 @@ def invite_mentor(
         mentor = repos.users.add(
             User(
                 email=email,
-                password_hash="",
+                # Password is set on invitation acceptance.
+                password_hash="",  # nosec B106
                 role=UserRole.mentor.value,
                 is_active=True,
             )
@@ -171,8 +174,8 @@ def list_board_mentors(
     result = []
     for inv in invitations:
         mentor = repos.users.get(inv.mentor_id)
-        email = mentor.email if mentor is not None else ""
-        result.append(_to_mentor_out(inv, email))
+        if mentor is not None:
+            result.append(_to_mentor_out(inv, mentor.email))
     return result
 
 
@@ -194,8 +197,9 @@ def get_invitation(
     if invitation is None or invitation.status != MentorStatus.pending.value:
         raise NotFoundError("Запрошення не знайдено або термін його дії минув")
     mentor = repos.users.get(invitation.mentor_id)
-    email = mentor.email if mentor is not None else ""
-    return _to_mentor_out(invitation, email)
+    if mentor is None:
+        raise NotFoundError("Користувача для цього запрошення не знайдено")
+    return _to_mentor_out(invitation, mentor.email)
 
 
 @invitations_router.post(
@@ -227,7 +231,6 @@ def get_invitation(
             }
         },
     ),
-
 )
 def accept_invitation(
     token: str = Path(..., description="Токен запрошення"),
@@ -246,10 +249,9 @@ def accept_invitation(
         if user.role != UserRole.mentor.value:
             raise ForbiddenError("Лише ментор може прийняти запрошення")
         invited_mentor = repos.users.get(invitation.mentor_id)
-        if (
-            invited_mentor is not None
-            and invited_mentor.email.lower() != user.email.lower()
-        ):
+        if invited_mentor is None:
+            raise ForbiddenError("Користувача для цього запрошення не знайдено")
+        if invited_mentor.email.lower() != user.email.lower():
             raise ForbiddenError("Це запрошення призначене для іншого email")
         invitation.mentor_id = user.id
     elif payload is not None and payload.password:
@@ -264,7 +266,9 @@ def accept_invitation(
         mentor = repos.users.get(invitation.mentor_id)
         if mentor is not None and mentor.password_hash:
             raise UnauthorizedError("Потрібен вхід у систему для прийняття запрошення")
-        raise UnauthorizedError("Вкажіть пароль для активації облікового запису ментора")
+        raise UnauthorizedError(
+            "Вкажіть пароль для активації облікового запису ментора"
+        )
 
     invitation.status = MentorStatus.accepted.value
     invitation.accepted_at = utcnow()

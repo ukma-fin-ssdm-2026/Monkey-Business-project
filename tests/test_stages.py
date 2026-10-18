@@ -167,31 +167,23 @@ def test_list_stages_raises_not_found_for_missing_board(repos, owner):
 
     # Act & Assert
     with pytest.raises(NotFoundError) as exc_info:
-        stages_router.list_stages(
-            board_id=missing_board_id, user=owner, repos=repos
-        )
+        stages_router.list_stages(board_id=missing_board_id, user=owner, repos=repos)
     assert f"Дошку {missing_board_id} не знайдено" in str(exc_info.value)
 
 
 def test_list_stages_forbidden_for_stranger_candidate(repos, board, other_candidate):
     # Arrange & Act & Assert
     with pytest.raises(ForbiddenError):
-        stages_router.list_stages(
-            board_id=board.id, user=other_candidate, repos=repos
-        )
+        stages_router.list_stages(board_id=board.id, user=other_candidate, repos=repos)
 
 
-def test_list_stages_allows_mentor_with_access(
-    repos, board_repo, board, mentor_user
-):
+def test_list_stages_allows_mentor_with_access(repos, board_repo, board, mentor_user):
     # Arrange
     board_repo.mentor_access.add((board.id, mentor_user.id))
     repos.stages.add(Stage(board_id=board.id, name="Відгук", order_index=0))
 
     # Act
-    result = stages_router.list_stages(
-        board_id=board.id, user=mentor_user, repos=repos
-    )
+    result = stages_router.list_stages(board_id=board.id, user=mentor_user, repos=repos)
 
     # Assert
     assert len(result) == 1
@@ -269,7 +261,9 @@ def test_create_stage_allowed_for_admin(repos, board, admin_user):
 
 def test_update_stage_name_and_order_success(repos, board, owner):
     # Arrange
-    stage = repos.stages.add(Stage(board_id=board.id, name="Стара назва", order_index=1))
+    stage = repos.stages.add(
+        Stage(board_id=board.id, name="Стара назва", order_index=1)
+    )
     payload = StageUpdate(name="Нова назва", order_index=5)
 
     # Act
@@ -287,7 +281,9 @@ def test_update_stage_name_and_order_success(repos, board, owner):
 
 def test_update_stage_partial_update_only_name(repos, board, owner):
     # Arrange
-    stage = repos.stages.add(Stage(board_id=board.id, name="Стара назва", order_index=3))
+    stage = repos.stages.add(
+        Stage(board_id=board.id, name="Стара назва", order_index=3)
+    )
     payload = StageUpdate(name="Оновлена назва")
 
     # Act
@@ -324,7 +320,9 @@ def test_update_stage_raises_not_found_when_stage_belongs_to_different_board(
 ):
     # Arrange
     other_board_id = uuid4()
-    stage = repos.stages.add(Stage(board_id=other_board_id, name="Чужий етап", order_index=0))
+    stage = repos.stages.add(
+        Stage(board_id=other_board_id, name="Чужий етап", order_index=0)
+    )
     payload = StageUpdate(name="Зміна")
 
     # Act & Assert
@@ -345,7 +343,9 @@ def test_update_stage_raises_not_found_when_stage_belongs_to_different_board(
 
 def test_delete_stage_success_when_stage_has_no_cards(repos, board, owner):
     # Arrange
-    stage = repos.stages.add(Stage(board_id=board.id, name="Порожній етап", order_index=0))
+    stage = repos.stages.add(
+        Stage(board_id=board.id, name="Порожній етап", order_index=0)
+    )
 
     # Act
     stages_router.delete_stage(
@@ -358,7 +358,9 @@ def test_delete_stage_success_when_stage_has_no_cards(repos, board, owner):
 
 def test_delete_stage_raises_conflict_when_stage_has_cards(repos, board, owner):
     # Arrange: Граничний випадок цілісності даних (FR-024)
-    stage = repos.stages.add(Stage(board_id=board.id, name="Етап із картками", order_index=0))
+    stage = repos.stages.add(
+        Stage(board_id=board.id, name="Етап із картками", order_index=0)
+    )
     repos.stages.stages_with_cards.add(stage.id)
 
     # Act & Assert
