@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 from src.api.errors import register_error_handlers
 from src.api.schemas import ChangePasswordRequest, LoginRequest, RegisterRequest
 
-SECRET = "s3cret-Passw0rd"
+SECRET = "s3cret-Passw0rd" # pragma: allowlist secret
 
 
 @pytest.fixture()
@@ -50,10 +50,10 @@ def test_missing_field_does_not_echo_request_body(client):
 @pytest.mark.parametrize(
     "path, payload, field",
     [
-        ("/register", {"email": "a@example.com", "password": "short1"}, "password"),
+        ("/register", {"email": "a@example.com", "password": "short1"}, "password"), # pragma: allowlist secret
         (
             "/change-password",
-            {"current_password": SECRET, "new_password": "short1"},
+            {"current_password": SECRET, "new_password": "short1"}, # pragma: allowlist secret
             "new_password",
         ),
     ],

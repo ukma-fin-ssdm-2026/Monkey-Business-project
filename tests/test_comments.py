@@ -64,7 +64,7 @@ def _repositories(**overrides) -> Repositories:
 
 
 def _user(role: str = "candidate") -> User:
-    return User(email="user@example.com", password_hash="unused", role=role)
+    return User(email="user@example.com", password_hash="unused", role=role)#pragma: allowlist secret
 
 
 def _card(board_id: UUID) -> Card:

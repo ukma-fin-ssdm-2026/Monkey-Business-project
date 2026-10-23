@@ -443,7 +443,7 @@ class BoardMentorOut(BaseModel):
     )
     invite_token: str = Field(
         ...,
-        examples=["k7X9vL2mQ8n4P1z0R3t5Y6u7I8o9W0e1"],
+        examples=["k7X9vL2mQ8n4P1z0R3t5Y6u7I8o9W0e1"],  # pragma: allowlist secret
         description="Одноразовий токен запрошення",
     )
     invited_at: datetime = Field(..., description="Дата і час надсилання запрошення")

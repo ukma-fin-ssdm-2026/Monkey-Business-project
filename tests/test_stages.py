@@ -81,7 +81,7 @@ class InMemoryStageRepository:
 def owner() -> User:
     return User(
         email="candidate.owner@example.com",
-        password_hash="hash",
+        password_hash="hash", # pragma: allowlist secret
         role=UserRole.candidate.value,
     )
 
@@ -90,7 +90,7 @@ def owner() -> User:
 def other_candidate() -> User:
     return User(
         email="stranger@example.com",
-        password_hash="hash",
+        password_hash="hash", # pragma: allowlist secret
         role=UserRole.candidate.value,
     )
 
@@ -99,7 +99,7 @@ def other_candidate() -> User:
 def admin_user() -> User:
     return User(
         email="admin@example.com",
-        password_hash="hash",
+        password_hash="hash", # pragma: allowlist secret
         role=UserRole.admin.value,
     )
 
@@ -108,7 +108,7 @@ def admin_user() -> User:
 def mentor_user() -> User:
     return User(
         email="mentor@example.com",
-        password_hash="hash",
+        password_hash="hash", # pragma: allowlist secret
         role=UserRole.mentor.value,
     )
 
