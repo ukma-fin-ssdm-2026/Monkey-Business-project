@@ -485,13 +485,13 @@ def test_change_password_success(repos, make_user):
     response = auth.change_password(payload, user, repos)
 
     assert response.user.id == user.id
-    assert auth._verify_password("abcd12345", user.password_hash)
+    assert auth._verify_password("abcd12345", user.password_hash) # pragma: allowlist secret
 
 
 def test_change_password_rejects_wrong_current_password(repos, make_user):
     user = make_user(email="user@example.com")
     payload = ChangePasswordRequest(
-        current_password="wrong_password", new_password="abcd12345"
+        current_password="wrong_password", new_password="abcd12345" # pragma: allowlist secret
     )
     with pytest.raises(UnauthorizedError, match="Невірний пароль"):
         auth.change_password(payload, user, repos)
@@ -510,7 +510,7 @@ def test_login_increments_failed_attempts_on_wrong_password(repos, make_user):
     user = make_user(email="user@example.com")
 
     with pytest.raises(UnauthorizedError):
-        auth.login(LoginRequest(email=user.email, password="wrong"), repos)
+        auth.login(LoginRequest(email=user.email, password="wrong"), repos) # pragma: allowlist secret
 
     assert repos.users.get(user.id).failed_login_attempts == 1
 

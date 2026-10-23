@@ -17,7 +17,7 @@ def test_user_repository_stores_failed_login_attempts():
     # Arrange
     user = User(
         email="user@example.com",
-        password_hash="unused",
+        password_hash="unused", # pragma: allowlist secret
         role="candidate",
         failed_login_attempts=4,
     )
@@ -37,7 +37,7 @@ def test_user_repository_restores_failed_login_attempts():
     # Arrange
     user = User(
         email="user@example.com",
-        password_hash="unused",
+        password_hash="unused", # pragma: allowlist secret
         role="candidate",
         failed_login_attempts=5,
     )
