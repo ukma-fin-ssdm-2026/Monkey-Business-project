@@ -20,6 +20,8 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Path, status
 from fastapi.security import HTTPAuthorizationCredentials
+import mailtrap as mt
+import os
 
 from ..auth import (
     CandidateOrAdmin,
@@ -50,6 +52,8 @@ from ..schemas import (
     UserRole,
 )
 
+MAILTRAP_API_TOKEN=os.getenv("MAILTRAP_API_TOKEN")
+
 mentors_router = APIRouter(prefix="/boards/{board_id}/mentors", tags=["Mentors"])
 invitations_router = APIRouter(prefix="/invitations", tags=["Invitations"])
 
@@ -76,13 +80,29 @@ def _to_mentor_out(invitation: BoardMentor, email: str) -> BoardMentorOut:
 
 
 def _send_invitation_email(email: str, token: str, board_id: UUID) -> None:
-    """Відправка email із посиланням-запрошенням."""
-    # Логування посилання-запрошення (емуляція зовнішнього поштового провайдера)
-    invite_url = f"/invite/{token}"
-    print(
-        f"[Email Service] Надіслано лист на {email}: "
-        f"Запрошення до дошки {board_id}. Посилання: {invite_url}"
+    """Відправка email із посиланням-запрошенням через API Mailtrap."""
+    
+    invite_url = f"/v1/invitations/{token}"
+    
+    mail = mt.Mail(
+        sender=mt.Address(email="hello@demomailtrap.co", name="Interview Board"),
+        to=[mt.Address(email=email)],
+        subject=f"Запрошення до дошки",
+        text=(
+            f"Привіт!\n\n"
+            f"Вас запросили до дошки (ID: {board_id}).\n"
+            f"Щоб приєднатися, перейдіть за цим посиланням:\n"
+            f"{invite_url}\n\n"
+        ),
+        category="Invitation Test",
     )
+
+    try:
+        client = mt.MailtrapClient(token=MAILTRAP_API_TOKEN)
+        response = client.send(mail)
+        print(f"[Email Service] Успішно надіслано лист на {email}. Відповідь: {response}")
+    except Exception as e:
+        print(f"[Email Service] Помилка відправки на {email}: {e}")
 
 
 @mentors_router.post(
