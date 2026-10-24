@@ -39,6 +39,7 @@ from ..errors import (
     ConflictError,
     ForbiddenError,
     NotFoundError,
+    ServiceUnavailableError,
     UnauthorizedError,
     error_responses,
 )
@@ -81,13 +82,18 @@ def _to_mentor_out(invitation: BoardMentor, email: str) -> BoardMentorOut:
 
 def _send_invitation_email(email: str, token: str, board_id: UUID) -> None:
     """Відправка email із посиланням-запрошенням через API Mailtrap."""
-    
-    invite_url = f"/v1/invitations/{token}"
-    
+
+    if not MAILTRAP_API_TOKEN:
+        raise RuntimeError(
+            "MAILTRAP_API_TOKEN не задано — email не може бути відправлено. "
+            "Додайте змінну в .env і перезапустіть контейнер."
+        )
+
+    invite_url = f"http://localhost:5173/invitations/{token}"
     mail = mt.Mail(
         sender=mt.Address(email="hello@demomailtrap.co", name="Interview Board"),
         to=[mt.Address(email=email)],
-        subject=f"Запрошення до дошки",
+        subject="Запрошення до дошки",
         text=(
             f"Привіт!\n\n"
             f"Вас запросили до дошки (ID: {board_id}).\n"
@@ -98,11 +104,17 @@ def _send_invitation_email(email: str, token: str, board_id: UUID) -> None:
     )
 
     try:
-        client = mt.MailtrapClient(token=MAILTRAP_API_TOKEN)
+        client = mt.MailtrapClient(token=MAILTRAP_API_TOKEN, sandbox=True, inbox_id=4439163)
         response = client.send(mail)
         print(f"[Email Service] Успішно надіслано лист на {email}. Відповідь: {response}")
     except Exception as e:
-        print(f"[Email Service] Помилка відправки на {email}: {e}")
+        details = ""
+        if hasattr(e, "response") and e.response is not None:
+            details = f" Деталі API: {e.response.text}"
+        raise ServiceUnavailableError(
+            f"Не вдалося надіслати запрошення на {email}: {e}.{details}"
+        ) from e
+
 
 
 @mentors_router.post(

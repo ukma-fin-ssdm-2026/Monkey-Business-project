@@ -157,3 +157,33 @@ export interface ErrorBody {
 export interface ErrorResponse {
   error: ErrorBody;
 }
+
+// --- mentors / invitations ---
+
+export type MentorStatus = "pending" | "accepted" | "revoked";
+
+export interface BoardMentorOut {
+  id: string;
+  board_id: string;
+  mentor_id: string | null;
+  email: string;
+  status: MentorStatus;
+  invite_token: string;
+  invited_at: string;
+  accepted_at: string | null;
+}
+
+export interface InviteMentorRequest {
+  email: string;
+}
+
+export interface AcceptInvitationRequest {
+  password?: string;
+}
+
+export interface AcceptInvitationResponse {
+  message: string;
+  board_id: string;
+  status: MentorStatus;
+  access_token: string | null;
+}

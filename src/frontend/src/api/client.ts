@@ -9,6 +9,9 @@
  */
 
 import type {
+  AcceptInvitationRequest,
+  AcceptInvitationResponse,
+  BoardMentorOut,
   CardCreate,
   CardLinkCreate,
   CardLinkOut,
@@ -20,6 +23,7 @@ import type {
   CardOut,
   CardUpdate,
   ErrorResponse,
+  InviteMentorRequest,
   LoginRequest,
   RegisterRequest,
   StageCreate,
@@ -186,5 +190,23 @@ export const api = {
     request<void>(
       "DELETE",
       `/v1/boards/${boardId}/cards/${cardId}/notes/${noteId}`,
+    ),
+
+  // --- mentors ---
+  listMentors: (boardId: string) =>
+    request<BoardMentorOut[]>("GET", `/v1/boards/${boardId}/mentors`),
+  inviteMentor: (boardId: string, payload: InviteMentorRequest) =>
+    request<BoardMentorOut>("POST", `/v1/boards/${boardId}/mentors`, payload),
+  revokeMentor: (boardId: string, mentorId: string) =>
+    request<void>("DELETE", `/v1/boards/${boardId}/mentors/${mentorId}`),
+
+  // --- invitations ---
+  getInvitation: (token: string) =>
+    request<BoardMentorOut>("GET", `/v1/invitations/${token}`),
+  acceptInvitation: (token: string, payload?: AcceptInvitationRequest) =>
+    request<AcceptInvitationResponse>(
+      "POST",
+      `/v1/invitations/${token}/accept`,
+      payload,
     ),
 };
