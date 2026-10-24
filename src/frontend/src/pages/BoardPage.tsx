@@ -18,6 +18,7 @@ import { useAuth } from "../context/AuthContext";
 import type { CardOut, StageOut } from "../api/types";
 import { StageColumn } from "../components/StageColumn";
 import { CardModal } from "../components/CardModal";
+import { MentorsPanel } from "../components/MentorsPanel";
 
 async function fetchAllCards(boardId: string): Promise<CardOut[]> {
   const limit = 100;
@@ -44,6 +45,7 @@ export function BoardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [showMentors, setShowMentors] = useState(false);
 
   const canWrite = user?.role === "candidate" || user?.role === "admin";
 
@@ -179,6 +181,12 @@ export function BoardPage() {
           </span>
           <button
             className="secondary"
+            onClick={() => setShowMentors(true)}
+          >
+            Ментори
+          </button>
+          <button
+            className="secondary"
             onClick={() => navigate("/board/setup")}
           >
             Змінити дошку
@@ -239,6 +247,14 @@ export function BoardPage() {
             setCards((prev) => prev.filter((c) => c.id !== cardId));
             setSelectedCardId(null);
           }}
+        />
+      )}
+
+      {showMentors && boardId && (
+        <MentorsPanel
+          boardId={boardId}
+          canWrite={!!canWrite}
+          onClose={() => setShowMentors(false)}
         />
       )}
     </div>

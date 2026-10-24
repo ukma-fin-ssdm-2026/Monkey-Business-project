@@ -9,6 +9,9 @@
  */
 
 import type {
+  AcceptInvitationRequest,
+  AcceptInvitationResponse,
+  BoardMentorOut,
   CardCreate,
   CardLinkCreate,
   CardLinkOut,
@@ -19,7 +22,10 @@ import type {
   CardNoteUpdate,
   CardOut,
   CardUpdate,
+  CommentCreate,
+  CommentOut,
   ErrorResponse,
+  InviteMentorRequest,
   LoginRequest,
   RegisterRequest,
   StageCreate,
@@ -48,6 +54,20 @@ export class ApiError extends Error {
     this.requestId = body.error.request_id;
     this.details = body.error.details ?? [];
   }
+}
+
+export function formatApiError(err: unknown, fallback: string): string {
+  if (err instanceof ApiError) {
+    if (err.details && err.details.length > 0) {
+      const detailsMsg = err.details.map((d) => d.message).join(", ");
+      return `${err.message}: ${detailsMsg}`;
+    }
+    return err.message;
+  }
+  if (err instanceof Error) {
+    return err.message;
+  }
+  return fallback;
 }
 
 let authToken: string | null = null;
@@ -186,5 +206,41 @@ export const api = {
     request<void>(
       "DELETE",
       `/v1/boards/${boardId}/cards/${cardId}/notes/${noteId}`,
+    ),
+
+  // --- comments ---
+  listComments: (boardId: string, cardId: string) =>
+    request<CommentOut[]>(
+      "GET",
+      `/v1/boards/${boardId}/cards/${cardId}/comments`,
+    ),
+  createComment: (boardId: string, cardId: string, payload: CommentCreate) =>
+    request<CommentOut>(
+      "POST",
+      `/v1/boards/${boardId}/cards/${cardId}/comments`,
+      payload,
+    ),
+  deleteComment: (boardId: string, cardId: string, commentId: string) =>
+    request<void>(
+      "DELETE",
+      `/v1/boards/${boardId}/cards/${cardId}/comments/${commentId}`,
+    ),
+
+  // --- mentors ---
+  listMentors: (boardId: string) =>
+    request<BoardMentorOut[]>("GET", `/v1/boards/${boardId}/mentors`),
+  inviteMentor: (boardId: string, payload: InviteMentorRequest) =>
+    request<BoardMentorOut>("POST", `/v1/boards/${boardId}/mentors`, payload),
+  revokeMentor: (boardId: string, mentorId: string) =>
+    request<void>("DELETE", `/v1/boards/${boardId}/mentors/${mentorId}`),
+
+  // --- invitations ---
+  getInvitation: (token: string) =>
+    request<BoardMentorOut>("GET", `/v1/invitations/${token}`),
+  acceptInvitation: (token: string, payload?: AcceptInvitationRequest) =>
+    request<AcceptInvitationResponse>(
+      "POST",
+      `/v1/invitations/${token}/accept`,
+      payload,
     ),
 };

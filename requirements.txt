@@ -9,3 +9,4 @@ fastmcp>=4.0
 SQLAlchemy>=2.0
 psycopg[binary]>=3.2
 alembic>=1.14
+mailtrap
