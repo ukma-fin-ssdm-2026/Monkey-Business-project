@@ -53,7 +53,7 @@ from ..schemas import (
     UserRole,
 )
 
-MAILTRAP_API_TOKEN=os.getenv("MAILTRAP_API_TOKEN")
+MAILTRAP_API_TOKEN = os.getenv("MAILTRAP_API_TOKEN")
 
 mentors_router = APIRouter(prefix="/boards/{board_id}/mentors", tags=["Mentors"])
 invitations_router = APIRouter(prefix="/invitations", tags=["Invitations"])
@@ -104,9 +104,13 @@ def _send_invitation_email(email: str, token: str, board_id: UUID) -> None:
     )
 
     try:
-        client = mt.MailtrapClient(token=MAILTRAP_API_TOKEN, sandbox=True, inbox_id=4439163)
+        client = mt.MailtrapClient(
+            token=MAILTRAP_API_TOKEN, sandbox=True, inbox_id=4439163
+        )
         response = client.send(mail)
-        print(f"[Email Service] Успішно надіслано лист на {email}. Відповідь: {response}")
+        print(
+            f"[Email Service] Успішно надіслано лист на {email}. Відповідь: {response}"
+        )
     except Exception as e:
         details = ""
         if hasattr(e, "response") and e.response is not None:
@@ -114,7 +118,6 @@ def _send_invitation_email(email: str, token: str, board_id: UUID) -> None:
         raise ServiceUnavailableError(
             f"Не вдалося надіслати запрошення на {email}: {e}.{details}"
         ) from e
-
 
 
 @mentors_router.post(

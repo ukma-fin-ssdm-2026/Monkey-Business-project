@@ -538,6 +538,79 @@ label {
   gap: 8px;
 }
 
+/* --- comments --- */
+
+.section-error {
+  background: #ffebe6;
+  color: var(--danger);
+  border: 1px solid #ffbdad;
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.comments-list {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comments-list li {
+  background: #f4f5f7;
+  border-radius: var(--radius);
+  padding: 8px 10px;
+}
+
+.comments-list p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.comment-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.comment-date {
+  flex: 1;
+}
+
+.comment-badge {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #dfe1e6;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.comment-badge.badge-you {
+  background: #eae6ff;
+  color: #5243aa;
+}
+
+.comment-badge.badge-mentor {
+  background: #deebff;
+  color: #0747a6;
+}
+
+.comment-badge.badge-candidate {
+  background: #e3fcef;
+  color: #006644;
+}
+
 /* --- mentors panel --- */
 
 .mentors-list li {

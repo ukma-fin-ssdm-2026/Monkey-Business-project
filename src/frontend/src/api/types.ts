@@ -187,3 +187,18 @@ export interface AcceptInvitationResponse {
   status: MentorStatus;
   access_token: string | null;
 }
+
+// --- comments ---
+
+export interface CommentCreate {
+  content: string;
+}
+
+export interface CommentOut {
+  id: string;
+  card_id: string;
+  author_id: string;
+  content: string;
+  created_at: string;
+}
+

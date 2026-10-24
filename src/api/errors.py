@@ -67,7 +67,9 @@ class ConflictError(ApiError):
 
 class ServiceUnavailableError(ApiError):
     def __init__(self, message: str) -> None:
-        super().__init__(status.HTTP_503_SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", message)
+        super().__init__(
+            status.HTTP_503_SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", message
+        )
 
 
 def error_responses(
