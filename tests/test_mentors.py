@@ -19,6 +19,10 @@ import pytest
 from pydantic import ValidationError
 from fastapi.security import HTTPAuthorizationCredentials
 
+from unittest.mock import MagicMock
+from src.api.errors import ServiceUnavailableError
+import src.api.routers.mentors as mentors_router_module
+
 from src.api import auth
 from src.api.domain import Board, BoardMentor, Card, User
 from src.api.errors import (
@@ -37,6 +41,8 @@ from src.api.schemas import (
     MentorStatus,
     UserRole,
 )
+from src.api.routers import comments as comments_router
+from src.api.schemas import CommentCreate
 
 TEST_SECRET = "unit-test-jwt-secret-at-least-32-bytes"  # pragma: allowlist secret
 MENTOR_PASSWORD = "mentor-password-123"  # pragma: allowlist secret
@@ -62,6 +68,17 @@ class InMemoryRepository:
         self.items[entity.id] = entity
         return entity
 
+class InMemoryCardChildRepository(InMemoryRepository):
+    def list_for_card(self, card_id):
+        return [i for i in self.items.values() if getattr(i, "card_id", None) == card_id]
+
+class InMemoryCommentRepository(InMemoryRepository):
+    def list_for_card(self, card_id: uuid4) -> list:
+        return [c for c in self.items.values() if getattr(c, "card_id", None) == card_id]
+
+class InMemoryCardChildRepository(InMemoryRepository):
+    def list_for_card(self, card_id):
+        return [i for i in self.items.values() if getattr(i, "card_id", None) == card_id]
 
 class InMemoryUserRepository(InMemoryRepository):
     def get_by_email(self, email: str):
@@ -126,8 +143,9 @@ def repos(mentors_repo) -> Repositories:
         stages=InMemoryRepository(),
         cards=InMemoryCardRepository(),
         links=None,
-        notes=None,
+        notes=InMemoryCardChildRepository(),
         mentors=mentors_repo,
+        comments=InMemoryCardChildRepository(),
     )
 
 
@@ -207,7 +225,7 @@ def _bearer(user: User) -> HTTPAuthorizationCredentials:
 # invite_mentor (FR-012)
 # --------------------------------------------------------------------------- #
 
-
+# US-002
 def test_invite_mentor_creates_account_and_pending_invitation(
     repos, board, candidate, sent_emails
 ):
@@ -227,7 +245,7 @@ def test_invite_mentor_creates_account_and_pending_invitation(
     assert [e["email"] for e in sent_emails] == ["new.mentor@example.com"]
     assert sent_emails[0]["token"] == result.invite_token
 
-
+# US-002
 def test_invite_mentor_reuses_existing_mentor_account(
     repos, board, candidate, mentor, sent_emails
 ):
@@ -243,7 +261,7 @@ def test_invite_mentor_reuses_existing_mentor_account(
     assert result.mentor_id == mentor.id
     assert len(repos.users.items) == 2  # candidate + mentor, без дубліката
 
-
+# US-002
 def test_2_1_invite_mentor_reinvites_revoked_mentor(
     repos, board, candidate, mentor, make_invitation, sent_emails
 ):
@@ -273,6 +291,7 @@ def test_2_1_invite_mentor_reinvites_revoked_mentor(
     ],
     ids=["already-accepted", "already-pending"],
 )
+# US-002
 def test_invite_mentor_rejects_duplicate_invitation(
     repos, board, candidate, mentor, make_invitation, sent_emails, status, message
 ):
@@ -289,7 +308,7 @@ def test_invite_mentor_rejects_duplicate_invitation(
         )
     assert sent_emails == []
 
-
+# US-002
 def test_invite_mentor_rejects_inviting_yourself(repos, board, candidate, sent_emails):
     # Arrange
     payload = InviteMentorRequest(email=candidate.email.upper())
@@ -301,7 +320,7 @@ def test_invite_mentor_rejects_inviting_yourself(repos, board, candidate, sent_e
         )
     assert sent_emails == []
 
-
+# US-002
 def test_invite_mentor_rejects_email_registered_with_other_role(
     repos, board, candidate, make_user, sent_emails
 ):
@@ -317,7 +336,7 @@ def test_invite_mentor_rejects_email_registered_with_other_role(
             repos=repos,
         )
 
-
+# US-002
 def test_invite_mentor_raises_not_found_for_missing_board(
     repos, candidate, sent_emails
 ):
@@ -330,7 +349,7 @@ def test_invite_mentor_raises_not_found_for_missing_board(
             repos=repos,
         )
 
-
+# US-002
 def test_invite_mentor_forbidden_for_foreign_candidate(
     repos, board, make_user, sent_emails
 ):
@@ -352,7 +371,7 @@ def test_invite_mentor_forbidden_for_foreign_candidate(
 # list_board_mentors / get_invitation
 # --------------------------------------------------------------------------- #
 
-
+# US-002
 def test_list_board_mentors_returns_emails_and_statuses(
     repos, board, candidate, mentor, make_invitation
 ):
@@ -367,7 +386,7 @@ def test_list_board_mentors_returns_emails_and_statuses(
         (mentor.email, MentorStatus.accepted)
     ]
 
-
+# US-002
 def test_list_board_mentors_skips_deleted_mentor(
     repos, board, candidate, mentor, make_invitation
 ):
@@ -384,7 +403,7 @@ def test_list_board_mentors_skips_deleted_mentor(
         (mentor.id, mentor.email)
     ]
 
-
+# US-002
 def test_get_invitation_rejects_deleted_mentor(repos, make_invitation):
     ghost = User(email="ghost@example.com", password_hash="", role="mentor")
     invitation = make_invitation(ghost, MentorStatus.pending)
@@ -394,6 +413,8 @@ def test_get_invitation_rejects_deleted_mentor(repos, make_invitation):
 
 
 @pytest.mark.parametrize("use_bearer", [False, True], ids=["password", "bearer"])
+
+# US-002
 def test_accept_invitation_rejects_deleted_mentor(
     repos, mentor, make_invitation, use_bearer
 ):
@@ -413,7 +434,7 @@ def test_accept_invitation_rejects_deleted_mentor(
     assert invitation.status == MentorStatus.pending.value
     assert invitation.mentor_id == ghost.id
 
-
+# US-002
 def test_get_invitation_returns_pending_invitation(repos, mentor, make_invitation):
     # Arrange
     make_invitation(mentor, MentorStatus.pending, token="abc")
@@ -431,6 +452,8 @@ def test_get_invitation_returns_pending_invitation(repos, mentor, make_invitatio
     [None, MentorStatus.accepted, MentorStatus.revoked],
     ids=["unknown-token", "already-accepted", "revoked"],
 )
+
+# US-002
 def test_get_invitation_hides_non_pending_invitations(
     repos, mentor, make_invitation, status
 ):
@@ -447,7 +470,7 @@ def test_get_invitation_hides_non_pending_invitations(
 # accept_invitation
 # --------------------------------------------------------------------------- #
 
-
+# US-002
 def test_accept_invitation_with_password_activates_account_and_issues_token(
     repos, mentor, make_invitation
 ):
@@ -468,7 +491,7 @@ def test_accept_invitation_with_password_activates_account_and_issues_token(
     assert saved.status == MentorStatus.accepted.value
     assert saved.accepted_at is not None
 
-
+# US-002
 def test_accept_invitation_with_bearer_of_invited_mentor(
     repos, mentor, make_invitation
 ):
@@ -484,7 +507,7 @@ def test_accept_invitation_with_bearer_of_invited_mentor(
     assert response.access_token is None
     assert repos.mentors.get(invitation.id).status == MentorStatus.accepted.value
 
-
+# US-002
 @pytest.mark.parametrize("status", [None, MentorStatus.accepted, MentorStatus.revoked])
 def test_accept_invitation_rejects_unknown_or_used_token(
     repos, mentor, make_invitation, status
@@ -502,7 +525,7 @@ def test_accept_invitation_rejects_unknown_or_used_token(
             repos=repos,
         )
 
-
+# US-002
 def test_accept_invitation_rejects_bearer_of_non_mentor(
     repos, mentor, candidate, make_invitation
 ):
@@ -515,7 +538,7 @@ def test_accept_invitation_rejects_bearer_of_non_mentor(
             token="abc", payload=None, credentials=_bearer(candidate), repos=repos
         )
 
-
+# US-002
 def test_accept_invitation_rejects_bearer_of_different_mentor(
     repos, mentor, make_user, make_invitation
 ):
@@ -538,6 +561,8 @@ def test_accept_invitation_rejects_bearer_of_different_mentor(
     ],
     ids=["new-mentor-must-set-password", "existing-mentor-must-log-in"],
 )
+
+# US-002
 def test_accept_invitation_without_credentials_or_password_is_unauthorized(
     repos, make_user, make_invitation, password_hash, message
 ):
@@ -552,7 +577,7 @@ def test_accept_invitation_without_credentials_or_password_is_unauthorized(
         )
     assert repos.mentors.get(invitation.id).status == MentorStatus.pending.value
 
-
+# US-002
 def test_accept_invitation_rejects_password_shorter_than_8_chars():
     # Граничне значення схеми: 7 символів — помилка, 8 — дозволено.
     with pytest.raises(ValidationError):
@@ -564,7 +589,7 @@ def test_accept_invitation_rejects_password_shorter_than_8_chars():
 # revoke_mentor (FR-015)
 # --------------------------------------------------------------------------- #
 
-
+# US-002
 def test_revoke_mentor_marks_invitation_revoked_and_removes_access(
     repos, board, candidate, mentor, make_invitation
 ):
@@ -584,7 +609,7 @@ def test_revoke_mentor_marks_invitation_revoked_and_removes_access(
     with pytest.raises(ForbiddenError):
         auth.require_board_access(repos, board.id, mentor)
 
-
+# US-002
 def test_revoke_mentor_raises_not_found_when_mentor_was_not_invited(
     repos, board, candidate
 ):
@@ -594,7 +619,7 @@ def test_revoke_mentor_raises_not_found_when_mentor_was_not_invited(
             board_id=board.id, mentor_id=uuid4(), user=candidate, repos=repos
         )
 
-
+# US-002
 def test_revoke_mentor_forbidden_for_mentor(repos, board, mentor, make_invitation):
     # Arrange
     make_invitation(mentor, MentorStatus.accepted)
@@ -616,7 +641,7 @@ def invited_mentor(mentor, make_invitation) -> User:
     make_invitation(mentor, MentorStatus.accepted)
     return mentor
 
-
+# US-002
 def test_02_mentor_cannot_edit_card(repos, board, card, invited_mentor):
     # Arrange
     payload = CardUpdate(position="New Position")
@@ -632,7 +657,7 @@ def test_02_mentor_cannot_edit_card(repos, board, card, invited_mentor):
         )
     assert repos.cards.get(card.id).position == "Backend Engineer"
 
-
+# US-002
 def test_08_mentor_cannot_change_company_field(repos, board, card, invited_mentor):
     # Arrange
     payload = CardUpdate(company="Нова Компанія")
@@ -648,7 +673,7 @@ def test_08_mentor_cannot_change_company_field(repos, board, card, invited_mento
         )
     assert repos.cards.get(card.id).company == "Acme Corp"
 
-
+# US-008
 def test_owner_can_edit_card(repos, board, card, candidate):
     # Контрольний тест: той самий виклик для власника дошки успішний,
     # тож відмова ментору в тестах вище спричинена саме роллю, а не помилкою даних.
@@ -666,3 +691,40 @@ def test_owner_can_edit_card(repos, board, card, candidate):
 
     # Assert
     assert repos.cards.get(card.id).position == "Senior Backend Engineer"
+
+# US-002
+def test_send_invitation_email_raises_error_if_no_token(monkeypatch):
+    monkeypatch.setattr(mentors_router_module, "MAILTRAP_API_TOKEN", None)
+
+    with pytest.raises(RuntimeError, match="MAILTRAP_API_TOKEN не задано"):
+        mentors_router_module._send_invitation_email(
+            email="test@example.com", 
+            token="dummy-token", 
+            board_id=uuid4()
+        )
+
+# US-002
+def test_send_invitation_email_raises_service_unavailable_on_mailtrap_error(monkeypatch):
+    monkeypatch.setattr(mentors_router_module, "MAILTRAP_API_TOKEN", "fake-token")
+
+    mock_client_instance = MagicMock()
+    mock_client_instance.send.side_effect = Exception("Mailtrap API timeout")
+    
+    mock_client_class = MagicMock(return_value=mock_client_instance)
+    monkeypatch.setattr(mentors_router_module.mt, "MailtrapClient", mock_client_class)
+
+    with pytest.raises(ServiceUnavailableError, match="Не вдалося надіслати запрошення"):
+        mentors_router_module._send_invitation_email(
+            email="test@example.com", 
+            token="dummy-token", 
+            board_id=uuid4()
+        )
+
+# US-002
+def test_invite_mentor_rejects_invalid_email_format():
+    with pytest.raises(ValidationError) as exc_info:
+        InviteMentorRequest(email="invalid-email-format")
+    
+    errors = exc_info.value.errors()
+    assert len(errors) > 0
+    assert errors[0]["loc"] == ("email",)
