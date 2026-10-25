@@ -123,7 +123,7 @@ def test_tp14_owner_invites_new_email_creates_mentor_and_pending_invitation(
     owner = users.add(
         User(
             email="candidate@example.com",
-            password_hash="unused",
+            password_hash="unused", # pragma: allowlist secret
             role=UserRole.candidate.value,
         )
     )
