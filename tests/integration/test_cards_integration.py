@@ -2,7 +2,7 @@
 Інструмент: Claude
 Застосування: Інтеграційний тест створення картки через API з PostgreSQL
 (TP-06 з docs/validation/test-plan.md; FR-007, US-007).
-Верифікація: Прогін pytest -m postgres проти PostgreSQL 17 у Docker.
+Верифікація: Прогін pytest проти PostgreSQL 16 і 17 у Docker.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ from sqlalchemy import select
 
 from src.api.repositories.sql import CardRow
 
-pytestmark = [pytest.mark.integration, pytest.mark.postgres]
+pytestmark = pytest.mark.integration
 
 
 def _cards_on_board(new_session, board_id: UUID) -> list[CardRow]:

@@ -3,11 +3,12 @@
 Застосування: Спільні фікстури інтеграційних тестів API + PostgreSQL за
 docs/validation/test-plan.md (власник дошки, ментор із прийнятим запрошенням,
 картка, нова сесія БД для перевірки збереження).
-Верифікація: Прогін pytest -m postgres проти PostgreSQL 17 у Docker.
+Верифікація: Прогін pytest проти PostgreSQL 16 і 17 у Docker.
 
 Тести працюють з окремою базою з TEST_DATABASE_URL: схема створюється
 міграціями Alembic, а перед кожним тестом усі таблиці очищуються. Тому не
-вказуйте тут адресу бази, дані якої потрібні.
+вказуйте тут адресу бази, дані якої потрібні. Без TEST_DATABASE_URL тести
+пропускаються; у CI їх запускає .github/workflows/lab07-card-order.yml.
 """
 
 from __future__ import annotations
@@ -48,10 +49,7 @@ def _bearer(token: str) -> dict[str, str]:
 def engine() -> Iterator[Engine]:
     url = os.getenv("TEST_DATABASE_URL")
     if not url:
-        pytest.fail(
-            "TEST_DATABASE_URL не задано: інтеграційним тестам потрібна окрема "
-            "PostgreSQL (див. tests/integration/conftest.py)"
-        )
+        pytest.skip("TP-06/TP-10 потребують TEST_DATABASE_URL на окрему PostgreSQL")
     with pytest.MonkeyPatch.context() as patch:
         # The app reads DATABASE_URL once and caches the session factory.
         patch.setenv("DATABASE_URL", url)

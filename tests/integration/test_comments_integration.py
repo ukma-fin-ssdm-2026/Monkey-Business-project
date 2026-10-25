@@ -2,7 +2,7 @@
 Інструмент: Claude
 Застосування: Інтеграційний тест коментаря ментора через API з PostgreSQL
 (TP-10 з docs/validation/test-plan.md; FR-013, FR-014, US-008).
-Верифікація: Прогін pytest -m postgres проти PostgreSQL 17 у Docker.
+Верифікація: Прогін pytest проти PostgreSQL 16 і 17 у Docker.
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from sqlalchemy import select
 from src.api.domain import utcnow
 from src.api.repositories.sql import CardRow, CommentRow
 
-pytestmark = [pytest.mark.integration, pytest.mark.postgres]
+pytestmark = pytest.mark.integration
 
 
 def _card_snapshot(new_session, card_id: UUID) -> dict:
