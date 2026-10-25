@@ -537,3 +537,148 @@ label {
   display: flex;
   gap: 8px;
 }
+
+/* --- comments --- */
+
+.section-error {
+  background: #ffebe6;
+  color: var(--danger);
+  border: 1px solid #ffbdad;
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.comments-list {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comments-list li {
+  background: #f4f5f7;
+  border-radius: var(--radius);
+  padding: 8px 10px;
+}
+
+.comments-list p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.comment-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.comment-date {
+  flex: 1;
+}
+
+.comment-badge {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #dfe1e6;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.comment-badge.badge-you {
+  background: #eae6ff;
+  color: #5243aa;
+}
+
+.comment-badge.badge-mentor {
+  background: #deebff;
+  color: #0747a6;
+}
+
+.comment-badge.badge-candidate {
+  background: #e3fcef;
+  color: #006644;
+}
+
+/* --- mentors panel --- */
+
+.mentors-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.mentors-list li:last-child {
+  border-bottom: none;
+}
+
+.mentor-email {
+  flex: 1;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mentor-status-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.mentor-status-badge.status-pending {
+  background: #fff0b3;
+  color: #974f0c;
+}
+.mentor-status-badge.status-accepted {
+  background: #e3fcef;
+  color: #006644;
+}
+.mentor-status-badge.status-revoked {
+  background: #f4f5f7;
+  color: var(--text-muted);
+}
+
+button.danger-text {
+  background: transparent;
+  color: var(--danger);
+  font-size: 12px;
+  padding: 2px 8px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+}
+button.danger-text:hover {
+  background: #ffebe6;
+}
+
+/* --- invitation page --- */
+
+.invitation-info {
+  background: #f4f5f7;
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.invitation-info p {
+  margin: 0;
+}
+.invitation-info code {
+  font-size: 12px;
+  word-break: break-all;
+}

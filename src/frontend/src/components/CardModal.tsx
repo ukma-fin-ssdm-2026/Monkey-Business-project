@@ -12,13 +12,16 @@
  */
 
 import { FormEvent, useEffect, useState } from "react";
-import { api, ApiError } from "../api/client";
+import { api, ApiError, formatApiError } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 import type {
+  BoardMentorOut,
   CardLinkOut,
   CardNoteOut,
   CardOut,
   CardStatus,
   CardUpdate,
+  CommentOut,
   NoteSource,
 } from "../api/types";
 
@@ -53,6 +56,7 @@ interface Props {
 }
 
 export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDeleted }: Props) {
+  const { user } = useAuth();
   const [company, setCompany] = useState(card.company);
   const [position, setPosition] = useState(card.position);
   const [vacancyUrl, setVacancyUrl] = useState(card.vacancy_url ?? "");
@@ -71,11 +75,31 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
   const [newNote, setNewNote] = useState("");
   const [newNoteSource, setNewNoteSource] = useState<NoteSource>("candidate");
 
+  const [comments, setComments] = useState<CommentOut[] | null>(null);
+  const [commentsLoading, setCommentsLoading] = useState(true);
+  const [commentsError, setCommentsError] = useState<string | null>(null);
+  const [newComment, setNewComment] = useState("");
+  const [submittingComment, setSubmittingComment] = useState(false);
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
+  const [mentors, setMentors] = useState<BoardMentorOut[]>([]);
+
   useEffect(() => {
     api.listLinks(boardId, card.id).then(setLinks).catch(() => setLinks([]));
     api.listNotes(boardId, card.id).then(setNotes).catch(() => setNotes([]));
+
+    setCommentsLoading(true);
+    setCommentsError(null);
+    api.listComments(boardId, card.id)
+      .then((data) => setComments(data))
+      .catch((err) => {
+        setCommentsError(formatApiError(err, "Не вдалося завантажити коментарі"));
+        setComments([]);
+      })
+      .finally(() => setCommentsLoading(false));
+
+    api.listMentors(boardId).then(setMentors).catch(() => setMentors([]));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [card.id]);
+  }, [boardId, card.id]);
 
   function buildDiff(): CardUpdate {
     const diff: CardUpdate = {};
@@ -171,6 +195,44 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
       setNotes((prev) => (prev ?? []).filter((n) => n.id !== noteId));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Не вдалося видалити нотатку");
+    }
+  }
+
+  async function handleAddComment(e: FormEvent) {
+    e.preventDefault();
+    const trimmed = newComment.trim();
+    if (!trimmed) {
+      setCommentsError("Вміст коментаря не може бути порожнім");
+      return;
+    }
+    if (trimmed.length > 3000) {
+      setCommentsError("Коментар не може перевищувати 3000 символів");
+      return;
+    }
+    setSubmittingComment(true);
+    setCommentsError(null);
+    try {
+      const created = await api.createComment(boardId, card.id, { content: trimmed });
+      setComments((prev) => [...(prev ?? []), created]);
+      setNewComment("");
+    } catch (err) {
+      setCommentsError(formatApiError(err, "Не вдалося додати коментар"));
+    } finally {
+      setSubmittingComment(false);
+    }
+  }
+
+  async function handleDeleteComment(commentId: string) {
+    if (!window.confirm("Ви дійсно бажаєте видалити цей коментар?")) return;
+    setDeletingCommentId(commentId);
+    setCommentsError(null);
+    try {
+      await api.deleteComment(boardId, card.id, commentId);
+      setComments((prev) => (prev ?? []).filter((c) => c.id !== commentId));
+    } catch (err) {
+      setCommentsError(formatApiError(err, "Не вдалося видалити коментар"));
+    } finally {
+      setDeletingCommentId(null);
     }
   }
 
@@ -364,6 +426,106 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
               </div>
             </form>
           )}
+        </section>
+
+        <section className="modal-section">
+          <h3>Коментарі</h3>
+
+          {commentsError && (
+            <div className="section-error" role="alert">
+              <span>{commentsError}</span>
+              <button
+                type="button"
+                className="icon-button"
+                onClick={() => setCommentsError(null)}
+                aria-label="Закрити повідомлення про помилку"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
+          {commentsLoading ? (
+            <p className="empty-hint">Завантаження коментарів...</p>
+          ) : (
+            <ul className="comments-list">
+              {(comments ?? []).map((c) => {
+                const isAuthor = user?.id === c.author_id;
+                const canDelete = isAuthor || user?.role === "admin";
+                const mentor = mentors.find((m) => m.mentor_id === c.author_id);
+                const authorLabel = isAuthor
+                  ? `Ви${user?.role === "mentor" ? " (ментор)" : ""}`
+                  : mentor
+                  ? `Ментор (${mentor.email})`
+                  : user?.role === "mentor"
+                  ? "Кандидат"
+                  : "Користувач";
+
+                const badgeClass = isAuthor
+                  ? "badge-you"
+                  : mentor
+                  ? "badge-mentor"
+                  : "badge-candidate";
+
+                return (
+                  <li key={c.id}>
+                    <div className="comment-meta">
+                      <span className={`comment-badge ${badgeClass}`}>
+                        {authorLabel}
+                      </span>
+                      <span className="comment-date">
+                        {new Date(c.created_at).toLocaleString("uk-UA")}
+                      </span>
+                      {canDelete && (
+                        <button
+                          type="button"
+                          className="icon-button"
+                          onClick={() => handleDeleteComment(c.id)}
+                          title="Видалити коментар"
+                          aria-label="Видалити коментар"
+                          disabled={deletingCommentId === c.id}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                    <p>{c.content}</p>
+                  </li>
+                );
+              })}
+              {comments !== null && comments.length === 0 && (
+                <li className="empty-hint">Ще немає коментарів</li>
+              )}
+            </ul>
+          )}
+
+          <form className="inline-form stacked" onSubmit={handleAddComment}>
+            <textarea
+              placeholder="Залишити коментар..."
+              value={newComment}
+              onChange={(e) => {
+                setNewComment(e.target.value);
+                if (commentsError) setCommentsError(null);
+              }}
+              onKeyDown={(e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                  e.preventDefault();
+                  void handleAddComment(e);
+                }
+              }}
+              maxLength={3000}
+              rows={2}
+              disabled={submittingComment}
+            />
+            <div className="inline-form-row" style={{ justifyContent: "flex-end" }}>
+              <button
+                type="submit"
+                disabled={submittingComment || !newComment.trim()}
+              >
+                {submittingComment ? "Надсилання..." : "Додати коментар"}
+              </button>
+            </div>
+          </form>
         </section>
       </div>
     </div>

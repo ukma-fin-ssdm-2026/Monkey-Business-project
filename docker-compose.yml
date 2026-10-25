@@ -34,6 +34,7 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-interview_board}:${POSTGRES_PASSWORD:-interview_board}@db:5432/${POSTGRES_DB:-interview_board}
+      MAILTRAP_API_TOKEN: ${MAILTRAP_API_TOKEN}
     ports:
       - "127.0.0.1:${API_PORT:-3000}:8000"
     healthcheck:

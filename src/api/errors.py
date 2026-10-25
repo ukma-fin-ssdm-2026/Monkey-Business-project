@@ -65,6 +65,13 @@ class ConflictError(ApiError):
         super().__init__(status.HTTP_409_CONFLICT, "CONFLICT", message)
 
 
+class ServiceUnavailableError(ApiError):
+    def __init__(self, message: str) -> None:
+        super().__init__(
+            status.HTTP_503_SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", message
+        )
+
+
 def error_responses(
     not_found: str,
     invalid: str = "Невалідні параметри запиту",
