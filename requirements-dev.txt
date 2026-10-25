@@ -2,7 +2,7 @@ black==26.10.1
 flake8==7.1.1
 bandit>=1.8.0
 detect-secrets==1.5.0
-pre-commit>=3.8
+pre-commit>=4.7.0
 pytest>=9.1
 pytest-cov>=6.0.0
 hypothesis>=6.100.0
