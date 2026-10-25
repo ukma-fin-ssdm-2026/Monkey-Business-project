@@ -321,12 +321,29 @@ def move_card(
     _require_board(repos, board_id, user, write=True)
     card = _require_card(repos, board_id, card_id)
     _require_stage(repos, board_id, payload.stage_id)
-    card = repos.cards.save(
-        replace(
-            card,
-            stage_id=payload.stage_id,
-            position_index=payload.position_index,
-            updated_at=utcnow(),
-        )
+    # Remove before inserting, including moves within the same stage. This keeps
+    # every affected stage contiguous and avoids duplicate position indices.
+    destination = [
+        item
+        for item in repos.cards.list_for_board(board_id, payload.stage_id, None)
+        if item.id != card.id
+    ]
+    position = min(payload.position_index, len(destination))
+    moved = replace(
+        card, stage_id=payload.stage_id, position_index=position, updated_at=utcnow()
     )
-    return CardOut.model_validate(card)
+    destination.insert(position, moved)
+    affected = [destination]
+    if card.stage_id != payload.stage_id:
+        affected.append(
+            [
+                item
+                for item in repos.cards.list_for_board(board_id, card.stage_id, None)
+                if item.id != card.id
+            ]
+        )
+    for items in affected:
+        for index, item in enumerate(items):
+            if item.id == card.id or item.position_index != index:
+                repos.cards.save(replace(item, position_index=index))
+    return CardOut.model_validate(moved)
