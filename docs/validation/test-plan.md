@@ -31,14 +31,17 @@
 | TP-04 | `tests/test_card_order_postgres.py::test_tp04_move_between_stages_commits_order`; команда нижче | Пройдено локально та в CI на PostgreSQL 16: POST → 200, GET обох етапів, перевірка в новій сесії БД. |
 | TP-13 | `tests/test_card_order.py::test_tp13_owner_updates_card_without_changing_order` | Пройдено; результати в [журналі](review-log.md). |
 | TP-14 | `tests/test_mentors.py::test_invite_mentor_creates_account_and_pending_invitation` | Пройдено в повному локальному прогоні. |
-| TP-05, TP-06, TP-09, TP-10 | [PR #168](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/pull/168) | Реалізація в PR #168. |
+| TP-05 | `tests/test_schemas.py::test_card_create_rejects_whitespace_only_company`; `python -m pytest tests/test_schemas.py --no-cov -v` | Пройдено; параметризовано трьома представниками класу «лише пробільні символи». |
+| TP-06 | `tests/integration/test_cards_integration.py::test_owner_creates_card_that_persists`; команда нижче | Пройдено локально на PostgreSQL 16 і 17: POST → 201, GET повертає ті самі поля, нова сесія БД бачить рівно одну картку. У CI — `lab07-card-order.yml`. |
+| TP-09 | `tests/test_comments.py::test_create_comment_rejects_blank_content_at_schema_level` | Пройдено; `ValidationError` лише для `content`. |
+| TP-10 | `tests/integration/test_comments_integration.py::test_mentor_comment_persists_and_leaves_card_unchanged`; команда нижче | Пройдено локально на PostgreSQL 16 і 17: ментор із прийнятим запрошенням → 201, GET власника, запис у новій сесії БД, рядок картки не змінено. У CI — `lab07-card-order.yml`. |
 
 Локальний запуск у PowerShell після встановлення залежностей:
 
 ```powershell
 docker run --detach --name monkey-lab07-postgres --env POSTGRES_HOST_AUTH_METHOD=trust --env POSTGRES_DB=monkey_lab07 --publish 127.0.0.1:55432:5432 postgres:16
 $env:TEST_DATABASE_URL = 'postgresql+psycopg://postgres@127.0.0.1:55432/monkey_lab07'
-python -m pytest tests/test_card_order.py tests/test_card_order_postgres.py --no-cov -v
+python -m pytest tests/test_card_order.py tests/test_card_order_postgres.py tests/integration --no-cov -v
 python -m pytest
 docker stop monkey-lab07-postgres
 ```

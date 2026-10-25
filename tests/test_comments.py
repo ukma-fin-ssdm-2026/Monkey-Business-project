@@ -8,6 +8,7 @@ from __future__ import annotations
 from uuid import UUID, uuid4
 
 import pytest
+from pydantic import ValidationError
 
 from src.api.routers import comments as comments_router
 from src.api.domain import Board, Card, Comment, User
@@ -145,9 +146,12 @@ def test_create_comment_denies_mentor_without_access(repos, board_and_card):
         comments_router.create_comment(payload, board.id, card.id, mentor, repos)
 
 
+# TP-09 (docs/validation/test-plan.md)
 def test_create_comment_rejects_blank_content_at_schema_level():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError) as exc_info:
         CommentCreate(content="   ")
+
+    assert [error["loc"] for error in exc_info.value.errors()] == [("content",)]
 
 
 # --------------------------------------------------------------------------- #
