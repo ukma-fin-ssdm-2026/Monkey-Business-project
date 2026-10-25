@@ -163,7 +163,7 @@ def test_create_link_denies_mentor_write_access(repos, board_and_card):
     with pytest.raises(ForbiddenError):
         card_links.create_link(payload, board.id, card.id, mentor, repos)
 
-
+# TF-07 FR-009 US-003
 def test_create_link_rejects_invalid_url_at_schema_level():
     with pytest.raises(ValueError):
         CardLinkCreate(url="not-a-url")
