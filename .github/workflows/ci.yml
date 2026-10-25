@@ -54,3 +54,52 @@ jobs:
 
       - name: Check for spec drift
         run: git diff --exit-code docs/api/
+
+  integration:
+    runs-on: [self-hosted, linux]
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: interview_board_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test  # pragma: allowlist secret
+        # Container port only: the host port is picked at random, so parallel
+        # jobs on a shared self-hosted runner do not collide on 5432.
+        ports:
+          - 5432
+        options: >-
+          --health-cmd "pg_isready -U test -d interview_board_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      # Unit and integration tests together give the combined API coverage
+      # that docs/validation/test-plan.md uses as an exit criterion.
+      - name: Run unit and integration tests (PostgreSQL)
+        env:
+          TEST_DATABASE_URL: postgresql+psycopg://test:test@localhost:${{ job.services.postgres.ports['5432'] }}/interview_board_test  # pragma: allowlist secret
+        run: pytest -m "postgres or not postgres"
+
+      - name: Add coverage summary to job summary
+        if: always()
+        run: |
+          echo "### Combined Coverage (unit + integration)" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          coverage report >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
