@@ -65,7 +65,7 @@
 ## Валідація — Лаб07
 
 - [План тестування](./docs/validation/test-plan.md) — сценарії TP-01–TP-14, власники, вимоги й команди запуску.
-- [Журнал оглядів і результатів](./docs/validation/review-log.md) — фактичний відгук, внесені зміни, огляд ШІ-коду та результати TP-03/TP-04.
+- [Журнал оглядів і результатів](./docs/validation/review-log.md) — відгук команди Spectrum, внесені зміни, огляд ШІ-коду та результати TP-03/TP-04.
 - [Матриця простежуваності](./docs/requirements/rtm.md) і [JUnit-звіт локального прогону](./docs/validation/pytest-results.xml).
 - [CI для порядку карток із PostgreSQL](./.github/workflows/lab07-card-order.yml).
 
