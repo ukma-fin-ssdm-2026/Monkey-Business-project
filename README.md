@@ -62,7 +62,14 @@
 - [Стратегія тестування](./docs/testing/testing-strategy.md) та [журнал налагодження](./docs/testing/debugging-log.md).
 - Запуск із кореня: `python -m pytest`; генерує HTML/XML і перевіряє поріг 70% для всього `src/api` з урахуванням гілок.
 
-## Документи
+## Валідація — Лаб07
+
+- [План тестування](./docs/validation/test-plan.md) — сценарії TP-01–TP-14, власники, вимоги й команди запуску.
+- [Журнал оглядів і результатів](./docs/validation/review-log.md) — фактичний відгук, внесені зміни, огляд ШІ-коду та результати TP-03/TP-04.
+- [Матриця простежуваності](./docs/requirements/rtm.md) і [JUnit-звіт локального прогону](./docs/validation/pytest-results.xml).
+- [CI для порядку карток із PostgreSQL](./.github/workflows/lab07-card-order.yml).
+
+## Документи проєкту
 - [TeamCharter.md](./TeamCharter.md) — командний статут
 - [Project-Description.md](./Project-Description.md) — опис проєкту
 - [docs/TaskWorkflow.md](./docs/TaskWorkflow.md) — робочий процес завдань (issues)
