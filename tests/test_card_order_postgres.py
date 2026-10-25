@@ -33,7 +33,9 @@ def postgres_sessions(monkeypatch):
         sessions = sessionmaker(engine)
         # Keep the real request dependency: each request commits or rolls back.
         monkeypatch.setattr(db, "_session_factory", lambda: sessions)
-        monkeypatch.setenv("JWT_SECRET", "lab07-test-only-signing-key-32-characters")
+        monkeypatch.setenv(
+            "JWT_SECRET", "lab07-test-only-signing-key-32-characters"
+        )  # pragma: allowlist secret
         yield sessions
     finally:
         with root_engine.begin() as connection:
@@ -47,7 +49,7 @@ def test_tp04_move_between_stages_commits_order(postgres_sessions):
     with postgres_sessions.begin() as session:
         repos = build_repositories(session)
         owner = repos.users.add(
-            User(email="owner@example.com", password_hash="unused", role="candidate")
+            User(email="owner@example.com", password_hash="", role="candidate")
         )
         board = repos.boards.add(Board(owner_id=owner.id))
         source = repos.stages.add(Stage(board_id=board.id, name="S1", order_index=0))

@@ -7,8 +7,8 @@ import pytest
 
 from src.api.domain import Board, Card, Stage, User
 from src.api.errors import ForbiddenError, NotFoundError
-from src.api.routers.cards import move_card
-from src.api.schemas import CardMove
+from src.api.routers.cards import move_card, update_card
+from src.api.schemas import CardMove, CardUpdate
 
 
 class MemoryCards:
@@ -156,3 +156,24 @@ def test_mentor_cannot_reorder_cards(board_cards):
         )
 
     assert repos.cards.items == before
+
+
+def test_tp13_owner_updates_card_without_changing_order(board_cards):
+    """TP-13 / FR-008 / US-007: editing a field preserves card identity/order."""
+    owner, board, _, cards, repos = board_cards
+    original = cards[1]
+
+    result = update_card(
+        CardUpdate(position="Senior Backend Engineer"),
+        board_id=board.id,
+        card_id=original.id,
+        user=owner,
+        repos=repos,
+    )
+
+    saved = repos.cards.get(original.id)
+    assert result.position == saved.position == "Senior Backend Engineer"
+    for field in ("id", "board_id", "stage_id", "company", "position_index"):
+        assert (
+            getattr(result, field) == getattr(saved, field) == getattr(original, field)
+        )
