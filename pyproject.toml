@@ -10,7 +10,9 @@ testpaths = ["tests"]
 # The API is imported as the src.api package, the same way CI runs src.api.main.
 pythonpath = ["."]
 addopts = "--cov --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=70"
-
+markers = [
+    "integration: mark for all integration tests"
+]
 
 [tool.coverage.run]
 source = ["src/api"]
