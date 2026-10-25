@@ -1,0 +1,4 @@
+# Dependencies for the TP-03/TP-04 CI job (Python 3.12, Linux).
+-r requirements.txt
+pytest>=9.1
+pytest-cov>=6.0.0
