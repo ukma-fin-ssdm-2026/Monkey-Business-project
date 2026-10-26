@@ -27,14 +27,17 @@
 
 | Тест | Реалізація / команда | Стан |
 |---|---|---|
+| TP-01 | `tests/test_mentor_access_unit.py::test_tp01_invited_mentor_write_access_is_forbidden_and_nothing_is_written`; `python -m pytest tests/test_mentor_access_unit.py --no-cov -v` | Пройдено локально: `ForbiddenError`, жоден репозиторій запису не викликано; контроль — той самий ментор читає. |
+| TP-02 | `tests/integration/test_mentor_access_integration.py::test_revoked_mentor_loses_access_and_status_is_persisted`; команда нижче | Пройдено локально на PostgreSQL 16: DELETE → 204, GET від ментора → 403, статус `revoked` у новій сесії БД. |
 | TP-03 | `tests/test_card_order.py::test_tp03_reorder_preserves_all_cards[TP-03]`; `python -m pytest tests/test_card_order.py --no-cov -v` | Локально пройдено; додаткові регресії перевіряють рух в обох напрямках, незмінну позицію, вихід за довжину списку, перенесення між етапами та відмову в доступі. |
 | TP-04 | `tests/test_card_order_postgres.py::test_tp04_move_between_stages_commits_order`; команда нижче | Пройдено локально та в CI на PostgreSQL 16: POST → 200, GET обох етапів, перевірка в новій сесії БД. |
 | TP-13 | `tests/test_card_order.py::test_tp13_owner_updates_card_without_changing_order` | Пройдено; результати в [журналі](review-log.md). |
-| TP-14 | `tests/test_mentors.py::test_invite_mentor_creates_account_and_pending_invitation` | Пройдено в повному локальному прогоні. |
+| TP-14 | `tests/test_mentor_access_unit.py::test_tp14_owner_invites_new_email_creates_mentor_and_pending_invitation`; `tests/test_mentors.py::test_invite_mentor_creates_account_and_pending_invitation` | Пройдено локально: роль `mentor`, запрошення `pending` з непорожнім токеном, лист на цю адресу з цим токеном. |
 | TP-05 | `tests/test_schemas.py::test_card_create_rejects_whitespace_only_company`; `python -m pytest tests/test_schemas.py --no-cov -v` | Пройдено; параметризовано трьома представниками класу «лише пробільні символи». |
 | TP-06 | `tests/integration/test_cards_integration.py::test_owner_creates_card_that_persists`; команда нижче | Пройдено локально на PostgreSQL 16 і 17: POST → 201, GET повертає ті самі поля, нова сесія БД бачить рівно одну картку. У CI — `lab07-card-order.yml`. |
 | TP-09 | `tests/test_comments.py::test_create_comment_rejects_blank_content_at_schema_level` | Пройдено; `ValidationError` лише для `content`. |
 | TP-10 | `tests/integration/test_comments_integration.py::test_mentor_comment_persists_and_leaves_card_unchanged`; команда нижче | Пройдено локально на PostgreSQL 16 і 17: ментор із прийнятим запрошенням → 201, GET власника, запис у новій сесії БД, рядок картки не змінено. У CI — `lab07-card-order.yml`. |
+| TP-11 | `tests/integration/test_mentor_access_integration.py::test_mentor_with_read_access_cannot_change_card[patch]`, `[delete]`, `[move]`; команда нижче | Пройдено локально на PostgreSQL 16: 3 із 3 запитів → 403, картка і кількість карток не змінені. |
 
 Локальний запуск у PowerShell після встановлення залежностей:
 
