@@ -11,6 +11,7 @@ import { Droppable } from "@hello-pangea/dnd";
 import { useState } from "react";
 import type { CardOut, StageOut } from "../api/types";
 import { CardItem } from "./CardItem";
+import { focusOnMount } from "./focusOnMount";
 import { NewCardForm } from "./NewCardForm";
 
 interface Props {
@@ -53,7 +54,7 @@ export function StageColumn({
           <input
             className="stage-name-input"
             value={nameDraft}
-            autoFocus
+            ref={focusOnMount}
             maxLength={100}
             onChange={(e) => setNameDraft(e.target.value)}
             onBlur={saveName}
