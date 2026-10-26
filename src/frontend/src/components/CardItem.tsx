@@ -40,10 +40,18 @@ interface Props {
 export function CardItem({ card, index, draggable, onOpen }: Props) {
   const deadline = formatDeadline(card.deadline);
 
+  // The library ignores drags that start on a <button> unless interactive
+  // element blocking is disabled.
   return (
-    <Draggable draggableId={card.id} index={index} isDragDisabled={!draggable}>
+    <Draggable
+      draggableId={card.id}
+      index={index}
+      isDragDisabled={!draggable}
+      disableInteractiveElementBlocking
+    >
       {(provided, snapshot) => (
-        <div
+        <button
+          type="button"
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -52,19 +60,19 @@ export function CardItem({ card, index, draggable, onOpen }: Props) {
           }`}
           onClick={() => onOpen(card.id)}
         >
-          <div className="card-item-header">
+          <span className="card-item-header">
             <span className="card-company">{card.company}</span>
             <span className={`status-badge status-${card.status}`}>
               {STATUS_LABEL[card.status]}
             </span>
-          </div>
-          <div className="card-position">{card.position}</div>
+          </span>
+          <span className="card-position">{card.position}</span>
           {deadline && (
-            <div className={`card-deadline${isOverdue(card.deadline) ? " overdue" : ""}`}>
+            <span className={`card-deadline${isOverdue(card.deadline) ? " overdue" : ""}`}>
               ⏰ {deadline}
-            </div>
+            </span>
           )}
-        </div>
+        </button>
       )}
     </Draggable>
   );
