@@ -152,6 +152,17 @@ test.describe('Lab08: поведінка дошки до і після рефа�
     await expect(modal(page)).toHaveCount(0);
   });
 
+  // Not a characterization test: before the switch to a native <button> the
+  // keyboard could lift a card but not open it.
+  test('Enter на картці у фокусі відкриває її', async ({ page, request }) => {
+    const company = await createCard(request, 'Enter Co');
+    await openBoard(page);
+
+    await cardItem(page, company).focus();
+    await page.keyboard.press('Enter');
+    await expect(modal(page)).toBeVisible();
+  });
+
   test('наведення на картку не змінює її фон', async ({ page, request }) => {
     const company = await createCard(request, 'Hover Co');
     await openBoard(page);
