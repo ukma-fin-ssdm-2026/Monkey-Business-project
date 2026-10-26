@@ -6,6 +6,7 @@
  */
 
 import { FormEvent, useState } from "react";
+import { focusOnMount } from "./focusOnMount";
 
 interface Props {
   onSubmit: (company: string, position: string) => Promise<void>;
@@ -31,7 +32,7 @@ export function NewCardForm({ onSubmit, onCancel }: Props) {
   return (
     <form className="new-card-form" onSubmit={handleSubmit}>
       <input
-        autoFocus
+        ref={focusOnMount}
         placeholder="Компанія"
         value={company}
         onChange={(e) => setCompany(e.target.value)}
