@@ -82,7 +82,14 @@ export function MentorsPanel({ boardId, canWrite, onClose }: Props) {
   }
 
   return (
-    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="modal-overlay">
+      <button
+        type="button"
+        className="modal-backdrop"
+        tabIndex={-1}
+        aria-label="Закрити"
+        onClick={onClose}
+      />
       <div className="modal-card" style={{ maxWidth: 520 }}>
         <div className="modal-header">
           <h2>Ментори дошки</h2>

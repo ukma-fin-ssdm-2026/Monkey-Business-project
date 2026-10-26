@@ -237,8 +237,15 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay">
+      <button
+        type="button"
+        className="modal-backdrop"
+        tabIndex={-1}
+        aria-label="Закрити"
+        onClick={onClose}
+      />
+      <div className="modal-card">
         <div className="modal-header">
           <h2>Картка вакансії</h2>
           <button className="icon-button" onClick={onClose}>

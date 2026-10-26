@@ -400,7 +400,21 @@ label {
   z-index: 10;
 }
 
+/* Fixed rather than absolute: the overlay scrolls, and the backdrop has to
+   keep covering the viewport around the card. */
+button.modal-backdrop,
+button.modal-backdrop:hover {
+  position: fixed;
+  inset: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: default;
+}
+
 .modal-card {
+  /* Positioned so that it paints above the fixed backdrop. */
+  position: relative;
   background: var(--surface);
   border-radius: var(--radius);
   width: 100%;
