@@ -58,7 +58,7 @@
 
 ## Тестування — Лаб06
 
-- [Модульні тести](./tests/) і [HTML-звіт покриття](./htmlcov/index.html).
+- [Модульні тести](./tests/) і [HTML-звіт покриття](./coverage.xml).
 - [Стратегія тестування](./docs/testing/testing-strategy.md) та [журнал налагодження](./docs/testing/debugging-log.md).
 - Запуск із кореня: `python -m pytest`; генерує HTML/XML і перевіряє поріг 70% для всього `src/api` з урахуванням гілок.
 

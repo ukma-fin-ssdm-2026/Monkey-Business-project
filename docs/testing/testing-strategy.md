@@ -8,7 +8,7 @@
 
 ## Покриття та прогалини
 
-Запуск: `python -m pytest`. Звіти: [`htmlcov/index.html`](../../htmlcov/index.html) і [`coverage.xml`](../../coverage.xml).
+Запуск: `python -m pytest`. Звіт: [`coverage.xml`](../../coverage.xml).
 
 **Загальне покриття з гілками — 91,16%**; рядки — **92,30% (1031/1117)**. Джерело — весь `src/api`, включно зі схемами, SQL та HTTP/MCP-адаптерами; виключено лише порожні `__init__.py`. `auth.py`, `domain.py`, `card_links.py`, `repositories/base.py` мають 100% рядків і гілок; `card_notes.py` — 96,00%; `mentors.py` — 98,05%; `comments.py` — 91,49%; `mcp_server.py` — 93,02%; `main.py` — 89,47%; `schemas.py` — 94,42%; `errors.py` — 95,35%.
 
