@@ -29,3 +29,4 @@ build/
 .coverage.*
 .mutmut-cache
 mutants/
+htmlcov/

@@ -10,6 +10,15 @@
 ## Документація API
 **[GitHub Pages](https://ukma-fin-ssdm-2026.github.io/Monkey-Business-project/)**
 
+## Запуск
+
+Детальні інструкції щодо розгортання компонентів:
+- **Бекенд та База даних:** [src/api/README.md](src/api/README.md)
+- **Фронтенд:** [src/frontend/README.md](src/frontend/README.md)
+
+Для успішного надсилання запрошень менторам через `docker-compose.yml` необхідний токен API. Отримайте його на сайті Mailtrap.io у налаштуваннях вашого Inboxes/API та додайте в .env або експортуйте як змінну середовища перед запуском:
+`export MAILTRAP_API_TOKEN="ваш_токен"`
+
 ## Команда
 
 | Ім'я | GitHub | Роль (Lab 5) |
@@ -23,6 +32,7 @@
 Використовуємо GitHub Flow: зміни в `main` вносяться лише через Pull Request з проходженням CI та щонайменше одним схваленням. Стандарт кодування, обов'язкові інструменти, кроки огляду коду та критерії готовності описано в [політиці якості та огляду коду](./TeamCharter.md#5-політика-якості-та-огляду-коду).
 
 ## Артефакти вимог
+- [Міні-ТЗ (Project Description)](Project-Description.md)
 - [Вимоги до системи (FR та NFR)](./docs/requirements/requirements.md) — функціональні та нефункціональні вимоги (ISO 25010)
 - [Користувацькі історії](./docs/requirements/user-stories.md) — користувацькі історії з критеріями прийняття (INVEST)
 - [Матриця простежуваності (RTM)](./docs/requirements/rtm.md) — зв'язок User Stories → FR → NFR → Test Cases
@@ -58,7 +68,7 @@
 
 ## Тестування — Лаб06
 
-- [Модульні тести](./tests/) і [HTML-звіт покриття](./htmlcov/index.html).
+- [Модульні тести](./tests/) і [HTML-звіт покриття](./coverage.xml).
 - [Стратегія тестування](./docs/testing/testing-strategy.md) та [журнал налагодження](./docs/testing/debugging-log.md).
 - Запуск із кореня: `python -m pytest`; генерує HTML/XML і перевіряє поріг 70% для всього `src/api` з урахуванням гілок.
 
