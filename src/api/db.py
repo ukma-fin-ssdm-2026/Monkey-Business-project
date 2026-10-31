@@ -48,6 +48,4 @@ def get_repositories() -> Iterator[Repositories]:
         yield build_repositories(session)
 
 
-# scope="function" closes the transaction right after the handler returns,
-# before the response is sent, so a failed commit cannot turn into a 2xx.
-Repos = Annotated[Repositories, Depends(get_repositories, scope="function")]
+Repos = Annotated[Repositories, Depends(get_repositories)]

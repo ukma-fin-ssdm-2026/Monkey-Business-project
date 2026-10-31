@@ -38,6 +38,9 @@
 | TP-09 | `tests/test_comments.py::test_create_comment_rejects_blank_content_at_schema_level` | Пройдено; `ValidationError` лише для `content`. |
 | TP-10 | `tests/integration/test_comments_integration.py::test_mentor_comment_persists_and_leaves_card_unchanged`; команда нижче | Пройдено локально на PostgreSQL 16 і 17: ментор із прийнятим запрошенням → 201, GET власника, запис у новій сесії БД, рядок картки не змінено. У CI — `lab07-card-order.yml`. |
 | TP-11 | `tests/integration/test_mentor_access_integration.py::test_mentor_with_read_access_cannot_change_card[patch]`, `[delete]`, `[move]`; команда нижче | Пройдено локально на PostgreSQL 16: 3 із 3 запитів → 403, картка і кількість карток не змінені. |
+| TP-07 | tests/test_schemas.py::test_create_link_rejects_invalid_url_at_schema_level; python -m pytest tests/test_schemas.py --no-cov -v | Пройдено; ValueError генерується на рівні схеми для невалідного URL. |
+| TP-08 | tests/integration/test_links_integration.py::test_api_owner_adds_link_to_card; команда нижче | Пройдено локально: POST → 200/201, GET підтверджує наявність URL у списку, запис успішно збережено в базі даних. |
+| TP-12 | Playwright E2E тест; npx playwright test --ui | Пройдено: виконано 30 ітерацій. Усі вклалися в поріг ≤300 мс (середній час: 65.13 мс, максимальний: 115.20 мс), видиме посилання з'являється без перезавантаження сторінки. |
 
 Локальний запуск у PowerShell після встановлення залежностей:
 

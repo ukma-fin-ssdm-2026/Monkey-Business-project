@@ -11,7 +11,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-interview_board}
       POSTGRES_USER: ${POSTGRES_USER:-interview_board}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-interview_board}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
     volumes:
       - pgdata:/var/lib/postgresql/data
     # Loopback only: alembic and the MCP server can reach the database from the
@@ -33,7 +33,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-interview_board}:${POSTGRES_PASSWORD:-interview_board}@db:5432/${POSTGRES_DB:-interview_board}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-interview_board}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@db:5432/${POSTGRES_DB:-interview_board}
       MAILTRAP_API_TOKEN: ${MAILTRAP_API_TOKEN}
     ports:
       - "127.0.0.1:${API_PORT:-3000}:8000"

@@ -21,8 +21,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
+          python -m pip install --only-binary=:all: -r requirements.txt
+          python -m pip install --only-binary=:all: -r requirements-dev.txt
 
       - name: Run tests with coverage
         run: pytest --cov --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=70
