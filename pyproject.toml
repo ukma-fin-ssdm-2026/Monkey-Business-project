@@ -1,6 +1,6 @@
 [project]
 name = "monkey-business-project"
-version = "0.1.2"
+version = "0.1.3"
 
 [tool.black]
 line-length = 88

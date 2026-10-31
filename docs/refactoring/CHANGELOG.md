@@ -1,3 +1,11 @@
+## [0.1.3] - 2026-10-31
+
+### Refactoring:
+
+- Закріплено GitHub Action `peaceiris/actions-gh-pages` на повному SHA
+  `84c30a85c19949d7eee79c4ff27748b70285e453`.
+  **Техніка:** Pin Dependency Version.
+
 ## [0.1.2] - 2026-10-31
 
 ### Refactoring:

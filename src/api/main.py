@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Tech Interview Board API",
-    version="0.1.2",
+    version="0.1.3",
     description="REST API для трекера підготовки до технічних співбесід (Code-First).",
     lifespan=lifespan,
     docs_url="/api-docs",
