@@ -1,0 +1,27 @@
+name: Lab08 characterization tests
+
+on:
+  pull_request:
+    paths:
+      - 'src/frontend/**'
+      - '.github/workflows/lab08-characterization.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/frontend/**'
+      - '.github/workflows/lab08-characterization.yml'
+
+jobs:
+  invitation-characterization:
+    runs-on: [self-hosted, linux]
+    defaults:
+      run:
+        working-directory: src/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - run: npm run test:unit
+      - run: npm run build

@@ -16,34 +16,19 @@ from uuid import UUID
 
 from fastapi import APIRouter, Path, status
 
-from ..auth import CandidateOrAdmin, CurrentUser, require_board_access
+from ..auth import CandidateOrAdmin, CurrentUser
 from ..db import Repos
-from ..domain import Card, CardNote, User, utcnow
+from ..domain import CardNote, utcnow
 from ..errors import NotFoundError, error_responses
 from ..repositories.base import Repositories
 from ..schemas import CardNoteCreate, CardNoteOut, CardNoteUpdate
+
+from .card_access import require_card
 
 router = APIRouter(
     prefix="/boards/{board_id}/cards/{card_id}/notes",
     tags=["Card Notes"],
 )
-
-
-def _require_card(
-    repos: Repositories,
-    board_id: UUID,
-    card_id: UUID,
-    user: User,
-    *,
-    write: bool = False,
-) -> Card:
-    if repos.boards.get(board_id) is None:
-        raise NotFoundError(f"Дошку {board_id} не знайдено")
-    require_board_access(repos, board_id, user, write=write)
-    card = repos.cards.get(card_id)
-    if card is None or card.board_id != board_id:
-        raise NotFoundError(f"Картку {card_id} на дошці {board_id} не знайдено")
-    return card
 
 
 def _require_note(repos: Repositories, card_id: UUID, note_id: UUID) -> CardNote:
@@ -72,7 +57,7 @@ def list_notes(
     user: CurrentUser = None,
     repos: Repos = None,
 ) -> list[CardNoteOut]:
-    _require_card(repos, board_id, card_id, user)
+    require_card(repos, board_id, card_id, user)
     return [CardNoteOut.model_validate(n) for n in repos.notes.list_for_card(card_id)]
 
 
@@ -98,7 +83,7 @@ def create_note(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> CardNoteOut:
-    _require_card(repos, board_id, card_id, user, write=True)
+    require_card(repos, board_id, card_id, user, write=True)
     note = repos.notes.add(
         CardNote(card_id=card_id, content=payload.content, source=payload.source.value)
     )
@@ -124,7 +109,7 @@ def update_note(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> CardNoteOut:
-    _require_card(repos, board_id, card_id, user, write=True)
+    require_card(repos, board_id, card_id, user, write=True)
     note = _require_note(repos, card_id, note_id)
     note = repos.notes.save(replace(note, content=payload.content, updated_at=utcnow()))
     return CardNoteOut.model_validate(note)
@@ -148,6 +133,6 @@ def delete_note(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> None:
-    _require_card(repos, board_id, card_id, user, write=True)
+    require_card(repos, board_id, card_id, user, write=True)
     _require_note(repos, card_id, note_id)
     repos.notes.delete(note_id)

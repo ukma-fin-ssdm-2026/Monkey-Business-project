@@ -13,7 +13,7 @@
  * Верифікація: Перевірено типи і білд.
  */
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, type ReactNode, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api, ApiError, setAuthToken } from "../api/client";
 import { useAuth } from "../context/AuthContext";
@@ -22,6 +22,14 @@ import type { BoardMentorOut } from "../api/types";
 const TOKEN_KEY = "tib.token";
 const USER_KEY = "tib.user";
 const BOARD_KEY_PREFIX = "tib.board.";
+
+function InvitationStatusScreen({ children }: { children: ReactNode }) {
+  return (
+    <div className="auth-screen">
+      <div className="auth-card">{children}</div>
+    </div>
+  );
+}
 
 export function InvitationPage() {
   const { token } = useParams<{ token: string }>();
@@ -119,41 +127,35 @@ export function InvitationPage() {
   // --- Рендер: завантаження ---
   if (loadingInv) {
     return (
-      <div className="auth-screen">
-        <div className="auth-card">
-          <p className="auth-subtitle">Перевірка запрошення...</p>
-        </div>
-      </div>
+      <InvitationStatusScreen>
+        <p className="auth-subtitle">Перевірка запрошення...</p>
+      </InvitationStatusScreen>
     );
   }
 
   // --- Рендер: помилка завантаження ---
   if (loadError || !invitation) {
     return (
-      <div className="auth-screen">
-        <div className="auth-card">
-          <h1>Запрошення не знайдено</h1>
-          <p className="form-error">{loadError ?? "Невідома помилка"}</p>
-          <p className="auth-subtitle">
-            Посилання могло протерміновуватись або вже було використано.
-          </p>
-          <button onClick={() => navigate("/login")}>Перейти до входу</button>
-        </div>
-      </div>
+      <InvitationStatusScreen>
+        <h1>Запрошення не знайдено</h1>
+        <p className="form-error">{loadError ?? "Невідома помилка"}</p>
+        <p className="auth-subtitle">
+          Посилання могло протерміновуватись або вже було використано.
+        </p>
+        <button onClick={() => navigate("/login")}>Перейти до входу</button>
+      </InvitationStatusScreen>
     );
   }
 
   // --- Рендер: успіх ---
   if (done) {
     return (
-      <div className="auth-screen">
-        <div className="auth-card">
-          <h1>🎉 Запрошення прийнято!</h1>
-          <p className="auth-subtitle">
-            Ви приєдналися до дошки. Перенаправляємо...
-          </p>
-        </div>
-      </div>
+      <InvitationStatusScreen>
+        <h1>🎉 Запрошення прийнято!</h1>
+        <p className="auth-subtitle">
+          Ви приєдналися до дошки. Перенаправляємо...
+        </p>
+      </InvitationStatusScreen>
     );
   }
 
