@@ -24,10 +24,10 @@
 ### Відповідальність за якість, рефакторинг та реліз (Лаб08)
 | Ім'я | GitHub | Роль (Lab 8) |
 |---|---|---|
-| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Testing Engineer |
-| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Code & Security Analyst |
-| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Refactoring Lead |
-| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Release manager |
+| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Інженер тестів |
+| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Аналітик коду та безпеки |
+| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Керівник рефакторингу |
+| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Реліз менеджер |
 
 ### Відповідальність за артефакти вимог:
 - **Requirements Lead (Nazar Sydorchuk)**: написання та вдосконалення користувацьких історій (INVEST), ведення розділу функціональних вимог (FR) у `requirements.md`.
