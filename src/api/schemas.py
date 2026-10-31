@@ -102,6 +102,25 @@ class TokenResponse(BaseModel):
     user: UserOut
 
 
+class BoardAccess(str, Enum):
+    owner = "owner"
+    mentor = "mentor"
+
+
+class BoardOut(BaseModel):
+    id: UUID = Field(
+        ...,
+        examples=["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
+        description="Ідентифікатор дошки (board_id для решти ендпоінтів)",
+    )
+    owner_id: UUID = Field(..., description="Кандидат, якому належить дошка")
+    access: BoardAccess = Field(
+        ...,
+        description="owner — власна дошка, mentor — доступ за прийнятим запрошенням",
+    )
+    created_at: datetime = Field(..., description="Дата створення дошки")
+
+
 class PaginationMeta(BaseModel):
     limit: int = Field(..., ge=1, le=100, description="Розмір сторінки (макс. 100)")
     offset: int = Field(..., ge=0, description="Зсув від початку списку")
