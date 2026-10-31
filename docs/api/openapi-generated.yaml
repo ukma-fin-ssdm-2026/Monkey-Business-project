@@ -1,12 +1,8 @@
-# Інструмент: Copilot.
-# Застосування: синхронізація версії з конфігурацією API після рефакторингу.
-# Верифікація: специфікацію згенеровано та перевірено в CI.
-
 openapi: 3.1.0
 info:
   title: Tech Interview Board API
   description: REST API для трекера підготовки до технічних співбесід (Code-First).
-  version: 0.1.5
+  version: 0.1.6
 paths:
   /v1/boards/{board_id}/stages:
     get:
