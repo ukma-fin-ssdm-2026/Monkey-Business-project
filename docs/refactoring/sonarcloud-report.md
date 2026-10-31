@@ -146,7 +146,7 @@ Frontend E2E у цьому локальному прогоні не запуск
 
 ```powershell
 cd src/frontend
-npm ci
+npm ci --ignore-scripts
 npm run test:unit
 npm run build
 ```
