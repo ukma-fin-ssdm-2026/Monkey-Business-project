@@ -19,3 +19,18 @@ def test_ci_pipelines_do_not_define_postgres_password():
 
     for workflow in workflows.glob("*.yml"):
         assert "POSTGRES_PASSWORD" not in workflow.read_text()
+
+
+def test_dependency_installations_require_binary_wheels():
+    files = [
+        ROOT / ".github" / "workflows" / "ci.yml",
+        ROOT / ".github" / "workflows" / "deploy-api-docs.yml",
+        ROOT / ".github" / "workflows" / "static-analysis.yml",
+        ROOT / "Dockerfile",
+    ]
+
+    for path in files:
+        text = path.read_text()
+        for line in text.splitlines():
+            if "pip install" in line and "-r " in line:
+                assert "--only-binary=:all:" in line, path
