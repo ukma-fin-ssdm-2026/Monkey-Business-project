@@ -1,3 +1,11 @@
+# Інструмент: Copilot.
+# Застосування: оновлення patch-версії проєкту після рефакторингів.
+# Верифікація: версію перевірено разом із package metadata та OpenAPI.
+
+[project]
+name = "monkey-business-project"
+version = "0.1.6"
+
 [tool.black]
 line-length = 88
 target-version = ["py312"]

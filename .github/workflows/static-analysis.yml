@@ -1,3 +1,7 @@
+# Інструмент: Copilot.
+# Застосування: безпечне встановлення залежностей статичного аналізу.
+# Верифікація: workflow перевірено та lint/security тести пройшли.
+
 name: Static analysis
 
 on:
@@ -13,7 +17,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r requirements-dev.txt
+      - run: >-
+          python -m pip install --only-binary=:all: --require-hashes
+          -r requirements-dev.lock
       - name: Format and style (black, flake8)
         run: |
           black --check src

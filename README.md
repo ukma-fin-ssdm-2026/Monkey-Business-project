@@ -21,12 +21,12 @@
 
 ## Команда
 
-| Ім'я | GitHub | Роль (Lab 5) |
+| Ім'я | GitHub | Роль (Lab 8) |
 |---|---|---|
-| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Quality Lead |
-| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Documentation Lead |
-| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Code Reviewer |
-| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Security Analyst |
+| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Testing Engineer |
+| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Code & Security Analyst |
+| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Refactoring Lead |
+| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Release manager |
 
 ## Стратегія розробки
 Використовуємо GitHub Flow: зміни в `main` вносяться лише через Pull Request з проходженням CI та щонайменше одним схваленням. Стандарт кодування, обов'язкові інструменти, кроки огляду коду та критерії готовності описано в [політиці якості та огляду коду](./TeamCharter.md#5-політика-якості-та-огляду-коду).

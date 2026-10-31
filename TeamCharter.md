@@ -7,15 +7,27 @@
   - Mykola Vashchenko (GitHub: @MykolaVashchenko, електронна пошта НаУКМА: m.vashchenko@ukma.edu.ua)
   - Nikita Dyshlyuk (GitHub: @mytec0l, електронна пошта НаУКМА: n.dyshlyuk@ukma.edu.ua)
 ## 2. Ролі та відповідальності (Roles & Responsibilities)
-| Name | Core | Project Requirements | Architecture | API Design | Code Quality |
-|---|---|---|---|---|---|
-| Nazar Sydorchuk | Issue Tracker Lead | Requirements Lead | UML Lead | Quality Lead | Documentation Lead |
-| Oleksii Volik | CI Maintainer | Quality Lead | Architecture Lead | Documentation Lead | Code Reviewer |
-| Mykola Vashchenko | Documentation Lead | Traceability Lead | Data & Threat Modeler / Documentation Lead | Backend Lead / API Design Lead | Security Analyst |
-| Nikita Dyshlyuk | Repo Maintainer | Documentation Lead | Requirements-Architecture Mapper | Integration Lead | Quality Lead |
-### Відповідальність за тестування (Лаб06)
-- **Керівник тестування (Nikita Dyshlyuk)**: набір `tests/`, модульні тести щонайменше двох модулів, звіт `htmlcov/`, аналіз рядків і гілок, фікстури, моки та граничні випадки (команда з чотирьох учасників).
-- Усі результати Лаб06 подаються до початку Лаб07. Кожен учасник додає власні TDD-відео та відео внеску в `Labs/Lab06/video_[ім’я].txt`, по одному посиланню на рядок.
+| Name | Core | Project Requirements | Architecture | API Design | Code Quality | Testing (Labs 06–07) | Quality & Release (Lab 08) |
+|---|---|---|---|---|---|---|---|
+| Nazar Sydorchuk | Issue Tracker Lead | Requirements Lead | UML Lead | Quality Lead | Documentation Lead | Test Strategist / Quality Analyst | Code & Security Analyst |
+| Oleksii Volik | CI Maintainer | Quality Lead | Architecture Lead | Documentation Lead | Code Reviewer | Integration Lead / Test Planner | Refactoring Lead |
+| Mykola Vashchenko | Documentation Lead | Traceability Lead | Data & Threat Modeler / Documentation Lead | Backend Lead / API Design Lead | Security Analyst | Debugging Lead / Review Manager | Release Manager |
+| Nikita Dyshlyuk | Repo Maintainer | Documentation Lead | Requirements-Architecture Mapper | Integration Lead | Quality Lead | Test Lead / Documentation Lead | Testing Engineer |
+### Відповідальність за тестування (Лаб06 та Лаб07)
+| Учасник | Ролі (Лаб06 & Лаб07) |
+|---|---|
+| Nikita Dyshlyuk | Керівник тестування \| Відповідальний за документацію |
+| Oleksii Volik | Керівник інтеграції \| Планувальник тестів |
+| Mykola Vashchenko | Керівник налагодження \| Менеджер оглядів |
+| Nazar Sydorchuk | Стратег тестування \| Аналітик якості |
+
+### Відповідальність за якість, рефакторинг та реліз (Лаб08)
+| Ім'я | GitHub | Роль (Lab 8) |
+|---|---|---|
+| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Інженер тестів |
+| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Аналітик коду та безпеки |
+| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Керівник рефакторингу |
+| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Реліз менеджер |
 
 ### Відповідальність за артефакти вимог:
 - **Requirements Lead (Nazar Sydorchuk)**: написання та вдосконалення користувацьких історій (INVEST), ведення розділу функціональних вимог (FR) у `requirements.md`.

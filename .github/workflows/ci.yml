@@ -1,3 +1,7 @@
+# Інструмент: Copilot.
+# Застосування: безпечне встановлення CI-залежностей лише з binary wheels.
+# Верифікація: workflow перевірено та відповідну конфігурацію протестовано.
+
 name: CI
 
 on:
@@ -21,8 +25,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
+          python -m pip install --only-binary=:all: --require-hashes -r requirements.lock
+          python -m pip install --only-binary=:all: --require-hashes -r requirements-dev.lock
 
       - name: Run tests with coverage
         run: pytest --cov --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=70
