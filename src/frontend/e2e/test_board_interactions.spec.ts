@@ -6,27 +6,25 @@
  * Верифікація: Прогін у Chrome проти API з PostgreSQL на гілці pre-refactor
  * і після кожного кроку рефакторингу.
  *
- * Як і test_performance.spec.ts, потребує запущених API, Vite dev-сервера та
- * користувача з дошкою; адреси й обліковий запис змінюються через змінні E2E_*.
+ * Як і test_performance.spec.ts, потребує запущених API та Vite dev-сервера;
+ * тестового кандидата і його board_id готує e2e/session.ts. Адреси й
+ * обліковий запис змінюються через змінні E2E_*.
  * Тести створюють власні картки і видаляють лише їх.
  */
 
 import { test, expect, type APIRequestContext, type Page } from '@playwright/test';
+import { API_URL, apiSession, openBoard } from './session';
 
-const API_URL = process.env.E2E_API_URL ?? 'http://localhost:3000';
-const UI_URL = process.env.E2E_UI_URL ?? 'http://localhost:5173';
-const EMAIL = process.env.E2E_EMAIL ?? 'e2e@example.com';
-const PASSWORD = process.env.E2E_PASSWORD ?? '12345678';
-const BOARD_ID = process.env.E2E_BOARD_ID ?? '881c9ea7-0d0c-4864-bafe-fbcb2bf70722';
 const SURFACE = 'rgb(255, 255, 255)';
 
 let headers: Record<string, string>;
+let boardId: string;
 let stageIds: string[];
 let createdCardIds: string[];
 
 async function createCard(request: APIRequestContext, name: string, stage = 0): Promise<string> {
   const company = `${name} ${Date.now()}`;
-  const response = await request.post(`${API_URL}/v1/boards/${BOARD_ID}/cards`, {
+  const response = await request.post(`${API_URL}/v1/boards/${boardId}/cards`, {
     data: { stage_id: stageIds[stage], company, position: 'Engineer' },
     headers,
   });
@@ -37,19 +35,9 @@ async function createCard(request: APIRequestContext, name: string, stage = 0): 
 
 async function stageOf(request: APIRequestContext, company: string): Promise<string> {
   const cards = await (
-    await request.get(`${API_URL}/v1/boards/${BOARD_ID}/cards`, { headers })
+    await request.get(`${API_URL}/v1/boards/${boardId}/cards`, { headers })
   ).json();
   return cards.items.find((card: { company: string }) => card.company === company).stage_id;
-}
-
-async function openBoard(page: Page) {
-  await page.goto(UI_URL);
-  await page.fill('input[type="email"]', EMAIL);
-  await page.fill('input[type="password"]', PASSWORD);
-  await page.click('button:has-text("Увійти")');
-  await page.fill('input[placeholder="3fa85f64-5717-4562-b3fc-2c963f66afa6"]', BOARD_ID);
-  await page.click('button:has-text("Відкрити дошку")');
-  await page.locator('.stage-column').first().waitFor();
 }
 
 const cardItem = (page: Page, company: string) => page.locator('.card-item', { hasText: company });
@@ -57,12 +45,9 @@ const modal = (page: Page) => page.locator('.modal-card');
 
 test.describe('Lab08: поведінка дошки до і після рефакторингу', () => {
   test.beforeEach(async ({ request }) => {
-    const login = await request.post(`${API_URL}/v1/auth/login`, {
-      data: { email: EMAIL, password: PASSWORD },
-    });
-    headers = { Authorization: `Bearer ${(await login.json()).access_token}` };
+    ({ headers, boardId } = await apiSession(request));
     const stages = await (
-      await request.get(`${API_URL}/v1/boards/${BOARD_ID}/stages`, { headers })
+      await request.get(`${API_URL}/v1/boards/${boardId}/stages`, { headers })
     ).json();
     stageIds = stages.map((stage: { id: string }) => stage.id);
     createdCardIds = [];
@@ -70,7 +55,7 @@ test.describe('Lab08: поведінка дошки до і після рефа�
 
   test.afterEach(async ({ request }) => {
     for (const id of createdCardIds) {
-      await request.delete(`${API_URL}/v1/boards/${BOARD_ID}/cards/${id}`, { headers });
+      await request.delete(`${API_URL}/v1/boards/${boardId}/cards/${id}`, { headers });
     }
   });
 
