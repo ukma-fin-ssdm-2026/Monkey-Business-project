@@ -4,6 +4,59 @@ info:
   description: REST API для трекера підготовки до технічних співбесід (Code-First).
   version: 0.1.0
 paths:
+  /v1/boards:
+    get:
+      tags:
+      - Boards
+      summary: Мої дошки
+      description: 'Повертає дошки поточного користувача: власну дошку кандидата та
+        дошки, до яких ментор має доступ за прийнятим запрошенням. Відсортовано за
+        датою створення.'
+      operationId: list_my_boards
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/BoardOut'
+                type: array
+                title: Response List My Boards
+        '401':
+          description: Невірні облікові дані
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+        '422':
+          description: Невалідні дані запиту
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
+      security:
+      - HTTPBearer: []
   /v1/boards/{board_id}/stages:
     get:
       tags:
@@ -2904,6 +2957,12 @@ components:
       - message
       - board_id
       title: AcceptInvitationResponse
+    BoardAccess:
+      type: string
+      enum:
+      - owner
+      - mentor
+      title: BoardAccess
     BoardMentorOut:
       properties:
         id:
@@ -2957,6 +3016,35 @@ components:
       - invite_token
       - invited_at
       title: BoardMentorOut
+    BoardOut:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: Ідентифікатор дошки (board_id для решти ендпоінтів)
+          examples:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        owner_id:
+          type: string
+          format: uuid
+          title: Owner Id
+          description: Кандидат, якому належить дошка
+        access:
+          $ref: '#/components/schemas/BoardAccess'
+          description: owner — власна дошка, mentor — доступ за прийнятим запрошенням
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Дата створення дошки
+      type: object
+      required:
+      - id
+      - owner_id
+      - access
+      - created_at
+      title: BoardOut
     CardCreate:
       properties:
         company:

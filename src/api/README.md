@@ -90,10 +90,10 @@ claude mcp get interview-board   # Status: ✔ Connected
 }
 ```
 
-Окремого ендпоінта для отримання `board_id` поки немає, тому ідентифікатор дошки кандидата
-можна знайти в БД:
+`board_id` повертає `GET /v1/boards` («мої дошки»): кандидат отримує дошку, створену під час
+реєстрації (`access: owner`), ментор — дошки, до яких прийняв запрошення (`access: mentor`).
+Адміністратору список чужих дошок не повертається; він відкриває дошку за відомим `board_id`.
 
 ```bash
-docker compose exec db psql -U interview_board -d interview_board \
-  -c "select b.id from boards b join users u on u.id = b.owner_id where u.email = 'you@example.com'"
+curl -H "Authorization: Bearer <access_token>" http://localhost:3000/v1/boards
 ```

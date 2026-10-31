@@ -13,7 +13,7 @@ from pathlib import Path
 
 from .errors import register_error_handlers
 from . import auth
-from .routers import card_links, card_notes, cards, comments, mentors, stages
+from .routers import boards, card_links, card_notes, cards, comments, mentors, stages
 
 SPEC_PATH = (
     Path(__file__).resolve().parents[2] / "docs" / "api" / "openapi-generated.yaml"
@@ -55,6 +55,7 @@ app = FastAPI(
 
 register_error_handlers(app)
 
+app.include_router(boards.router, prefix="/v1")
 app.include_router(stages.router, prefix="/v1")
 app.include_router(cards.router, prefix="/v1")
 app.include_router(card_links.router, prefix="/v1")

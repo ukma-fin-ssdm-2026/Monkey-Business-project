@@ -34,6 +34,7 @@ from sqlalchemy import (
     delete,
     exists,
     func,
+    or_,
     select,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
@@ -243,6 +244,24 @@ class SqlBoardRepository(_SqlRepository[Board]):
                 )
             )
         )
+
+    def list_for_user(self, user_id: UUID) -> list[Board]:
+        # Own boards plus boards shared with the user via an accepted invitation.
+        rows = self._session.scalars(
+            select(BoardRow)
+            .where(
+                or_(
+                    BoardRow.owner_id == user_id,
+                    exists().where(
+                        BoardMentorRow.board_id == BoardRow.id,
+                        BoardMentorRow.mentor_id == user_id,
+                        BoardMentorRow.status == "accepted",
+                    ),
+                )
+            )
+            .order_by(BoardRow.created_at)
+        )
+        return [self._to_entity(row) for row in rows]
 
 
 class SqlStageRepository(_SqlRepository[Stage]):
