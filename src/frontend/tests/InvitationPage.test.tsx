@@ -1,3 +1,9 @@
+/**
+ * ## Використання ШІ
+ * - **Інструмент:** Codex.
+ * - **Застосування:** створення 12 характеризаційних тестів сторінки запрошення.
+ * - **Верифікація:** автор переглянув сценарії та перевірив результати до/після.
+ */
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError, api, setAuthToken } from "../src/api/client";
