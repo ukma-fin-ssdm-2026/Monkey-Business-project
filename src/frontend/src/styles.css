@@ -129,6 +129,31 @@ label {
   font-size: 14px;
 }
 
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.board-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.board-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.board-list code {
+  font-size: 11px;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
 .auth-switch {
   font-size: 13px;
   color: var(--text-muted);

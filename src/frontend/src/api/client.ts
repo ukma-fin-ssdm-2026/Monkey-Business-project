@@ -12,6 +12,7 @@ import type {
   AcceptInvitationRequest,
   AcceptInvitationResponse,
   BoardMentorOut,
+  BoardOut,
   CardCreate,
   CardLinkCreate,
   CardLinkOut,
@@ -121,6 +122,9 @@ export const api = {
     request<TokenResponse>("POST", "/v1/auth/register", payload),
   login: (payload: LoginRequest) =>
     request<TokenResponse>("POST", "/v1/auth/login", payload),
+
+  // --- boards ---
+  listMyBoards: () => request<BoardOut[]>("GET", "/v1/boards"),
 
   // --- stages ---
   listStages: (boardId: string) =>

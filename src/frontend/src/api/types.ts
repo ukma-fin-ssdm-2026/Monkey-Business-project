@@ -10,6 +10,13 @@
 
 export type UserRole = "candidate" | "mentor" | "admin";
 
+export interface BoardOut {
+  id: string;
+  owner_id: string;
+  access: "owner" | "mentor";
+  created_at: string;
+}
+
 export interface UserOut {
   id: string;
   email: string;

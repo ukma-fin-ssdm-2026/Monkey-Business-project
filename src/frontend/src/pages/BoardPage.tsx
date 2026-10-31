@@ -185,12 +185,15 @@ export function BoardPage() {
           >
             Ментори
           </button>
-          <button
-            className="secondary"
-            onClick={() => navigate("/board/setup")}
-          >
-            Змінити дошку
-          </button>
+          {/* У кандидата лише власна дошка — перемикати нема на що. */}
+          {user?.role !== "candidate" && (
+            <button
+              className="secondary"
+              onClick={() => navigate("/board/setup")}
+            >
+              Змінити дошку
+            </button>
+          )}
           <button className="secondary" onClick={logout}>
             Вийти
           </button>

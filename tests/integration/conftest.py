@@ -95,7 +95,8 @@ def owner(client: TestClient, new_session: Callable[[], Session]) -> Account:
     )
     assert response.status_code == 201
     user_id = UUID(response.json()["user"]["id"])
-    # The API has no endpoint that returns the board created at registration.
+    # Read the board from the database, not GET /v1/boards, so that
+    # test_boards_integration.py checks that endpoint against independent data.
     with new_session() as session:
         board_id = session.scalar(
             select(BoardRow.id).where(BoardRow.owner_id == user_id)
