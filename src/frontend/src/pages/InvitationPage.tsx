@@ -13,6 +13,12 @@
  * Верифікація: Перевірено типи і білд.
  */
 
+/**
+ * ## Використання ШІ (рефакторинг)
+ * - **Інструмент:** Codex.
+ * - **Застосування:** винесення повторюваної розмітки в InvitationStatusScreen.
+ * - **Верифікація:** автор перевірив зміни, результати 12 тестів до/після та збірки.
+ */
 import { FormEvent, type ReactNode, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api, ApiError, setAuthToken } from "../api/client";
