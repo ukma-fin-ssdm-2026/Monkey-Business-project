@@ -1,3 +1,11 @@
+## [0.1.5] - 2026-11-01
+
+### Refactoring:
+
+- Оновлено `mutmut` з недоступної для binary-only інсталяції версії `2.5.1`
+  до `3.8.1`, яка має Python wheel.
+  **Техніка:** Upgrade Dependency Version.
+
 ## [0.1.4] - 2026-10-31
 
 ### Refactoring:

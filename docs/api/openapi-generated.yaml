@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Tech Interview Board API
   description: REST API для трекера підготовки до технічних співбесід (Code-First).
-  version: 0.1.4
+  version: 0.1.5
 paths:
   /v1/boards/{board_id}/stages:
     get:
