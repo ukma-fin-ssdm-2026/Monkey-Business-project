@@ -1,27 +1,57 @@
 /**
  * Інструмент: Claude
- * Застосування: Екран ручного вводу board_id — обхід відсутнього в API
- * ендпоінта "мої дошки" (фіксується в src/api/README.md), реалізований
- * лише на фронтенді, без змін бекенду.
+ * Застосування: Вибір дошки після входу — список з GET /v1/boards
+ * (routers/boards.py); єдина дошка відкривається автоматично, ручний
+ * ввід board_id показується лише адміністратору.
  * Верифікація: Перевірено типи й білд; регулярний вираз UUID перевірено
  * вручну на прикладі з документації (3fa85f64-5717-4562-b3fc-2c963f66afa6).
  */
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { api, formatApiError } from "../api/client";
+import type { BoardOut } from "../api/types";
 
-// Бекенд поки не має ендпоінта "мої дошки" (src/api/README.md:
-// "Окремого ендпоінта для отримання board_id поки немає"), тому board_id
-// цього користувача просять ввести один раз і зберігають лише в браузері.
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export function BoardSetupPage() {
-  const { user, setBoardId, logout } = useAuth();
+  const { user, boardId, setBoardId, logout } = useAuth();
   const navigate = useNavigate();
+  const [boards, setBoards] = useState<BoardOut[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const UUID_RE =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  function openBoard(id: string) {
+    setBoardId(id);
+    navigate("/board", { replace: true });
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .listMyBoards()
+      .then((data) => {
+        if (cancelled) return;
+        // Одразу після входу чи реєстрації (дошку ще не обрано) єдину
+        // доступну дошку відкриваємо без зайвого кроку.
+        if (data.length === 1 && !boardId) {
+          openBoard(data[0].id);
+          return;
+        }
+        setBoards(data);
+      })
+      .catch((err) => {
+        if (!cancelled) setLoadError(formatApiError(err, "Не вдалося отримати список дошок"));
+      });
+    return () => {
+      cancelled = true;
+    };
+    // Лише при відкритті сторінки: після openBoard boardId змінюється,
+    // і повторний запит не потрібен.
+  }, []);
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -30,52 +60,65 @@ export function BoardSetupPage() {
       setError("Це не схоже на UUID дошки (напр. 3fa85f64-5717-4562-b3fc-2c963f66afa6)");
       return;
     }
-    setBoardId(trimmed);
-    navigate("/board");
+    openBoard(trimmed);
   }
 
   return (
     <div className="auth-screen">
-      <form className="auth-card" onSubmit={onSubmit}>
-        <h1>Ідентифікатор дошки</h1>
-        <p className="auth-subtitle">
-          Привіт, {user?.email}! API поки не має ендпоінта для отримання
-          списку власних дошок, тому введіть <code>board_id</code> вручну.
-        </p>
-        {user?.role === "candidate" ? (
+      <div className="auth-card">
+        <h1>Оберіть дошку</h1>
+        <p className="auth-subtitle">Привіт, {user?.email}!</p>
+
+        {boards === null && !loadError && <p className="hint">Завантаження дошок...</p>}
+        {loadError && <p className="form-error">{loadError}</p>}
+
+        {boards && boards.length > 0 && (
+          <ul className="board-list">
+            {boards.map((board) => (
+              <li key={board.id}>
+                <button type="button" onClick={() => openBoard(board.id)}>
+                  {board.access === "owner" ? "Моя дошка" : "Дошка кандидата (ментор)"}
+                  {board.id === boardId && " — поточна"}
+                </button>
+                <code>{board.id}</code>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {boards && boards.length === 0 && user?.role !== "admin" && (
           <p className="hint">
-            Якщо ви щойно зареєструвалися, ваша дошка вже створена. Знайти
-            її ID можна в базі даних:
-            <br />
-            <code>
-              docker compose exec db psql -U interview_board -d
-              interview_board -c &quot;select b.id from boards b join users u
-              on u.id = b.owner_id where u.email = &apos;{user.email}
-              &apos;&quot;
-            </code>
-          </p>
-        ) : (
-          <p className="hint">
-            Запитайте board_id у кандидата, що веде цю дошку (ви —{" "}
-            {user?.role === "mentor" ? "ментор" : "адміністратор"}).
+            {user?.role === "mentor"
+              ? "Немає дошок, до яких у вас є доступ. Прийміть запрошення від кандидата за посиланням з листа."
+              : "Немає дошок, пов'язаних з вашим акаунтом."}
           </p>
         )}
-        <label>
-          board_id
-          <input
-            type="text"
-            placeholder="3fa85f64-5717-4562-b3fc-2c963f66afa6"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            required
-          />
-        </label>
-        {error && <p className="form-error">{error}</p>}
-        <button type="submit">Відкрити дошку</button>
+
+        {/* Ручний ввід — лише для адміністратора: список не повертає йому
+            чужі дошки, а кандидат і ментор не мають доступу поза списком
+            (auth.py: require_board_access). */}
+        {user?.role === "admin" && (
+          <form onSubmit={onSubmit}>
+            <label>
+              Введіть board_id дошки
+              <input
+                type="text"
+                placeholder="3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                required
+              />
+            </label>
+            {error && <p className="form-error">{error}</p>}
+            <button type="submit" className="secondary">
+              Відкрити дошку
+            </button>
+          </form>
+        )}
         <button type="button" className="link-button" onClick={logout}>
           Вийти з акаунту
         </button>
-      </form>
+      </div>
     </div>
   );
 }
