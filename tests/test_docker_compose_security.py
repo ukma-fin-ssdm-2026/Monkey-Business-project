@@ -1,6 +1,7 @@
-# Інструмент: Copilot.
-# Застосування: регресійні перевірки секретів і безпечного встановлення залежностей.
-# Верифікація: тести пройшли локально.
+# Інструмент: Copilot; Claude — перевірка непривілейованого USER у Dockerfile.
+# Застосування: регресійні перевірки секретів, безпечного встановлення залежностей
+# і запуску контейнера API не від root.
+# Верифікація: тести пройшли локально; тест USER падав до зміни Dockerfile.
 
 from pathlib import Path
 
@@ -38,3 +39,14 @@ def test_dependency_installations_require_binary_wheels():
         for line in text.splitlines():
             if "pip install" in line and "-r " in line:
                 assert "--only-binary=:all:" in line, path
+
+
+def test_api_container_runs_as_non_root_user():
+    lines = (ROOT / "Dockerfile").read_text().splitlines()
+    instructions = [line.split(maxsplit=1) for line in lines if line[:1].isupper()]
+    keywords = [parts[0] for parts in instructions]
+    assert "USER" in keywords, "Dockerfile must switch to a non-root USER"
+
+    last_user = len(keywords) - 1 - keywords[::-1].index("USER")
+    assert last_user < keywords.index("CMD")
+    assert instructions[last_user][1].strip() not in {"root", "0", "0:0"}
