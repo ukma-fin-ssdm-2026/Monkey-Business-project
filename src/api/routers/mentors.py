@@ -10,6 +10,8 @@
 Покриває FR-012 (запрошення ментора за email із посиланням, доступ «перегляд і коментарі»).
 
 Доповнення Лаб06: Codex — регресійні тести та виправлення виявленого дефекту.
+Доповнення: Claude — адреса фронтенду в посиланні-запрошенні береться з FRONTEND_URL,
+щоб після деплою (Azure Static Web Apps) лист не вів на localhost.
 """
 
 from __future__ import annotations
@@ -54,6 +56,7 @@ from ..schemas import (
 )
 
 MAILTRAP_API_TOKEN = os.getenv("MAILTRAP_API_TOKEN")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
 
 mentors_router = APIRouter(prefix="/boards/{board_id}/mentors", tags=["Mentors"])
 invitations_router = APIRouter(prefix="/invitations", tags=["Invitations"])
@@ -89,7 +92,7 @@ def _send_invitation_email(email: str, token: str, board_id: UUID) -> None:
             "Додайте змінну в .env і перезапустіть контейнер."
         )
 
-    invite_url = f"http://localhost:5173/invitations/{token}"
+    invite_url = f"{FRONTEND_URL}/invitations/{token}"
     mail = mt.Mail(
         sender=mt.Address(email="hello@demomailtrap.co", name="Interview Board"),
         to=[mt.Address(email=email)],

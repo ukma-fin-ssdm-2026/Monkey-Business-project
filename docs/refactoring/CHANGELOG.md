@@ -4,6 +4,19 @@
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), версії —
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed:
+
+- Посилання в листі-запрошенні ментора будується з `FRONTEND_URL`
+  (за замовчуванням `http://localhost:5173`) замість захардкодженого
+  `localhost`, щоб воно працювало після деплою.
+  **Техніка:** Externalize Configuration.
+- `docker-compose.yml` передає в API обов'язкову змінну `JWT_SECRET`;
+  раніше контейнер підписував токени публічним development-ключем.
+- Додано `src/frontend/public/staticwebapp.config.json`: Azure Static Web
+  Apps повертає `index.html` для маршрутів SPA замість 404.
+
 ## [0.1.7] - 2026-11-01
 
 ### Refactoring:
