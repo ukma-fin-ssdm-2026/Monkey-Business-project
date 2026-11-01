@@ -3,7 +3,7 @@
 # Верифікація: усі залежності успішно завантажено з --only-binary=:all:.
 
 black==26.10.1
-flake8==7.1.1
+flake8==7.5.0
 bandit>=1.8.0
 detect-secrets==1.5.0
 pre-commit>=3.8
