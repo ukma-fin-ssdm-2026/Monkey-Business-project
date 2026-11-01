@@ -173,3 +173,13 @@ Black (`--check src`), Flake8 (`src`) і Bandit (`-c pyproject.toml -r src`) п�
 2. [`fcaeeb5`](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/commit/fcaeeb5)
    — повторювану обгортку екранів винесено в `InvitationStatusScreen`
    (Extract Component). Той самий файл тестів без змін: **12 passed**.
+
+### Quality Gate у SonarQube Cloud (+0,25)
+Налаштовано Quality Gate як обов'язкову перевірку Pull Request у branch protection для гілки main. Прогін було заблоковано через виявлені вразливості (незафіксовані залежності). Після суворого локування за допомогою --require-hashes та requirements.lock повторна перевірка була успішно пройдена.
+
+b604087b3eb44afe3120727e1b46de1d671460db
+https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/runs/124677919070
+— заблокований прогін через непіновані залежності: failed.
+
+https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/pull/192
+— успішний Pull Request після оновлення lock-файлів із SHA-256 та додавання --require-hashes: passed (Quality Gate пройдено).
