@@ -3,7 +3,8 @@
 Застосування: Gemini — початкові тести та фікстури (запрошення, read-only ментор).
 Claude — переробка: прибрано підміну `_require_board` (раніше тест перевіряв власну
 заглушку, а не код), використано доменну модель BoardMentor замість копії, додано
-тести для invite/list/get/accept/revoke та граничних випадків.
+тести для invite/list/get/accept/revoke та граничних випадків; тест адреси
+фронтенду (FRONTEND_URL) у листі-запрошенні.
 Верифікація: тести запущено через pytest; кожну гілку mentors.py звірено вручну;
 перевірено, що навмисне зламання коду (мутації) робить тести червоними.
 
@@ -719,6 +720,28 @@ def test_send_invitation_email_raises_service_unavailable_on_mailtrap_error(monk
             token="dummy-token", 
             board_id=uuid4()
         )
+
+
+# US-002
+def test_send_invitation_email_links_to_configured_frontend(monkeypatch):
+    monkeypatch.setattr(mentors_router_module, "MAILTRAP_API_TOKEN", "fake-token")
+    monkeypatch.setattr(mentors_router_module, "FRONTEND_URL", "https://board.example")
+
+    mock_client_instance = MagicMock()
+    monkeypatch.setattr(
+        mentors_router_module.mt,
+        "MailtrapClient",
+        MagicMock(return_value=mock_client_instance),
+    )
+
+    mentors_router_module._send_invitation_email(
+        email="test@example.com", token="dummy-token", board_id=uuid4()
+    )
+
+    sent_mail = mock_client_instance.send.call_args.args[0]
+    assert "https://board.example/invitations/dummy-token" in sent_mail.text
+    assert "localhost" not in sent_mail.text
+
 
 # US-002
 def test_invite_mentor_rejects_invalid_email_format():

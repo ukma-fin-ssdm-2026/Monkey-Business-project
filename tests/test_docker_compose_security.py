@@ -1,4 +1,5 @@
-# Інструмент: Copilot; Claude — перевірка непривілейованого USER у Dockerfile.
+# Інструмент: Copilot; Claude — перевірки непривілейованого USER у Dockerfile
+# та обов'язкового JWT_SECRET у compose.
 # Застосування: регресійні перевірки секретів, безпечного встановлення залежностей
 # і запуску контейнера API не від root.
 # Верифікація: тести пройшли локально; тест USER падав до зміни Dockerfile.
@@ -17,6 +18,15 @@ def test_postgres_password_is_external_and_required():
     assert expected_password in compose
     assert "POSTGRES_PASSWORD:-" not in compose
     assert "DATABASE_URL:" in compose
+
+
+def test_jwt_secret_is_external_and_required():
+    compose = (ROOT / "docker-compose.yml").read_text()
+
+    # Without it the API signs tokens with the public development fallback
+    # from auth._secret(), so anyone could forge a valid token.
+    assert "JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}" in compose
+    assert "JWT_SECRET:-" not in compose
 
 
 def test_ci_pipelines_do_not_define_postgres_password():

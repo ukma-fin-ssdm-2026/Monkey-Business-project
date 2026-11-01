@@ -13,6 +13,17 @@ npm run dev
 Відкрити http://localhost:5173. Бекенд (з docker compose) має працювати на
 http://localhost:3000.
 
+## Продакшн-білд (Azure Static Web Apps)
+
+```bash
+VITE_API_BASE_URL=https://<адреса-API> npm run build
+```
+
+`public/staticwebapp.config.json` потрапляє в `dist/` і переписує невідомі
+маршрути (`/board/...`, `/invitations/...`) на `index.html`, щоб оновлення
+сторінки не давало 404 у `BrowserRouter`. API на іншому origin має дозволяти
+CORS для адреси фронтенду.
+
 ## Вибір дошки
 
 Після входу чи реєстрації сторінка `/board/setup` бере список дошок з

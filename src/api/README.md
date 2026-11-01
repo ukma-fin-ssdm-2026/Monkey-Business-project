@@ -8,7 +8,7 @@ docker compose up -d --build
 
 - Контейнер `api` при старті застосовує міграції (`alembic upgrade head`) і запускає uvicorn; API доступне на http://localhost:3000.
 - Контейнер `db` — PostgreSQL 17. Порт опубліковано лише на `127.0.0.1`. Дані зберігаються в томі `pgdata` між перезапусками; `docker compose down -v` їх видаляє.
-- Змінні можна задати у файлі `.env` у корені репозиторію: `POSTGRES_PASSWORD` є обов'язковою, а `POSTGRES_DB` і `POSTGRES_USER` за замовчуванням мають значення `interview_board`; `POSTGRES_PORT` (`5432`) і `API_PORT` (`3000`) — необов'язкові. Якщо порт 5432 зайнятий локальним PostgreSQL: `POSTGRES_PORT=5434 docker compose up -d`.
+- Змінні можна задати у файлі `.env` у корені репозиторію: `POSTGRES_PASSWORD` і `JWT_SECRET` є обов'язковими (`JWT_SECRET` — ключ підпису токенів, щонайменше 32 байти, напр. `openssl rand -hex 32`); `FRONTEND_URL` — адреса фронтенду для посилань у листах-запрошеннях (за замовчуванням `http://localhost:5173`), а `POSTGRES_DB` і `POSTGRES_USER` за замовчуванням мають значення `interview_board`; `POSTGRES_PORT` (`5432`) і `API_PORT` (`3000`) — необов'язкові. Якщо порт 5432 зайнятий локальним PostgreSQL: `POSTGRES_PORT=5434 docker compose up -d`.
 
 ## Локально (uvicorn з автоперезавантаженням)
 
