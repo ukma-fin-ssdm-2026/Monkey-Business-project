@@ -1,6 +1,8 @@
-# Інструмент: Copilot.
-# Застосування: регресійні перевірки секретів і безпечного встановлення залежностей.
-# Верифікація: тести пройшли локально.
+# Інструмент: Copilot; Claude — перевірки непривілейованого USER у Dockerfile
+# та обов'язкового JWT_SECRET у compose.
+# Застосування: регресійні перевірки секретів, безпечного встановлення залежностей
+# і запуску контейнера API не від root.
+# Верифікація: тести пройшли локально; тест USER падав до зміни Dockerfile.
 
 from pathlib import Path
 
@@ -16,6 +18,15 @@ def test_postgres_password_is_external_and_required():
     assert expected_password in compose
     assert "POSTGRES_PASSWORD:-" not in compose
     assert "DATABASE_URL:" in compose
+
+
+def test_jwt_secret_is_external_and_required():
+    compose = (ROOT / "docker-compose.yml").read_text()
+
+    # Without it the API signs tokens with the public development fallback
+    # from auth._secret(), so anyone could forge a valid token.
+    assert "JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}" in compose
+    assert "JWT_SECRET:-" not in compose
 
 
 def test_ci_pipelines_do_not_define_postgres_password():
@@ -38,3 +49,14 @@ def test_dependency_installations_require_binary_wheels():
         for line in text.splitlines():
             if "pip install" in line and "-r " in line:
                 assert "--only-binary=:all:" in line, path
+
+
+def test_api_container_runs_as_non_root_user():
+    lines = (ROOT / "Dockerfile").read_text().splitlines()
+    instructions = [line.split(maxsplit=1) for line in lines if line[:1].isupper()]
+    keywords = [parts[0] for parts in instructions]
+    assert "USER" in keywords, "Dockerfile must switch to a non-root USER"
+
+    last_user = len(keywords) - 1 - keywords[::-1].index("USER")
+    assert last_user < keywords.index("CMD")
+    assert instructions[last_user][1].strip() not in {"root", "0", "0:0"}

@@ -2,7 +2,7 @@
   "_ai_usage": "Copilot: оновлення patch-версії після рефакторингів; перевірено узгодженість package metadata.",
   "name": "tech-interview-board-frontend",
   "private": true,
-  "version": "0.1.6",
+  "version": "0.1.8",
   "type": "module",
   "scripts": {
     "dev": "vite",

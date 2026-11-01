@@ -16,32 +16,18 @@ from uuid import UUID
 
 from fastapi import APIRouter, Path, status
 
-from ..auth import CurrentUser, require_board_access
+from ..auth import CurrentUser
 from ..db import Repos
-from ..domain import Card, Comment, User
+from ..domain import Comment
 from ..errors import ForbiddenError, NotFoundError, error_responses
 from ..repositories.base import Repositories
 from ..schemas import CommentCreate, CommentOut
+from .card_access import require_card
 
 router = APIRouter(
     prefix="/boards/{board_id}/cards/{card_id}/comments",
     tags=["Comments"],
 )
-
-
-def _require_card(
-    repos: Repositories,
-    board_id: UUID,
-    card_id: UUID,
-    user: User,
-) -> Card:
-    if repos.boards.get(board_id) is None:
-        raise NotFoundError(f"Дошку {board_id} не знайдено")
-    require_board_access(repos, board_id, user)
-    card = repos.cards.get(card_id)
-    if card is None or card.board_id != board_id:
-        raise NotFoundError(f"Картку {card_id} на дошці {board_id} не знайдено")
-    return card
 
 
 def _require_comment(repos: Repositories, card_id: UUID, comment_id: UUID) -> Comment:
@@ -68,7 +54,7 @@ def list_comments(
     user: CurrentUser = None,
     repos: Repos = None,
 ) -> list[CommentOut]:
-    _require_card(repos, board_id, card_id, user)
+    require_card(repos, board_id, card_id, user)
     return [CommentOut.model_validate(c) for c in repos.comments.list_for_card(card_id)]
 
 
@@ -94,7 +80,7 @@ def create_comment(
     user: CurrentUser = None,
     repos: Repos = None,
 ) -> CommentOut:
-    _require_card(repos, board_id, card_id, user)
+    require_card(repos, board_id, card_id, user)
     comment = repos.comments.add(
         Comment(
             card_id=card_id,
@@ -126,7 +112,7 @@ def delete_comment(
     user: CurrentUser = None,
     repos: Repos = None,
 ) -> None:
-    _require_card(repos, board_id, card_id, user)
+    require_card(repos, board_id, card_id, user)
     comment = _require_comment(repos, card_id, comment_id)
     if comment.author_id != user.id and user.role != "admin":
         raise ForbiddenError("Видалити коментар може лише його автор або адмін")

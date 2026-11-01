@@ -16,22 +16,15 @@ from uuid import UUID
 
 from fastapi import APIRouter, Path, status
 
-from ..auth import CandidateOrAdmin, CurrentUser, require_board_access
+from ..auth import CandidateOrAdmin, CurrentUser
 from ..db import Repos
-from ..domain import Stage, User
+from ..domain import Stage
 from ..errors import ConflictError, NotFoundError, error_responses
 from ..repositories.base import Repositories
 from ..schemas import StageCreate, StageOut, StageUpdate
+from .card_access import require_board
 
 router = APIRouter(prefix="/boards/{board_id}/stages", tags=["Stages"])
-
-
-def _require_board(
-    repos: Repositories, board_id: UUID, user: User, *, write: bool = False
-) -> None:
-    if repos.boards.get(board_id) is None:
-        raise NotFoundError(f"Дошку {board_id} не знайдено")
-    require_board_access(repos, board_id, user, write=write)
 
 
 def _require_stage(repos: Repositories, board_id: UUID, stage_id: UUID) -> Stage:
@@ -57,7 +50,7 @@ def list_stages(
     user: CurrentUser = None,
     repos: Repos = None,
 ) -> list[StageOut]:
-    _require_board(repos, board_id, user)
+    require_board(repos, board_id, user)
     return [StageOut.model_validate(s) for s in repos.stages.list_for_board(board_id)]
 
 
@@ -81,7 +74,7 @@ def create_stage(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> StageOut:
-    _require_board(repos, board_id, user, write=True)
+    require_board(repos, board_id, user, write=True)
     order_index = payload.order_index
     if order_index is None:
         order_index = len(repos.stages.list_for_board(board_id))
@@ -112,7 +105,7 @@ def update_stage(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> StageOut:
-    _require_board(repos, board_id, user, write=True)
+    require_board(repos, board_id, user, write=True)
     stage = _require_stage(repos, board_id, stage_id)
     changes = {
         k: v for k, v in payload.model_dump(exclude_unset=True).items() if v is not None
@@ -142,7 +135,7 @@ def delete_stage(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> None:
-    _require_board(repos, board_id, user, write=True)
+    require_board(repos, board_id, user, write=True)
     _require_stage(repos, board_id, stage_id)
     if repos.stages.has_cards(stage_id):
         raise ConflictError("Неможливо видалити етап, у якому є картки")
