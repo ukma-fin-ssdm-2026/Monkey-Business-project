@@ -32,7 +32,6 @@ from ..auth import (
     _issue_token,
     bearer,
     get_current_user,
-    require_board_access,
 )
 from ..db import Repos
 from ..domain import BoardMentor, User, utcnow
@@ -45,7 +44,6 @@ from ..errors import (
     UnauthorizedError,
     error_responses,
 )
-from ..repositories.base import Repositories
 from ..schemas import (
     AcceptInvitationRequest,
     AcceptInvitationResponse,
@@ -54,20 +52,13 @@ from ..schemas import (
     MentorStatus,
     UserRole,
 )
+from .card_access import require_board
 
 MAILTRAP_API_TOKEN = os.getenv("MAILTRAP_API_TOKEN")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
 
 mentors_router = APIRouter(prefix="/boards/{board_id}/mentors", tags=["Mentors"])
 invitations_router = APIRouter(prefix="/invitations", tags=["Invitations"])
-
-
-def _require_board(
-    repos: Repositories, board_id: UUID, user: User, *, write: bool = False
-) -> None:
-    if repos.boards.get(board_id) is None:
-        raise NotFoundError(f"Дошку {board_id} не знайдено")
-    require_board_access(repos, board_id, user, write=write)
 
 
 def _to_mentor_out(invitation: BoardMentor, email: str) -> BoardMentorOut:
@@ -143,7 +134,7 @@ def invite_mentor(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> BoardMentorOut:
-    _require_board(repos, board_id, user, write=True)
+    require_board(repos, board_id, user, write=True)
 
     email = str(payload.email).lower()
     if email == user.email.lower():
@@ -206,7 +197,7 @@ def list_board_mentors(
     user: CurrentUser = None,
     repos: Repos = None,
 ) -> list[BoardMentorOut]:
-    _require_board(repos, board_id, user)
+    require_board(repos, board_id, user)
     invitations = repos.mentors.list_for_board(board_id)
 
     result = []
@@ -340,7 +331,7 @@ def revoke_mentor(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> None:
-    _require_board(repos, board_id, user, write=True)
+    require_board(repos, board_id, user, write=True)
     invitation = repos.mentors.get_by_board_and_mentor(board_id, mentor_id)
     if invitation is None:
         raise NotFoundError("Ментора серед запрошених для цієї дошки не знайдено")

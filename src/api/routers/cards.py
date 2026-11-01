@@ -21,9 +21,9 @@ from uuid import UUID
 
 from fastapi import APIRouter, Path, Query, status
 
-from ..auth import CandidateOrAdmin, CurrentUser, require_board_access
+from ..auth import CandidateOrAdmin, CurrentUser
 from ..db import Repos
-from ..domain import Card, User, utcnow
+from ..domain import Card, utcnow
 from ..errors import NotFoundError, error_responses
 from ..repositories.base import Repositories
 from ..schemas import (
@@ -35,16 +35,9 @@ from ..schemas import (
     CardUpdate,
     PaginationMeta,
 )
+from .card_access import require_board
 
 router = APIRouter(prefix="/boards/{board_id}/cards", tags=["Cards"])
-
-
-def _require_board(
-    repos: Repositories, board_id: UUID, user: User, *, write: bool = False
-) -> None:
-    if repos.boards.get(board_id) is None:
-        raise NotFoundError(f"Дошку {board_id} не знайдено")
-    require_board_access(repos, board_id, user, write=write)
 
 
 def _require_card(repos: Repositories, board_id: UUID, card_id: UUID) -> Card:
@@ -132,7 +125,7 @@ def list_cards(
     user: CurrentUser = None,
     repos: Repos = None,
 ) -> CardListResponse:
-    _require_board(repos, board_id, user)
+    require_board(repos, board_id, user)
     all_items = repos.cards.list_for_board(
         board_id, stage_id, status_.value if status_ else None
     )
@@ -204,7 +197,7 @@ def create_card(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> CardOut:
-    _require_board(repos, board_id, user, write=True)
+    require_board(repos, board_id, user, write=True)
     _require_stage(repos, board_id, payload.stage_id)
     data = payload.model_dump()
     if data.get("vacancy_url") is not None:
@@ -235,7 +228,7 @@ def get_card(
     user: CurrentUser = None,
     repos: Repos = None,
 ) -> CardOut:
-    _require_board(repos, board_id, user)
+    require_board(repos, board_id, user)
     return CardOut.model_validate(_require_card(repos, board_id, card_id))
 
 
@@ -259,7 +252,7 @@ def update_card(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> CardOut:
-    _require_board(repos, board_id, user, write=True)
+    require_board(repos, board_id, user, write=True)
     card = _require_card(repos, board_id, card_id)
     changes = payload.model_dump(exclude_unset=True)
     if changes.get("vacancy_url") is not None:
@@ -291,7 +284,7 @@ def delete_card(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> None:
-    _require_board(repos, board_id, user, write=True)
+    require_board(repos, board_id, user, write=True)
     _require_card(repos, board_id, card_id)
     repos.cards.delete(card_id)
 
@@ -318,7 +311,7 @@ def move_card(
     user: CandidateOrAdmin = None,
     repos: Repos = None,
 ) -> CardOut:
-    _require_board(repos, board_id, user, write=True)
+    require_board(repos, board_id, user, write=True)
     card = _require_card(repos, board_id, card_id)
     _require_stage(repos, board_id, payload.stage_id)
     # Remove before inserting, including moves within the same stage. This keeps
