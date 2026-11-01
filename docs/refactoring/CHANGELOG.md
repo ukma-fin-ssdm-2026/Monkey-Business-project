@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-11-01
+
 ### Changed:
 
 - Посилання в листі-запрошенні ментора будується з `FRONTEND_URL`
@@ -16,6 +18,13 @@
   раніше контейнер підписував токени публічним development-ключем.
 - Додано `src/frontend/public/staticwebapp.config.json`: Azure Static Web
   Apps повертає `index.html` для маршрутів SPA замість 404.
+
+### Refactoring:
+
+- Три однакові функції `_require_board` у `stages.py`, `cards.py`,
+  `mentors.py` і копію `_require_card` у `comments.py` замінено спільними
+  `require_board` і `require_card` у `src/api/routers/card_access.py`.
+  **Техніка:** Extract Function.
 
 ## [0.1.7] - 2026-11-01
 
