@@ -19,8 +19,8 @@ from src.api import db
 DRIVER_MESSAGE = 'connection to server at "10.0.0.5", port 5432 failed: timeout expired'
 LOGIN = {
     "email": "user@example.com",
-    "password": "correct-pass-1",
-}  # pragma: allowlist secret
+    "password": "correct-pass-1",  # pragma: allowlist secret
+}
 
 
 class _DeadDatabaseSession:
