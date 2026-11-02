@@ -31,13 +31,21 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    case,
     delete,
     exists,
     func,
     or_,
     select,
+    update,
 )
-from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    Mapped,
+    Session,
+    mapped_column,
+    sessionmaker,
+)
 
 from ..domain import Board, BoardMentor, Card, CardLink, CardNote, Comment, Stage, User
 from .base import Repositories
@@ -76,6 +84,7 @@ class UserRow(Base):
     is_active: Mapped[bool]
     created_at: Mapped[datetime]
     failed_login_attempts: Mapped[int] = mapped_column(default=0, server_default="0")
+    locked_until: Mapped[Optional[datetime]]
 
 
 class BoardRow(Base):
@@ -226,6 +235,46 @@ class SqlUserRepository(_SqlRepository[User]):
     def get_by_email(self, email: str) -> Optional[User]:
         row = self._session.scalar(select(UserRow).where(UserRow.email == email))
         return None if row is None else self._to_entity(row)
+
+
+class SqlLoginAttemptRepository:
+    """Лічильник входів у власних транзакціях.
+
+    Транзакція запиту відкочується на 401/403, тож запис через неї зник би
+    разом із відповіддю. Кожен метод фіксує зміну одразу.
+    """
+
+    def __init__(self, session_factory: sessionmaker[Session]) -> None:
+        self._session_factory = session_factory
+
+    def register_attempt(
+        self, user_id: UUID, *, lock_at: int, lock_until: datetime
+    ) -> int:
+        # One UPDATE: the row lock makes parallel attempts get distinct
+        # numbers, and the lock is set in the same statement that reaches
+        # the limit, so the counter never sits at the limit without it.
+        attempts = UserRow.failed_login_attempts + 1
+        with self._session_factory.begin() as session:
+            return session.execute(
+                update(UserRow)
+                .where(UserRow.id == user_id)
+                .values(
+                    failed_login_attempts=attempts,
+                    locked_until=case(
+                        (attempts >= lock_at, lock_until),
+                        else_=UserRow.locked_until,
+                    ),
+                )
+                .returning(UserRow.failed_login_attempts)
+            ).scalar_one()
+
+    def reset(self, user_id: UUID) -> None:
+        with self._session_factory.begin() as session:
+            session.execute(
+                update(UserRow)
+                .where(UserRow.id == user_id)
+                .values(failed_login_attempts=0, locked_until=None)
+            )
 
 
 class SqlBoardRepository(_SqlRepository[Board]):

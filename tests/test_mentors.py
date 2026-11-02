@@ -697,7 +697,7 @@ def test_owner_can_edit_card(repos, board, card, candidate):
 def test_send_invitation_email_raises_error_if_no_token(monkeypatch):
     monkeypatch.setattr(mentors_router_module, "MAILTRAP_API_TOKEN", None)
 
-    with pytest.raises(RuntimeError, match="MAILTRAP_API_TOKEN не задано"):
+    with pytest.raises(ServiceUnavailableError, match="Не вдалося надіслати лист"):
         mentors_router_module._send_invitation_email(
             email="test@example.com", 
             token="dummy-token", 
@@ -709,12 +709,14 @@ def test_send_invitation_email_raises_service_unavailable_on_mailtrap_error(monk
     monkeypatch.setattr(mentors_router_module, "MAILTRAP_API_TOKEN", "fake-token")
 
     mock_client_instance = MagicMock()
-    mock_client_instance.send.side_effect = Exception("Mailtrap API timeout")
-    
+    mock_client_instance.send.side_effect = mentors_router_module.mt.APIError(
+        500, ["Mailtrap API timeout"]
+    )
+
     mock_client_class = MagicMock(return_value=mock_client_instance)
     monkeypatch.setattr(mentors_router_module.mt, "MailtrapClient", mock_client_class)
 
-    with pytest.raises(ServiceUnavailableError, match="Не вдалося надіслати запрошення"):
+    with pytest.raises(ServiceUnavailableError, match="Не вдалося надіслати лист"):
         mentors_router_module._send_invitation_email(
             email="test@example.com", 
             token="dummy-token", 

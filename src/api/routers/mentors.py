@@ -16,6 +16,7 @@
 
 from __future__ import annotations
 
+import logging
 import secrets
 from typing import Annotated, Optional
 from uuid import UUID
@@ -24,6 +25,7 @@ from fastapi import APIRouter, Depends, Path, status
 from fastapi.security import HTTPAuthorizationCredentials
 import mailtrap as mt
 import os
+import requests
 
 from ..auth import (
     CandidateOrAdmin,
@@ -57,6 +59,15 @@ from .card_access import require_board
 MAILTRAP_API_TOKEN = os.getenv("MAILTRAP_API_TOKEN")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
 
+# Provider details (URLs, inbox id, raw API answers) go to the log only;
+# the client gets this message and the request_id (CWE-209).
+EMAIL_UNAVAILABLE_MESSAGE = (
+    "Не вдалося надіслати лист із запрошенням. Запрошення не створено, "
+    "спробуйте пізніше"
+)
+
+logger = logging.getLogger(__name__)
+
 mentors_router = APIRouter(prefix="/boards/{board_id}/mentors", tags=["Mentors"])
 invitations_router = APIRouter(prefix="/invitations", tags=["Invitations"])
 
@@ -75,13 +86,19 @@ def _to_mentor_out(invitation: BoardMentor, email: str) -> BoardMentorOut:
 
 
 def _send_invitation_email(email: str, token: str, board_id: UUID) -> None:
-    """Відправка email із посиланням-запрошенням через API Mailtrap."""
+    """Відправка email із посиланням-запрошенням через API Mailtrap.
+
+    Швидка відмова: без листа ментор не дізнається про запрошення, тож
+    ServiceUnavailableError відкочує транзакцію і запис не створюється.
+    """
 
     if not MAILTRAP_API_TOKEN:
-        raise RuntimeError(
-            "MAILTRAP_API_TOKEN не задано — email не може бути відправлено. "
-            "Додайте змінну в .env і перезапустіть контейнер."
+        logger.error(
+            "MAILTRAP_API_TOKEN is not set, invitation email for board %s "
+            "was not sent; add it to .env and restart the container",
+            board_id,
         )
+        raise ServiceUnavailableError(EMAIL_UNAVAILABLE_MESSAGE)
 
     invite_url = f"{FRONTEND_URL}/invitations/{token}"
     mail = mt.Mail(
@@ -101,17 +118,15 @@ def _send_invitation_email(email: str, token: str, board_id: UUID) -> None:
         client = mt.MailtrapClient(
             token=MAILTRAP_API_TOKEN, sandbox=True, inbox_id=4439163
         )
-        response = client.send(mail)
-        print(
-            f"[Email Service] Успішно надіслано лист на {email}. Відповідь: {response}"
+        client.send(mail)
+    # Only provider and network failures; a bug in our own code (TypeError
+    # while building the mail) must surface as a 500, not hide behind a 503.
+    except (mt.MailtrapError, requests.RequestException) as e:
+        logger.warning(
+            "Mailtrap failed to send invitation for board %s: %s", board_id, e
         )
-    except Exception as e:
-        details = ""
-        if hasattr(e, "response") and e.response is not None:
-            details = f" Деталі API: {e.response.text}"
-        raise ServiceUnavailableError(
-            f"Не вдалося надіслати запрошення на {email}: {e}.{details}"
-        ) from e
+        raise ServiceUnavailableError(EMAIL_UNAVAILABLE_MESSAGE) from e
+    logger.info("Invitation email sent for board %s", board_id)
 
 
 @mentors_router.post(

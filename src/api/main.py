@@ -8,11 +8,12 @@
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 import yaml
 from pathlib import Path
 
 from .errors import register_error_handlers
-from . import auth
+from . import auth, db
 from .routers import boards, card_links, card_notes, cards, comments, mentors, stages
 
 SPEC_PATH = (
@@ -71,12 +72,19 @@ app.include_router(auth.router, prefix="/v1")
     tags=["Meta"],
     summary="Перевірка стану сервісу",
     description=(
-        "Повертає 200, якщо сервіс працює. Використовується "
-        "зовнішнім моніторингом доступності (REL-1)."
+        "Повертає 200, якщо сервіс працює і база даних відповідає, інакше 503. "
+        "Використовується зовнішнім моніторингом доступності (REL-1) "
+        "і healthcheck контейнера."
     ),
+    responses={503: {"description": "База даних недоступна"}},
 )
-def health() -> dict:
-    return {"status": "ok"}
+def health() -> JSONResponse:
+    if not db.database_is_available():
+        return JSONResponse(
+            status_code=503,
+            content={"status": "unhealthy", "checks": {"database": "unavailable"}},
+        )
+    return JSONResponse({"status": "ok", "checks": {"database": "ok"}})
 
 
 if __name__ == "__main__":
