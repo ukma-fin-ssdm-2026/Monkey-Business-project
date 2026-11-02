@@ -16,13 +16,18 @@
 
 from __future__ import annotations
 
+import logging
 import uuid
 
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import OperationalError, SQLAlchemyError
+from sqlalchemy.exc import TimeoutError as PoolTimeoutError
 
 from .schemas import ErrorBody, ErrorDetail, ErrorResponse
+
+logger = logging.getLogger(__name__)
 
 # Absolute URL: the API does not serve the markdown docs, so a
 # relative path would 404 for clients.
@@ -229,6 +234,39 @@ def register_error_handlers(app: FastAPI) -> None:
             status_code=exc.status_code,
             content=body.model_dump(mode="json"),
             headers=headers,
+        )
+
+    @app.exception_handler(SQLAlchemyError)
+    async def handle_database_error(
+        request: Request, exc: SQLAlchemyError
+    ) -> JSONResponse:
+        # Fail fast: the transaction is already rolled back, so answering
+        # with a clear error is safer than guessing a response. The driver
+        # message stays in the log only, it names hosts and SQL (CWE-209).
+        request_id = _request_id(request)
+        if isinstance(exc, (OperationalError, PoolTimeoutError)):
+            # Connection lost, connect/statement timeout or exhausted pool:
+            # transient, the client may retry later.
+            logger.error("Database unavailable [%s]: %s", request_id, exc)
+            status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+            code, message = "SERVICE_UNAVAILABLE", (
+                "База даних тимчасово недоступна. Спробуйте пізніше"
+            )
+        else:
+            logger.exception("Database error [%s]", request_id)
+            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+            code, message = "INTERNAL_ERROR", "Внутрішня помилка сервера"
+        body = ErrorResponse(
+            error=ErrorBody(
+                code=code,
+                message=message,
+                details=[],
+                request_id=request_id,
+                documentation=f"{DOCS_BASE}#error-handling",
+            )
+        )
+        return JSONResponse(
+            status_code=status_code, content=body.model_dump(mode="json")
         )
 
     @app.exception_handler(RequestValidationError)

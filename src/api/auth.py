@@ -11,7 +11,7 @@ import jwt
 from fastapi import APIRouter, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from .db import Repos
+from .db import LoginAttempts, Repos
 from .domain import DEFAULT_STAGE_NAMES, Board, Stage, User
 from .errors import (
     ConflictError,
@@ -33,9 +33,10 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 bearer = HTTPBearer(auto_error=False)
 TOKEN_TTL = timedelta(hours=24)
 
-# Simple brute-force protection: block login attempts once a user has
-# accumulated MAX_FAILED_ATTEMPTS consecutive wrong passwords.
+# Brute-force protection: after MAX_FAILED_ATTEMPTS consecutive wrong
+# passwords login is blocked for LOCKOUT_DURATION, then a new window starts.
 MAX_FAILED_ATTEMPTS = 5
+LOCKOUT_DURATION = timedelta(minutes=15)
 
 
 def _secret() -> str:
@@ -110,36 +111,48 @@ def register(payload: RegisterRequest, repos: Repos) -> TokenResponse:
     return _issue_token(user)
 
 
-def _register_failed_attempt(user: User, repos: Repositories) -> None:
-    user.failed_login_attempts += 1
-    repos.users.save(user)
-
-
-def _reset_failed_attempts(user: User, repos: Repositories) -> None:
-    if user.failed_login_attempts:
-        user.failed_login_attempts = 0
-        repos.users.save(user)
+def _locked_error(locked_until: datetime | None) -> ForbiddenError:
+    if locked_until is None:
+        return ForbiddenError("Обліковий запис тимчасово заблоковано")
+    return ForbiddenError(
+        "Обліковий запис тимчасово заблоковано до "
+        f"{locked_until:%H:%M} UTC. Спробуйте пізніше"
+    )
 
 
 @router.post(
     "/login",
     response_model=TokenResponse,
-    responses=auth_error_responses(),
+    responses=auth_error_responses(forbidden="Обліковий запис тимчасово заблоковано"),
 )
-def login(payload: LoginRequest, repos: Repos) -> TokenResponse:
+def login(
+    payload: LoginRequest, repos: Repos, attempts: LoginAttempts
+) -> TokenResponse:
     user = repos.users.get_by_email(str(payload.email).lower())
-    if user is not None and user.failed_login_attempts >= MAX_FAILED_ATTEMPTS:
-        raise ForbiddenError("Обліковий запис тимчасово заблоковано")
-    valid = (
-        user is not None
-        and user.is_active
-        and _verify_password(payload.password, user.password_hash)
-    )
-    if not valid:
-        if user is not None and user.is_active:
-            _register_failed_attempt(user, repos)
+    if user is None or not user.is_active:
         raise UnauthorizedError("Невірний email або пароль")
-    _reset_failed_attempts(user, repos)
+
+    now = datetime.now(timezone.utc)
+    if user.locked_until is not None:
+        # Stored in UTC; a backend without time zones (SQLite) returns it naive.
+        locked_until = user.locked_until.replace(
+            tzinfo=user.locked_until.tzinfo or timezone.utc
+        )
+        if locked_until > now:
+            raise _locked_error(locked_until)
+        # The lock has expired: a new window of MAX_FAILED_ATTEMPTS starts.
+        attempts.reset(user.id)
+
+    # The attempt is counted before the slow password check, so a burst of
+    # parallel requests gets at most MAX_FAILED_ATTEMPTS password checks.
+    attempt = attempts.register_attempt(
+        user.id, lock_at=MAX_FAILED_ATTEMPTS, lock_until=now + LOCKOUT_DURATION
+    )
+    if attempt > MAX_FAILED_ATTEMPTS:
+        raise _locked_error(None)
+    if not _verify_password(payload.password, user.password_hash):
+        raise UnauthorizedError("Невірний email або пароль")
+    attempts.reset(user.id)
     return _issue_token(user)
 
 

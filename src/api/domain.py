@@ -32,6 +32,7 @@ class User:
     id: UUID = field(default_factory=uuid4)
     created_at: datetime = field(default_factory=utcnow)
     failed_login_attempts: int = 0
+    locked_until: Optional[datetime] = None
 
 
 @dataclass(kw_only=True)

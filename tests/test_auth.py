@@ -61,6 +61,25 @@ class InMemoryUserRepository(InMemoryRepository):
         return next((u for u in self.items.values() if u.email == email), None)
 
 
+class InMemoryLoginAttempts:
+    """Поведінка SqlLoginAttemptRepository над in-memory користувачами."""
+
+    def __init__(self, users: InMemoryUserRepository) -> None:
+        self._users = users
+
+    def register_attempt(self, user_id, *, lock_at, lock_until) -> int:
+        user = self._users.get(user_id)
+        user.failed_login_attempts += 1
+        if user.failed_login_attempts >= lock_at:
+            user.locked_until = lock_until
+        return user.failed_login_attempts
+
+    def reset(self, user_id) -> None:
+        user = self._users.get(user_id)
+        user.failed_login_attempts = 0
+        user.locked_until = None
+
+
 def _repositories(*, users=None, boards=None, stages=None) -> Repositories:
     return Repositories(
         users=users, boards=boards, stages=stages, cards=None, links=None, notes=None
@@ -101,6 +120,11 @@ def repos() -> Repositories:
         boards=InMemoryRepository(),
         stages=InMemoryRepository(),
     )
+
+
+@pytest.fixture
+def attempts(repos) -> InMemoryLoginAttempts:
+    return InMemoryLoginAttempts(repos.users)
 
 
 @pytest.fixture
@@ -290,10 +314,12 @@ def test_register_rejects_existing_email_regardless_of_case(repos, make_user):
 
 
 @pytest.mark.parametrize("email", ["user@example.com", "USER@example.com"])
-def test_login_returns_token_for_valid_credentials(repos, make_user, email):
+def test_login_returns_token_for_valid_credentials(repos, attempts, make_user, email):
     user = make_user(email="user@example.com")
 
-    response = auth.login(LoginRequest(email=email, password=PASSWORD), repos)
+    response = auth.login(
+        LoginRequest(email=email, password=PASSWORD), repos, attempts
+    )
 
     assert response.user.id == user.id
     assert response.access_token
@@ -309,13 +335,13 @@ def test_login_returns_token_for_valid_credentials(repos, make_user, email):
     ids=["unknown-email", "wrong-password", "blocked-user"],
 )
 def test_login_rejects_bad_credentials_with_one_generic_error(
-    repos, make_user, email, password, is_active
+    repos, attempts, make_user, email, password, is_active
 ):
     make_user(email="user@example.com", is_active=is_active)
     payload = LoginRequest(email=email, password=password)
 
     with pytest.raises(UnauthorizedError) as exc_info:
-        auth.login(payload, repos)
+        auth.login(payload, repos, attempts)
 
     # One message for every case, so the response does not reveal which emails exist.
     assert exc_info.value.message == "Невірний email або пароль"
@@ -506,29 +532,32 @@ def test_change_password_rejects_same_password(repos, make_user):
         auth.change_password(payload, user, repos)
 
 
-def test_login_increments_failed_attempts_on_wrong_password(repos, make_user):
+def test_login_increments_failed_attempts_on_wrong_password(repos, attempts, make_user):
     user = make_user(email="user@example.com")
 
     with pytest.raises(UnauthorizedError):
-        auth.login(LoginRequest(email=user.email, password="wrong"), repos) # pragma: allowlist secret
+        auth.login(LoginRequest(email=user.email, password="wrong"), repos, attempts) # pragma: allowlist secret
 
     assert repos.users.get(user.id).failed_login_attempts == 1
 
 
-def test_login_rejects_locked_account_even_with_correct_password(repos, make_user):
+def test_login_rejects_locked_account_even_with_correct_password(
+    repos, attempts, make_user
+):
     user = make_user(email="user@example.com")
     user.failed_login_attempts = auth.MAX_FAILED_ATTEMPTS
+    user.locked_until = datetime.now(timezone.utc) + timedelta(minutes=5)
     repos.users.save(user)
 
     with pytest.raises(ForbiddenError, match="заблоковано"):
-        auth.login(LoginRequest(email=user.email, password=PASSWORD), repos)
+        auth.login(LoginRequest(email=user.email, password=PASSWORD), repos, attempts)
 
 
-def test_login_resets_failed_attempts_on_success(repos, make_user):
+def test_login_resets_failed_attempts_on_success(repos, attempts, make_user):
     user = make_user(email="user@example.com")
     user.failed_login_attempts = 3
     repos.users.save(user)
 
-    auth.login(LoginRequest(email=user.email, password=PASSWORD), repos)
+    auth.login(LoginRequest(email=user.email, password=PASSWORD), repos, attempts)
 
     assert repos.users.get(user.id).failed_login_attempts == 0

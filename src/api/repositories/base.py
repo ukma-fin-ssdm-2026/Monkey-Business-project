@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional, Protocol, TypeVar
 from uuid import UUID
 
@@ -36,6 +37,20 @@ class Repository(Protocol[E]):
 
 class UserRepository(Repository[User], Protocol):
     def get_by_email(self, email: str) -> Optional[User]: ...
+
+
+class LoginAttemptRepository(Protocol):
+    """Лічильник невдалих входів; кожна зміна фіксується одразу, поза
+    транзакцією запиту."""
+
+    def register_attempt(
+        self, user_id: UUID, *, lock_at: int, lock_until: datetime
+    ) -> int:
+        """Атомарно збільшує лічильник і повертає номер спроби; на lock_at-й
+        спробі встановлює locked_until."""
+        ...
+
+    def reset(self, user_id: UUID) -> None: ...
 
 
 class BoardRepository(Repository[Board], Protocol):

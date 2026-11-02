@@ -2799,6 +2799,22 @@ paths:
                       details: []
                       request_id: req_example
                       documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbidden:
+                  summary: Обліковий запис тимчасово заблоковано
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Обліковий запис тимчасово заблоковано
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
         '422':
           description: Невалідні дані запиту
           content:
@@ -2889,18 +2905,18 @@ paths:
       tags:
       - Meta
       summary: Перевірка стану сервісу
-      description: Повертає 200, якщо сервіс працює. Використовується зовнішнім моніторингом
-        доступності (REL-1).
+      description: Повертає 200, якщо сервіс працює і база даних відповідає, інакше
+        503. Використовується зовнішнім моніторингом доступності (REL-1) і healthcheck
+        контейнера.
       operationId: health
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
-              schema:
-                additionalProperties: true
-                type: object
-                title: Response Health
+              schema: {}
+        '503':
+          description: База даних недоступна
 components:
   schemas:
     AcceptInvitationRequest:

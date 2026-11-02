@@ -18,11 +18,19 @@ from functools import cache
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
 
-from .repositories.base import Repositories
-from .repositories.sql import build_repositories
+from .repositories.base import LoginAttemptRepository, Repositories
+from .repositories.sql import SqlLoginAttemptRepository, build_repositories
+
+# Every wait on the database is bounded (Lab 9, R1): without these a dead
+# database host keeps a worker and a pool slot busy for ~2 minutes of TCP
+# retries, and a slow query holds them indefinitely.
+CONNECT_TIMEOUT_SECONDS = 3
+STATEMENT_TIMEOUT_MS = 5_000
+POOL_TIMEOUT_SECONDS = 5
 
 
 def database_url() -> str:
@@ -38,7 +46,27 @@ def database_url() -> str:
 # imports the app without a database.
 @cache
 def _session_factory() -> sessionmaker[Session]:
-    return sessionmaker(create_engine(database_url(), pool_pre_ping=True))
+    engine = create_engine(
+        database_url(),
+        pool_pre_ping=True,
+        pool_timeout=POOL_TIMEOUT_SECONDS,
+        connect_args={
+            "connect_timeout": CONNECT_TIMEOUT_SECONDS,
+            "options": f"-c statement_timeout={STATEMENT_TIMEOUT_MS}",
+        },
+    )
+    return sessionmaker(engine)
+
+
+def database_is_available() -> bool:
+    """Чи відповідає БД на SELECT 1 (для /health)."""
+    try:
+        with _session_factory()() as session:
+            session.execute(text("SELECT 1"))
+    # RuntimeError: DATABASE_URL is not set, so there is no database to reach.
+    except (SQLAlchemyError, RuntimeError):
+        return False
+    return True
 
 
 def get_repositories() -> Iterator[Repositories]:
@@ -48,4 +76,9 @@ def get_repositories() -> Iterator[Repositories]:
         yield build_repositories(session)
 
 
+def get_login_attempts() -> LoginAttemptRepository:
+    return SqlLoginAttemptRepository(_session_factory())
+
+
 Repos = Annotated[Repositories, Depends(get_repositories)]
+LoginAttempts = Annotated[LoginAttemptRepository, Depends(get_login_attempts)]
