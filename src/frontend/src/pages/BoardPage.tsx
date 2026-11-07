@@ -22,7 +22,7 @@ import { MentorsPanel } from "../components/MentorsPanel";
 
 const MAX_CARD_PAGES = 1000;
 
-async function fetchAllCards(boardId: string): Promise<CardOut[]> {
+export async function fetchAllCards(boardId: string): Promise<CardOut[]> {
   const limit = 100;
   let offset = 0;
   const all: CardOut[] = [];
