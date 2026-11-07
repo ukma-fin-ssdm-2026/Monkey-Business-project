@@ -20,20 +20,30 @@ import { StageColumn } from "../components/StageColumn";
 import { CardModal } from "../components/CardModal";
 import { MentorsPanel } from "../components/MentorsPanel";
 
-async function fetchAllCards(boardId: string): Promise<CardOut[]> {
+const MAX_CARD_PAGES = 1000;
+
+export async function fetchAllCards(boardId: string): Promise<CardOut[]> {
   const limit = 100;
   let offset = 0;
   const all: CardOut[] = [];
-  // Дошка розрахована на ~100 карток (api-design.md), але на випадок
-  // більшого обсягу довантажуємо сторінками.
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
+  const seenCardIds = new Set<string>();
+
+  for (let pageIndex = 0; pageIndex < MAX_CARD_PAGES; pageIndex += 1) {
     const page = await api.listCards(boardId, limit, offset);
-    all.push(...page.items);
-    if (all.length >= page.pagination.total || page.items.length === 0) break;
+    const newItems = page.items.filter((item) => !seenCardIds.has(item.id));
+    if (page.items.length > 0 && newItems.length === 0) {
+      throw new Error("API повернув сторінку карток без нового прогресу");
+    }
+    newItems.forEach((item) => seenCardIds.add(item.id));
+    all.push(...newItems);
+    if (all.length >= page.pagination.total) return all;
+    if (page.items.length === 0) {
+      throw new Error("API повернув неповний список карток");
+    }
     offset += limit;
   }
-  return all;
+
+  throw new Error("Не вдалося завантажити всі картки: перевищено ліміт сторінок");
 }
 
 export function BoardPage() {

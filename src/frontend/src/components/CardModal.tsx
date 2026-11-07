@@ -70,8 +70,10 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
   const [error, setError] = useState<string | null>(null);
 
   const [links, setLinks] = useState<CardLinkOut[] | null>(null);
+  const [linksError, setLinksError] = useState<string | null>(null);
   const [newLink, setNewLink] = useState("");
   const [notes, setNotes] = useState<CardNoteOut[] | null>(null);
+  const [notesError, setNotesError] = useState<string | null>(null);
   const [newNote, setNewNote] = useState("");
   const [newNoteSource, setNewNoteSource] = useState<NoteSource>("candidate");
 
@@ -82,10 +84,36 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
   const [submittingComment, setSubmittingComment] = useState(false);
   const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
   const [mentors, setMentors] = useState<BoardMentorOut[]>([]);
+  const [mentorsError, setMentorsError] = useState<string | null>(null);
+  const [relatedDataReloadKey, setRelatedDataReloadKey] = useState(0);
 
   useEffect(() => {
-    api.listLinks(boardId, card.id).then(setLinks).catch(() => setLinks([]));
-    api.listNotes(boardId, card.id).then(setNotes).catch(() => setNotes([]));
+    let cancelled = false;
+    setLinks(null);
+    setNotes(null);
+    setMentors([]);
+    setLinksError(null);
+    setNotesError(null);
+    setMentorsError(null);
+
+    api.listLinks(boardId, card.id).then((data) => {
+      if (!cancelled) setLinks(data);
+    }).catch((err) => {
+      if (!cancelled) {
+        console.error("Failed to load card links", err);
+        setLinks([]);
+        setLinksError(formatApiError(err, "Не вдалося завантажити посилання"));
+      }
+    });
+    api.listNotes(boardId, card.id).then((data) => {
+      if (!cancelled) setNotes(data);
+    }).catch((err) => {
+      if (!cancelled) {
+        console.error("Failed to load card notes", err);
+        setNotes([]);
+        setNotesError(formatApiError(err, "Не вдалося завантажити нотатки"));
+      }
+    });
 
     setCommentsLoading(true);
     setCommentsError(null);
@@ -97,9 +125,23 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
       })
       .finally(() => setCommentsLoading(false));
 
-    api.listMentors(boardId).then(setMentors).catch(() => setMentors([]));
+    api.listMentors(boardId).then((data) => {
+      if (!cancelled) setMentors(data);
+    }).catch((err) => {
+      if (!cancelled) {
+        console.error("Failed to load board mentors", err);
+        setMentorsError(formatApiError(err, "Не вдалося завантажити менторів"));
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [boardId, card.id]);
+  }, [boardId, card.id, relatedDataReloadKey]);
+
+  function reloadRelatedData() {
+    setRelatedDataReloadKey((key) => key + 1);
+  }
 
   function buildDiff(): CardUpdate {
     const diff: CardUpdate = {};
@@ -351,6 +393,17 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
 
         <section className="modal-section">
           <h3>Посилання на тестові завдання</h3>
+          {linksError && (
+            <div className="section-error" role="alert">
+              <span>{linksError}</span>
+              <button
+                type="button"
+                onClick={reloadRelatedData}
+              >
+                Повторити
+              </button>
+            </div>
+          )}
           <ul className="simple-list">
             {(links ?? []).map((link) => (
               <li key={link.id}>
@@ -364,7 +417,7 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
                 )}
               </li>
             ))}
-            {links !== null && links.length === 0 && (
+            {links !== null && !linksError && links.length === 0 && (
               <li className="empty-hint">Ще немає посилань</li>
             )}
           </ul>
@@ -383,6 +436,17 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
 
         <section className="modal-section">
           <h3>Нотатки та фідбек</h3>
+          {notesError && (
+            <div className="section-error" role="alert">
+              <span>{notesError}</span>
+              <button
+                type="button"
+                onClick={reloadRelatedData}
+              >
+                Повторити
+              </button>
+            </div>
+          )}
           <ul className="notes-list">
             {(notes ?? []).map((note) => (
               <li key={note.id}>
@@ -405,7 +469,7 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
                 <p>{note.content}</p>
               </li>
             ))}
-            {notes !== null && notes.length === 0 && (
+            {notes !== null && !notesError && notes.length === 0 && (
               <li className="empty-hint">Ще немає нотаток</li>
             )}
           </ul>
@@ -438,6 +502,17 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
         <section className="modal-section">
           <h3>Коментарі</h3>
 
+          {mentorsError && (
+            <div className="section-error" role="alert">
+              <span>{mentorsError}</span>
+              <button
+                type="button"
+                onClick={reloadRelatedData}
+              >
+                Повторити
+              </button>
+            </div>
+          )}
           {commentsError && (
             <div className="section-error" role="alert">
               <span>{commentsError}</span>

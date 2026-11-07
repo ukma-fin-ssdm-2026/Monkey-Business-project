@@ -40,6 +40,7 @@ import type {
 // фронтенд через той самий origin/reverse-proxy, що й API, або
 // задати VITE_API_BASE_URL на білд-час — бекенд при цьому не змінюється.
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
+export const API_REQUEST_TIMEOUT_MS = 10_000;
 
 export class ApiError extends Error {
   code: string;
@@ -87,16 +88,27 @@ async function request<T>(
   if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
 
   let res: Response;
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(
+    () => controller.abort(),
+    API_REQUEST_TIMEOUT_MS,
+  );
   try {
     res = await fetch(`${API_BASE}${path}`, {
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
     });
-  } catch {
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new Error("API не відповів вчасно. Спробуйте ще раз пізніше.");
+    }
     throw new Error(
       "Немає з'єднання з API. Перевірте, що бекенд запущено (docker compose up -d --build) і доступний.",
     );
+  } finally {
+    window.clearTimeout(timeoutId);
   }
 
   if (res.status === 204) {
@@ -104,10 +116,22 @@ async function request<T>(
   }
 
   const text = await res.text();
-  const data = text ? JSON.parse(text) : undefined;
+  let data: unknown;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(`Запит не вдався: HTTP ${res.status}`);
+    }
+  }
 
   if (!res.ok) {
-    if (data && data.error) {
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      "error" in data &&
+      data.error
+    ) {
       throw new ApiError(res.status, data as ErrorResponse);
     }
     throw new Error(`Запит не вдався: HTTP ${res.status}`);
