@@ -6,7 +6,7 @@ pydantic>=2.9.2
 PyJWT>=2.9.0
 pyyaml
 fastmcp>=4.0
-SQLAlchemy>=2.0
+SQLAlchemy>=2.1.8
 psycopg[binary]>=3.2
 alembic>=1.14
 mailtrap
