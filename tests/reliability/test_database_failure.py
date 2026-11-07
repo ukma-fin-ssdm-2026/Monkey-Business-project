@@ -87,6 +87,26 @@ def test_health_reports_ok_when_database_answers(client):
     assert response.json()["checks"] == {"database": "ok"}
 
 
+def test_health_recovers_after_database_outage(client, monkeypatch):
+    """Codex: health status is rechecked after recovery, without an API restart."""
+    assert client.get("/health").status_code == 200
+
+    with monkeypatch.context() as fault:
+        fault.setattr(db, "_session_factory", lambda: _DeadDatabaseFactory())
+        response = client.get("/health")
+        assert response.status_code == 503
+        assert response.json() == {
+            "status": "unhealthy",
+            "checks": {"database": "unavailable"},
+        }
+        assert "10.0.0.5" not in response.text
+        assert "OperationalError" not in response.text
+
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok", "checks": {"database": "ok"}}
+
+
 def test_health_reports_unhealthy_without_database_url(monkeypatch):
     monkeypatch.delenv("DATABASE_URL", raising=False)
     db._session_factory.cache_clear()

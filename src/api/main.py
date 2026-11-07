@@ -4,8 +4,12 @@
 налаштування автогенерації OpenAPI YAML через lifespan.
 Верифікація: Перевірено вручну локальним запуском сервера,
 підключення роутерів узгоджено командою.
+
+Використання ШІ (Лаб09): Codex — обробка файлової помилки експорту
+OpenAPI під час запуску (R10); перевірка ін'єкцією збою в reliability-тестах.
 """
 
+import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -19,6 +23,7 @@ from .routers import boards, card_links, card_notes, cards, comments, mentors, s
 SPEC_PATH = (
     Path(__file__).resolve().parents[2] / "docs" / "api" / "openapi-generated.yaml"
 )
+logger = logging.getLogger(__name__)
 
 
 def save_openapi_spec(app: FastAPI):
@@ -37,7 +42,15 @@ def save_openapi_spec(app: FastAPI):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    save_openapi_spec(app)
+    try:
+        save_openapi_spec(app)
+    except OSError:
+        # The YAML export is optional at runtime; /openapi.json uses memory.
+        # Explicit CLI/CI exports still fail through save_openapi_spec().
+        logger.warning(
+            "OpenAPI YAML export failed; API startup continues with in-memory schema",
+            exc_info=True,
+        )
     yield
 
 
