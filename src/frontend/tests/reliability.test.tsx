@@ -1,3 +1,12 @@
+/**
+ * ## Використання ШІ
+ * - **Інструмент:** Copilot.
+ * - **Застосування:** створення reliability-тестів для timeout, некоректної
+ *   JSON-відповіді, повторної пагінації та помилок залежних даних.
+ * - **Верифікація:** автор переглянув сценарії fault injection і перевірив
+ *   результат запуском Vitest.
+ */
+
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { api } from "../src/api/client";
@@ -44,7 +53,7 @@ describe("frontend reliability fixes", () => {
     ) as Promise<Response>);
 
     const request = expect(
-      api.login({ email: "user@example.com", password: "password" }),
+      api.login({ email: "user@example.com", password: "password" }), // pragma: allowlist secret
     ).rejects.toThrow("API не відповів вчасно");
     await act(async () => {
       vi.advanceTimersByTime(10_000);
@@ -61,7 +70,7 @@ describe("frontend reliability fixes", () => {
       }),
     );
 
-    await expect(api.login({ email: "user@example.com", password: "password" }))
+    await expect(api.login({ email: "user@example.com", password: "password" })) // pragma: allowlist secret
       .rejects.toThrow("Запит не вдався: HTTP 502");
   });
 
