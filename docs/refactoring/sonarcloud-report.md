@@ -44,6 +44,74 @@
 `duplicated_lines_density`, `sqale_rating`), `api/issues/search` (відкриті
 та закриті зауваження з датами закриття) і `api/qualitygates/project_status`.
 
+### Скриншоти панелі до і після
+
+Знімки панелі SonarQube Cloud (гілка `main`) зроблено 08.11.2026, час на них
+київський.
+
+**Звідки «до».** Аналізу `3a2a1f8` (26.10, 02:53) в історії SonarCloud уже
+немає: сервіс проріділив історію, і на графіках Activity лишилися аналізи 25.10,
+31.10, 01.11, 02.11 і 07.11 (тому точки не збігаються з таблицею «Історія
+аналізів `main`» вище, а лінії між точками — інтерполяція). Найраніший
+збережений аналіз — 25.10.2026, 20:45, коміт `9abf13d`. Обрані показники і
+Security Rating у ньому ті самі, що в `3a2a1f8`: Reliability E, Security E,
+6 Code Smells, 30 хв боргу; відрізняється лише Duplicated Lines (1,5% проти
+1,4%). Що 21 зауваження було відкрите саме на `3a2a1f8`, показує рис. 5.
+
+#### До
+
+**Рис. 1.** Activity, Reliability Rating і Security Rating: 25.10, 20:45 — обидва E.
+
+![Activity: Reliability Rating і Security Rating E на 25.10.2026](img/before-activity-ratings.png)
+
+**Рис. 2.** Activity, Code Smells: 25.10, 20:45 — 6. Самі зауваження закрито
+26.10 злиттям PR #177; аналізу за 26.10 в історії немає, тому лінія спадає до
+31.10.
+
+![Activity: 6 Code Smells на 25.10.2026](img/before-activity-code-smells.png)
+
+**Рис. 3.** Activity, Technical Debt: 25.10, 20:45 — 30 хв.
+
+![Activity: Technical Debt 30 хв на 25.10.2026](img/before-activity-tech-debt.png)
+
+**Рис. 4.** Issues, фільтр Status: Fixed — 21 закрите зауваження із сумарними
+зусиллями 1d 3h. Це ті самі 21 зауваження, що були відкриті до рефакторингу
+(див. «Початковий аналіз»); першими за пріоритетом стоять Blocker-секрет у
+`docker-compose.yml` (`secrets:S6698`) і Blocker-баг у `src/api/db.py`
+(`python:S930`). Панель показує серйозність у новій моделі якості
+(Blocker/High/Medium/Low), таблиці звіту — у класичній (Blocker/Major/Minor).
+[Повний список усіх 21 зауваження](img/before-fixed-issues-all.png).
+
+![Issues: 21 зауваження зі статусом Fixed](img/before-fixed-issues.png)
+
+**Рис. 5.** Перевірка SonarCloud Code Analysis на коміті `3a2a1f8` (гілки
+`pre-refactor` і `main`) у GitHub: 21 New issues.
+
+![GitHub: SonarCloud Code Analysis на 3a2a1f8, 21 New issues](img/before-github-check-3a2a1f8.png)
+
+#### Після
+
+Стан «після» видно також на правому краї рис. 1–3: A, 0 і 0 хв.
+
+**Рис. 6.** Overview `main`: Quality Gate Passed, 0 зауважень, Security Rating A.
+
+![Overview: Quality Gate Passed, 0 issues, Security A](img/after-overview.png)
+
+**Рис. 7.** Повна панель Overview: Security, Security Hotspots, Reliability і
+Maintainability — A, по 0 зауважень. За останні 30 днів закрито 13 зауважень
+безпеки, 8 надійності і 6 супроводжуваності. Надійності 8, а не 2 бага, бо в
+новій моделі якості 6 зауважень доступності фронтенду мають вплив і на
+Reliability, і на Maintainability (видно на рис. 4). Знімок відповідає
+аналізу `386f517` (07.11.2026, 17:47), пізнішому за `268e753`: обрані
+показники і Security Rating ті самі, а Duplicated Lines — 1,0% (у `268e753` —
+1,1%).
+
+![Overview: повна панель з рейтингами A](img/after-overview-full.png)
+
+*Використання ШІ: рис. 1–3, 5, 7 і повний список до рис. 4 знято скриптом
+Playwright, який підготував Claude; рис. 4 і 6 зроблено вручну. Значення на
+знімках звірено з API SonarCloud.*
+
 ## Security Rating: E → A
 
 | | До (`3a2a1f8`) | Після (`268e753`) |
