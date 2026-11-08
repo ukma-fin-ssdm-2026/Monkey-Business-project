@@ -14,6 +14,8 @@
 - **Виправлення R4, R9 і залишку R5 (Claude Code):** код, тести та розділ
   «Виправлені ризики R4, R9 і залишок R5». Новий тест R5 перевірено на старому
   `client.ts` — він зависав до тайм-ауту; на новому проходить.
+- **Бонус «обов'язкова перевірка PR» (Claude Code):** job `reliability-tests`
+  у `ci.yml` і розділ із доказами; команди job прогнано локально.
 -->
 
 # Reliability Report — Lab 09
@@ -660,3 +662,33 @@ R4 перестав маскувати дефекти валідатора, R9 �
 Mailtrap використовується для запрошень і не перевіряється `/health`; `ok`
 означає готовність API та доступність БД, а не гарантію доставки листів чи
 наявності всіх таблиць. Health check не надсилає тестових листів.
+
+### Тести надійності як обов'язкова перевірка PR
+
+| Доказ | Реалізація / перевірка |
+|---|---|
+| Окремий крок у CI | [ci.yml](../../.github/workflows/ci.yml), job `reliability-tests` з назвою **Reliability tests**, окремий від загального `build` |
+| Що запускається | `python -m pytest tests/reliability --no-cov -v` (R1–R4, R9, R10, health check), далі `npm run test:unit -- tests/reliability.test.tsx` (R5–R8; через npm-скрипт, а не `npx`, щоб vitest брався лише з `package-lock.json`) |
+| Коли запускається | На кожен `pull_request` у `main` і `push` у `main`, без фільтра `paths`: обов'язкова перевірка, яку пропустив фільтр, лишилася б у стані «Expected — waiting» і блокувала б PR |
+| Підсумок прогону | Крок «Add reliability summary» пише в Job Summary кількість тестів, падінь і помилок із JUnit-звіту |
+| Обов'язковість | Settings → Branches → правило для `main` → **Require status checks to pass before merging** → `Reliability tests` |
+| Прогін, де крок пройшов | [CI / Reliability tests, run 42524810864](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42524810864/job/128865949937) у PR #225 |
+
+**Чому `--no-cov`:** у `pyproject.toml` `addopts` вмикає поріг покриття 70 %.
+Він має сенс для повного набору в job `build`, а не для підмножини
+reliability-тестів, яка сама по собі покриває менше коду.
+
+**Що це дає:** PR, який ламає будь-яку реакцію на збій (тайм-аут, 503 при
+падінні БД, блокування входу, файловий збій під час старту), не можна
+змерджити в `main`, навіть якщо загальне покриття лишається вище порогу.
+
+Локальна перевірка команд job перед комітом (08.11.2026):
+
+```text
+$ python -m pytest tests/reliability --no-cov -q
+37 passed
+
+$ cd src/frontend && npm run test:unit -- tests/reliability.test.tsx
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+```
