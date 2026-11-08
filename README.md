@@ -29,12 +29,12 @@
 
 ## Команда
 
-| Ім'я | GitHub | Роль (Lab 8) |
+| Ім'я | GitHub | Роль (Lab 9) |
 |---|---|---|
-| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Testing Engineer |
-| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Code & Security Analyst |
-| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Refactoring Lead |
-| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Release manager |
+| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Risk Researcher |
+| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Failure Analyst |
+| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Reliability Engineer |
+| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Documentation Lead |
 
 ## Стратегія розробки
 Використовуємо GitHub Flow: зміни в `main` вносяться лише через Pull Request з проходженням CI та щонайменше одним схваленням. Стандарт кодування, обов'язкові інструменти, кроки огляду коду та критерії готовності описано в [політиці якості та огляду коду](./TeamCharter.md#5-політика-якості-та-огляду-коду).
@@ -87,6 +87,13 @@
 - [Матриця простежуваності](./docs/requirements/rtm.md) і [JUnit-звіт локального прогону](./docs/validation/pytest-results.xml).
 - [CI для порядку карток із PostgreSQL](./.github/workflows/lab07-card-order.yml).
 
+## Надійність — Лаб09
+
+- [Resilience Scavenger Hunt](./docs/reliability/scavenger-hunt.md) — ризики R1–R10 за категоріями A–E, ланцюги fault → error → failure і критичність.
+- [Звіт про надійність](./docs/reliability/reliability-report.md) — виправлення «до/після», використані патерни, режими відмови й відновлення, відкриті ризики та бонус health check.
+- Reliability-тести: [backend](./tests/reliability/) (R1–R3, R10) і [frontend](./src/frontend/tests/reliability.test.tsx) (R5–R8).
+- Запуск: `python -m pytest tests/reliability --no-cov` із кореня та `npm run test:unit -- --run` у `src/frontend`.
+
 ## Документи проєкту
 - [TeamCharter.md](./TeamCharter.md) — командний статут
 - [Project-Description.md](./Project-Description.md) — опис проєкту
@@ -106,3 +113,8 @@
 - **Інструмент:** Claude Code
 - **Застосування:** розділ «Розгорнута версія» з адресами розгорнутого застосунку та посиланням на `docs/deployment.md`
 - **Верифікація:** адреси перевірено HTTP-запитами до розгорнутих сервісів 01.11.2026
+
+Оновлення для Лабораторної роботи 9:
+- **Інструмент:** Claude Code
+- **Застосування:** оновлення таблиці ролей і додавання розділу «Надійність — Лаб09»
+- **Верифікація:** наявність файлів за посиланнями перевірено в репозиторії; розподіл ролей підтвердив відповідальний за документацію
