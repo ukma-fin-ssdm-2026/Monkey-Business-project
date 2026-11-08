@@ -5,6 +5,8 @@
 Верифікація: Перевірено вручну списком інструментів і викликами list_cards /
 create_card / list_stages / create_note через MCP-клієнт, зокрема повторний
 вхід після недійсного токена та помилки за відсутніх або невірних облікових даних.
+Доповнення (Claude Code, Лаб 9, R9): перевірка JSON і access_token у відповіді
+логіну; перевірено тестами tests/reliability/test_mcp_login_response.py.
 
 MCP-сервер, згенерований з API.
 
@@ -25,6 +27,7 @@ RBAC не обходяться. Ендпоінти автентифікації 
 
 from __future__ import annotations
 
+import logging
 import os
 from collections.abc import Generator
 
@@ -34,7 +37,13 @@ from fastmcp.server.providers.openapi import MCPType, RouteMap
 
 from .main import app
 
+logger = logging.getLogger(__name__)
+
 LOGIN_PATH = "/v1/auth/login"
+LOGIN_RESPONSE_INVALID_MESSAGE = (
+    "MCP-сервер не зміг увійти: API повернув некоректну відповідь на вхід "
+    "(немає access_token). Перевірте версію API та повторіть запит."
+)
 
 
 class LoginAuth(httpx2.Auth):
@@ -76,7 +85,29 @@ class LoginAuth(httpx2.Auth):
             raise RuntimeError(
                 f"MCP-сервер не зміг увійти як {email}: HTTP {response.status_code}"
             )
-        return response.json()["access_token"]
+        return _extract_access_token(response)
+
+
+def _extract_access_token(response: httpx2.Response) -> str:
+    """Fail fast with a clear integration error if HTTP 200 carries no usable token.
+
+    The response body is never logged or echoed: it may contain the token itself.
+    """
+    try:
+        payload = response.json()
+    except ValueError as exc:
+        logger.error(
+            "MCP login returned HTTP 200 with a non-JSON body (content-type %r)",
+            response.headers.get("content-type"),
+        )
+        raise RuntimeError(LOGIN_RESPONSE_INVALID_MESSAGE) from exc
+    token = payload.get("access_token") if isinstance(payload, dict) else None
+    if not isinstance(token, str) or not token.strip():
+        logger.error(
+            "MCP login returned HTTP 200 without a non-empty string access_token"
+        )
+        raise RuntimeError(LOGIN_RESPONSE_INVALID_MESSAGE)
+    return token
 
 
 # Requests go to the app in-process via ASGI, so no running HTTP server is needed.

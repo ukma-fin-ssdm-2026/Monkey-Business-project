@@ -62,6 +62,40 @@ describe("frontend reliability fixes", () => {
     await request;
   });
 
+  // R5 (залишок): заголовки прийшли, тіло не завершується — дедлайн має
+  // охопити й res.text(). Доповнення Claude Code, Лаб 9.
+  it("fails with a safe timeout message when the response body hangs", async () => {
+    vi.useFakeTimers();
+    const hangingBody = new ReadableStream<Uint8Array>({ start() {} });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(hangingBody, {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    const request = expect(
+      api.login({ email: "user@example.com", password: "password" }), // pragma: allowlist secret
+    ).rejects.toThrow("API не відповів вчасно");
+    await act(async () => {
+      vi.advanceTimersByTime(10_000);
+    });
+
+    await request;
+  });
+
+  it("returns the body when it arrives before the deadline", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ access_token: "t", token_type: "bearer" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    await expect(api.login({ email: "user@example.com", password: "password" })) // pragma: allowlist secret
+      .resolves.toMatchObject({ access_token: "t" });
+  });
+
   it("turns a non-JSON API response into a controlled HTTP error", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response("<html>bad gateway</html>", {
