@@ -668,7 +668,7 @@ Mailtrap використовується для запрошень і не пе
 | Доказ | Реалізація / перевірка |
 |---|---|
 | Окремий крок у CI | [ci.yml](../../.github/workflows/ci.yml), job `reliability-tests` з назвою **Reliability tests**, окремий від загального `build` |
-| Що запускається | `python -m pytest tests/reliability --no-cov -v` (R1–R4, R9, R10, health check), далі `npx vitest run tests/reliability.test.tsx` (R5–R8) |
+| Що запускається | `python -m pytest tests/reliability --no-cov -v` (R1–R4, R9, R10, health check), далі `npm run test:unit -- tests/reliability.test.tsx` (R5–R8; через npm-скрипт, а не `npx`, щоб vitest брався лише з `package-lock.json`) |
 | Коли запускається | На кожен `pull_request` у `main` і `push` у `main`, без фільтра `paths`: обов'язкова перевірка, яку пропустив фільтр, лишилася б у стані «Expected — waiting» і блокувала б PR |
 | Підсумок прогону | Крок «Add reliability summary» пише в Job Summary кількість тестів, падінь і помилок із JUnit-звіту |
 | Обов'язковість | Settings → Branches → правило для `main` → **Require status checks to pass before merging** → `Reliability tests` |
@@ -688,7 +688,7 @@ reliability-тестів, яка сама по собі покриває мен�
 $ python -m pytest tests/reliability --no-cov -q
 37 passed
 
-$ cd src/frontend && npx vitest run tests/reliability.test.tsx
+$ cd src/frontend && npm run test:unit -- tests/reliability.test.tsx
  Test Files  1 passed (1)
       Tests  6 passed (6)
 ```

@@ -98,9 +98,11 @@ jobs:
         working-directory: src/frontend
         run: npm ci --ignore-scripts
 
+      # npm script, not npx: vitest comes from package-lock.json via npm ci,
+      # so nothing unpinned can be fetched from the registry at run time.
       - name: Run frontend reliability tests (R5-R8)
         working-directory: src/frontend
-        run: npx vitest run tests/reliability.test.tsx
+        run: npm run test:unit -- tests/reliability.test.tsx
 
       - name: Add reliability summary to job summary
         if: always()
