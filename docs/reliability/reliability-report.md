@@ -16,6 +16,10 @@
   `client.ts` — він зависав до тайм-ауту; на новому проходить.
 - **Бонус «обов'язкова перевірка PR» (Claude Code):** job `reliability-tests`
   у `ci.yml` і розділ із доказами; команди job прогнано локально.
+- **Бонус «повтори з відступом і джитером» (Claude Code):** retry для health
+  check у `db.py`, тести `test_health_retry.py` і розділ із доказами. Під час
+  написання тест дедлайну спершу впав через помилку в арифметиці самого тесту
+  (6,5 + 0,4 + 3 = 9,9 ≤ 10); код поводився правильно, виправлено тест.
 -->
 
 # Reliability Report — Lab 09
@@ -174,8 +178,9 @@ timeout, connection error і authorization error Mailtrap, а також пер�
 відсутність токена та безпечне логування.
 
 > Це виправлення не заявляється як ідемпотентність зовнішнього виклику:
-> Mailtrap не підтримує idempotency key, тому бонус із retry для
-> ідемпотентного зовнішнього виклику не реалізовувався.
+> Mailtrap не підтримує idempotency key, тому повтори для нього не додано.
+> Бонус із retry реалізовано на ідемпотентному виклику — `SELECT 1` у health
+> check (див. «Бонуси»).
 
 ### R3 — вічне блокування входу
 
@@ -555,10 +560,11 @@ try {
 | Логування без витоку деталей | R1, R2: текст драйвера чи провайдера — лише в лозі (`logger.error`/`logger.warning`), клієнт отримує нейтральне повідомлення і `request_id` (CWE-209). R8: `console.error` для кожної відмови. R10: `logger.warning(..., exc_info=True)`. R4: `logger.info` для відхиленого URL. R9: `logger.error` без тіла відповіді (може містити токен) | Збій можна діагностувати, а клієнт не бачить хостів, SQL чи відповідей Mailtrap |
 | Атомарна операція | R3: `register_attempt` — один `UPDATE ... RETURNING` у власній транзакції | Rollback запиту не скидає лічильник, паралельні спроби отримують різні номери |
 | Health check | R1: `/health` виконує `SELECT 1` і повертає `503 unhealthy`, якщо БД недоступна | Моніторинг бачить реальний стан залежності, а не лише живий процес |
+| Retry з backoff і full jitter | Health check: до 3 спроб `SELECT 1`, пауза `uniform(0, min(1 с, 0,2 с · 2^(n-1)))`, лише для `OperationalError` і pool timeout, у межах дедлайну 10 с | Один обірваний конект не робить сервіс «нездоровим», а повтори не перевантажують БД синхронними хвилями |
 
-Retry з backoff не застосовувався: єдиний зовнішній виклик із побічним
-ефектом (Mailtrap) не ідемпотентний, тому автоматичний повтор міг би надіслати
-кілька листів (див. примітку в R2).
+Retry застосовано лише до ідемпотентного `SELECT 1` у health check. Для
+Mailtrap повторів немає: виклик має побічний ефект, і автоматичний повтор міг
+би надіслати кілька листів (див. примітку в R2).
 
 ## Відкриті ризики
 
@@ -637,6 +643,81 @@ R4 перестав маскувати дефекти валідатора, R9 �
 знайдених ризиків закрито.
 
 ## Бонуси
+
+### Повтори з відступом і джитером
+
+**Виклик:** `database_is_available()` у [db.py](../../src/api/db.py), який
+використовує `/health`. `SELECT 1` лише читає, тому повтор не має побічних
+ефектів — виклик ідемпотентний. Mailtrap свідомо не обрано (див. R2).
+
+**Композиція за §3.5, зсередини назовні:**
+
+1. **Тайм-аут** — кожна спроба обмежена `connect_timeout` 3 с,
+   `statement_timeout` 5 с і `pool_timeout` 5 с (R1).
+2. **Повтор** — не більше `HEALTH_CHECK_MAX_ATTEMPTS = 3` спроб; між ними
+   експоненційний відступ із full jitter. Новий повтор починається, лише
+   якщо до загального дедлайну `HEALTH_CHECK_DEADLINE_SECONDS = 10` вміщується
+   пауза і ще одна повна спроба (`elapsed + delay + connect_timeout`). Так
+   повтори не виводять health check за типовий 10-секундний тайм-аут проби
+   балансувальника.
+3. **Резервна реакція** — після останньої спроби `False`, тобто
+   `503 {"status":"unhealthy"}` і `logger.error`.
+
+```python
+def backoff_delay(attempt: int) -> float:
+    ceiling = min(
+        HEALTH_CHECK_BACKOFF_CAP_SECONDS,                        # 1,0 с
+        HEALTH_CHECK_BACKOFF_BASE_SECONDS * 2 ** (attempt - 1),  # 0,2 · 2^(n-1)
+    )
+    return _uniform(0.0, ceiling)  # full jitter: від 0 до ceiling
+
+for attempt in range(1, HEALTH_CHECK_MAX_ATTEMPTS + 1):
+    try:
+        _ping_database()                       # SELECT 1, з тайм-аутами
+    except _TRANSIENT_DB_ERRORS as exc:        # OperationalError, pool timeout
+        if attempt == HEALTH_CHECK_MAX_ATTEMPTS:
+            break
+        delay = backoff_delay(attempt)
+        if elapsed + delay + CONNECT_TIMEOUT_SECONDS > HEALTH_CHECK_DEADLINE_SECONDS:
+            break                              # дедлайн обмежує повтори
+        _sleep(delay)
+    except (SQLAlchemyError, RuntimeError):    # неперехідні — без повтору
+        return False
+    else:
+        return True
+return False                                   # fallback → /health 503
+```
+
+**Чому full jitter:** коли БД коротко «моргає», усі воркери й проби
+отримують помилку одночасно. Фіксований відступ змусив би їх повторити теж
+одночасно; випадкова пауза від 0 до межі розносить повтори в часі.
+
+**Що повторюється, а що ні:** лише перехідні збої — обрив з'єднання
+(`OperationalError`) і зайнятий пул (`TimeoutError`). Відсутній
+`DATABASE_URL` або, наприклад, `ProgrammingError` не виправляться за секунду,
+тому повертають `False` з першої спроби.
+
+| Доказ | Тест у [test_health_retry.py](../../tests/reliability/test_health_retry.py) |
+|---|---|
+| Кількість спроб обмежена, після останньої — fallback | `test_retries_are_bounded_and_fallback_reports_unhealthy`: БД лежить постійно → рівно 3 спроби, паузи `[0.2, 0.4]` (після останньої паузи немає), `/health` → `503 unhealthy`, лог «unavailable after 3 attempt(s)» |
+| Тимчасовий збій долається повтором | `test_transient_failure_recovers_within_retries` (обрив з'єднання і pool timeout): дві відмови, третя спроба успішна → `/health` 200 |
+| Здорова БД перевіряється один раз | `test_healthy_database_is_checked_once_without_sleep` |
+| Неперехідні помилки не повторюються | `test_non_transient_error_is_not_retried`: `RuntimeError` і `ProgrammingError` → 1 спроба, без пауз |
+| Експоненційний відступ із межею | `test_backoff_is_exponential_capped_full_jitter`: верхні межі `0.2, 0.4, 0.8, 1.0, 1.0, 1.0`, нижня завжди 0 |
+| Full jitter у межах | `test_backoff_delay_stays_within_full_jitter_bounds`: 1400 випадкових значень у `[0, ceiling]` |
+| Тайм-аут обмежує повтори | `test_retries_stop_when_deadline_leaves_no_room_for_another_attempt`: фейковий годинник, ліміт 5 спроб, але після 2-ї до дедлайну не вміщується ще одна → зупинка |
+
+Тести не чекають реального часу: `_sleep`, `_uniform` і `_monotonic` у `db.py`
+— модульні посилання, які тест підміняє дублерами (спільна фікстура
+`no_backoff_sleep` у `conftest.py` записує паузи замість сну).
+
+```text
+$ python -m pytest tests/reliability tests/test_main.py --no-cov -q
+50 passed in 13.40s
+```
+
+Ці тести лежать у `tests/reliability/`, тож автоматично виконуються
+обов'язковою перевіркою **Reliability tests** (див. бонус нижче).
 
 ### Перевірка здоров'я сервісу
 

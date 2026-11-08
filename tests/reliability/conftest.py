@@ -27,6 +27,14 @@ def jwt_secret(monkeypatch) -> None:
     monkeypatch.setenv("JWT_SECRET", TEST_SECRET)
 
 
+@pytest.fixture(autouse=True)
+def no_backoff_sleep(monkeypatch) -> list[float]:
+    """Health check retries record their backoff instead of really sleeping."""
+    sleeps: list[float] = []
+    monkeypatch.setattr(db, "_sleep", sleeps.append)
+    return sleeps
+
+
 @pytest.fixture
 def session_factory(monkeypatch) -> Iterator[sessionmaker[Session]]:
     # One shared connection, so every session sees the same in-memory database.

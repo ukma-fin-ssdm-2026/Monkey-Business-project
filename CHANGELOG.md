@@ -6,6 +6,12 @@
 
 ## [Unreleased]
 
+### Added:
+
+- Health check БД (`/health`) робить до 3 спроб `SELECT 1` з експоненційним
+  відступом і full jitter у межах дедлайну 10 с; повторюються лише перехідні
+  збої (обрив з'єднання, pool timeout).
+
 ### Fixed:
 
 - R4: `validate_vacancy_url` перехоплює лише `ValueError` від `urlparse`
