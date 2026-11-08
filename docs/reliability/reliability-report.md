@@ -672,7 +672,7 @@ Mailtrap використовується для запрошень і не пе
 | Коли запускається | На кожен `pull_request` у `main` і `push` у `main`, без фільтра `paths`: обов'язкова перевірка, яку пропустив фільтр, лишилася б у стані «Expected — waiting» і блокувала б PR |
 | Підсумок прогону | Крок «Add reliability summary» пише в Job Summary кількість тестів, падінь і помилок із JUnit-звіту |
 | Обов'язковість | Settings → Branches → правило для `main` → **Require status checks to pass before merging** → `Reliability tests` |
-| Прогін, де крок пройшов | TODO: посилання на прогін Actions |
+| Прогін, де крок пройшов | [CI / Reliability tests, run 42524810864](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42524810864/job/128865949937) у PR #225 |
 
 **Чому `--no-cov`:** у `pyproject.toml` `addopts` вмикає поріг покриття 70 %.
 Він має сенс для повного набору в job `build`, а не для підмножини
