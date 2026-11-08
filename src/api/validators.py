@@ -1,11 +1,18 @@
 """
 Валідатори бізнес-правил для карток та вакансій (US-003).
+
+Інструмент: Claude Code
+Застосування: Лаб 9, R4 — звуження except Exception до ValueError з логуванням.
+Верифікація: tests/test_validators.py і tests/reliability/test_url_validator.py.
 """
 
 from __future__ import annotations
 
 import ipaddress
+import logging
 from urllib.parse import urlparse
+
+logger = logging.getLogger(__name__)
 
 ALLOWED_SCHEMES = frozenset({"http", "https"})
 
@@ -38,8 +45,12 @@ def validate_vacancy_url(url: str | None) -> bool:
     cleaned = url.strip()
     try:
         parsed = urlparse(cleaned)
-        if parsed.scheme.lower() not in ALLOWED_SCHEMES:
-            return False
-        return _is_safe_host(parsed.hostname)
-    except Exception:
+        hostname = parsed.hostname
+    except ValueError as exc:
+        # Malformed input such as "http://[::1" is rejected; any other exception
+        # is a defect in this validator and must surface, not look like bad input.
+        logger.info("Rejected unparsable vacancy URL: %s", exc)
         return False
+    if parsed.scheme.lower() not in ALLOWED_SCHEMES:
+        return False
+    return _is_safe_host(hostname)

@@ -72,6 +72,35 @@ export function formatApiError(err: unknown, fallback: string): string {
   return fallback;
 }
 
+const TIMEOUT_MESSAGE = "API не відповів вчасно. Спробуйте ще раз пізніше.";
+
+function isAbortError(err: unknown): boolean {
+  return err instanceof DOMException && err.name === "AbortError";
+}
+
+// Браузер сам обриває res.text() після abort(), але не кожна реалізація
+// fetch (поліфіли, дублери в тестах) пов'язує тіло з signal. Гонка з
+// signal гарантує, що дедлайн спрацює незалежно від реалізації.
+function readBody(res: Response, signal: AbortSignal): Promise<string> {
+  if (signal.aborted) {
+    return Promise.reject(new DOMException("Aborted", "AbortError"));
+  }
+  return new Promise<string>((resolve, reject) => {
+    const onAbort = () => reject(new DOMException("Aborted", "AbortError"));
+    signal.addEventListener("abort", onAbort, { once: true });
+    res.text().then(
+      (value) => {
+        signal.removeEventListener("abort", onAbort);
+        resolve(value);
+      },
+      (err: unknown) => {
+        signal.removeEventListener("abort", onAbort);
+        reject(err);
+      },
+    );
+  });
+}
+
 let authToken: string | null = null;
 
 export function setAuthToken(token: string | null): void {
@@ -88,34 +117,43 @@ async function request<T>(
   if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
 
   let res: Response;
+  let text: string;
+  // Один дедлайн на весь обмін: і заголовки, і тіло (R5). Abort під час
+  // res.text() теж відхиляє promise з AbortError, тож UI не зависає.
   const controller = new AbortController();
   const timeoutId = window.setTimeout(
     () => controller.abort(),
     API_REQUEST_TIMEOUT_MS,
   );
   try {
-    res = await fetch(`${API_BASE}${path}`, {
-      method,
-      headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-      signal: controller.signal,
-    });
-  } catch (err) {
-    if (err instanceof DOMException && err.name === "AbortError") {
-      throw new Error("API не відповів вчасно. Спробуйте ще раз пізніше.");
+    try {
+      res = await fetch(`${API_BASE}${path}`, {
+        method,
+        headers,
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+        signal: controller.signal,
+      });
+    } catch (err) {
+      if (isAbortError(err)) throw new Error(TIMEOUT_MESSAGE);
+      throw new Error(
+        "Немає з'єднання з API. Перевірте, що бекенд запущено (docker compose up -d --build) і доступний.",
+      );
     }
-    throw new Error(
-      "Немає з'єднання з API. Перевірте, що бекенд запущено (docker compose up -d --build) і доступний.",
-    );
+
+    if (res.status === 204) {
+      return undefined as T;
+    }
+
+    try {
+      text = await readBody(res, controller.signal);
+    } catch (err) {
+      if (isAbortError(err)) throw new Error(TIMEOUT_MESSAGE);
+      throw new Error(`Запит не вдався: HTTP ${res.status}`);
+    }
   } finally {
     window.clearTimeout(timeoutId);
   }
 
-  if (res.status === 204) {
-    return undefined as T;
-  }
-
-  const text = await res.text();
   let data: unknown;
   if (text) {
     try {
