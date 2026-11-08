@@ -1,6 +1,8 @@
 # Інструмент: Copilot.
 # Застосування: безпечне встановлення CI-залежностей лише з binary wheels.
 # Верифікація: workflow перевірено та відповідну конфігурацію протестовано.
+# Доповнення (Claude Code, Лаб 9, бонус): окремий job «Reliability tests» для
+# обов'язкової перевірки PR; команди job прогнано локально перед комітом.
 
 name: CI
 
@@ -58,3 +60,60 @@ jobs:
 
       - name: Check for spec drift
         run: git diff --exit-code docs/api/
+
+  # Lab 09 bonus: reliability tests run as their own job so that branch
+  # protection can list "Reliability tests" as a required check for main.
+  # No paths filter on purpose: a required check that is skipped by a filter
+  # stays "Expected — waiting" and blocks the PR.
+  reliability-tests:
+    name: Reliability tests
+    runs-on: [self-hosted, linux]
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --only-binary=:all: --require-hashes -r requirements.lock
+          python -m pip install --only-binary=:all: --require-hashes -r requirements-dev.lock
+
+      # --no-cov: the 70 % gate from pyproject addopts applies to the full
+      # suite in the build job, not to this subset.
+      - name: Run backend reliability tests (tests/reliability)
+        run: python -m pytest tests/reliability --no-cov -v --junitxml=reliability-junit.xml
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install frontend dependencies
+        working-directory: src/frontend
+        run: npm ci --ignore-scripts
+
+      - name: Run frontend reliability tests (R5-R8)
+        working-directory: src/frontend
+        run: npx vitest run tests/reliability.test.tsx
+
+      - name: Add reliability summary to job summary
+        if: always()
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import xml.etree.ElementTree as ET
+          try:
+              suite = ET.parse("reliability-junit.xml").getroot()
+              suite = suite.find("testsuite") if suite.tag == "testsuites" else suite
+              a = suite.attrib
+              print("### Reliability tests (tests/reliability)")
+              print(f"- tests: {a.get('tests')}, failures: {a.get('failures')}, "
+                    f"errors: {a.get('errors')}, skipped: {a.get('skipped')}")
+          except (OSError, ET.ParseError):
+              print("### Reliability tests: no JUnit report produced")
+          PY
