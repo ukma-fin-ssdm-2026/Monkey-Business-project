@@ -40,7 +40,7 @@
 | R7 | Пагінація карток працює в необмеженому циклі | E | [BoardPage.tsx:17–27](../../src/frontend/src/pages/BoardPage.tsx#L17-L27) | High | **Виправлено** у поточному етапі |
 | R8 | Помилки links/notes/mentors ховаються як порожні дані | D | [CardModal.tsx:86–88](../../src/frontend/src/components/CardModal.tsx#L86-L88) | Medium | **Виправлено** у поточному етапі |
 | R9 | MCP login не перевіряє структуру JSON-відповіді | A, B | [mcp_server.py](../../src/api/mcp_server.py), `LoginAuth._login` | Medium | **Виправлено**: перевірка JSON і `access_token` |
-| R10 | Помилка запису OpenAPI YAML зупиняє запуск API | A, B | [main.py](../../src/api/main.py), `lifespan` / `save_openapi_spec` | High | **Виправлено** локально; 6 регресійних тестів |
+| R10 | Помилка запису OpenAPI YAML зупиняє запуск API | A, B | [main.py](../../src/api/main.py), `lifespan` / `save_openapi_spec` | High | **Виправлено** у `8553240` (main); 6 регресійних тестів |
 
 ## Критерії критичності та перевірка аналітика
 
