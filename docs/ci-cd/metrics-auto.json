@@ -84,6 +84,7 @@
       "execution_minutes": 8.233333333333333,
       "pre_ci_minutes": 132.08333333333334,
       "lead_minutes": 141.0,
+      "lead_queue_minutes": 0.6833333333333333,
       "lead_execution_minutes": 8.233333333333333,
       "deployed_by": "e5db88ee9f610e2f1c05ab3fbb7f9e3322be0f7d",
       "run_ids": [
@@ -93,6 +94,14 @@
         41251061238,
         41251061256
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41251061208,
@@ -145,6 +154,7 @@
       "execution_minutes": 1.8,
       "pre_ci_minutes": 62.766666666666666,
       "lead_minutes": 65.23333333333333,
+      "lead_queue_minutes": 0.6666666666666666,
       "lead_execution_minutes": 1.8,
       "deployed_by": "16e54e1d1d1f42224417265075962e882e14c70a",
       "run_ids": [
@@ -154,6 +164,14 @@
         41252094248,
         41252094284
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41252094239,
@@ -206,6 +224,7 @@
       "execution_minutes": 0.95,
       "pre_ci_minutes": 597.9,
       "lead_minutes": 598.8833333333333,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 0.95,
       "deployed_by": "124ce675d929f4a77322c9ee90dcc0f0cbfbcb08",
       "run_ids": [
@@ -213,6 +232,12 @@
         41295671471,
         41295671474
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41295671464,
@@ -253,6 +278,7 @@
       "execution_minutes": 13.816666666666666,
       "pre_ci_minutes": 9.3,
       "lead_minutes": 23.166666666666668,
+      "lead_queue_minutes": 0.05,
       "lead_execution_minutes": 13.816666666666666,
       "deployed_by": "268e753434da26019e59aaed2e9e34a35199a067",
       "run_ids": [
@@ -261,6 +287,13 @@
         41328923176,
         41328923193
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41328923035,
@@ -307,6 +340,7 @@
       "execution_minutes": 13.916666666666666,
       "pre_ci_minutes": 39.166666666666664,
       "lead_minutes": 56.03333333333333,
+      "lead_queue_minutes": 2.95,
       "lead_execution_minutes": 13.916666666666666,
       "deployed_by": "cdd0b9ebaba6221fc11b4d8074b79162e90465f1",
       "run_ids": [
@@ -316,6 +350,14 @@
         41333194557,
         41333194560
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41333194530,
@@ -368,6 +410,7 @@
       "execution_minutes": 10.95,
       "pre_ci_minutes": 7.966666666666667,
       "lead_minutes": 24.966666666666665,
+      "lead_queue_minutes": 6.05,
       "lead_execution_minutes": 10.95,
       "deployed_by": "4eb30353e5d0026224b5689d56608f58c97246ae",
       "run_ids": [
@@ -377,6 +420,14 @@
         41334636501,
         41334636509
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41334636455,
@@ -429,6 +480,7 @@
       "execution_minutes": 103.15,
       "pre_ci_minutes": 61.916666666666664,
       "lead_minutes": 191.4,
+      "lead_queue_minutes": 26.333333333333332,
       "lead_execution_minutes": 103.15,
       "deployed_by": "3184d4f3fc2b2c596eebad69f967066c98000794",
       "run_ids": [
@@ -438,6 +490,14 @@
         41348615367,
         41348615458
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41348615223,
@@ -490,6 +550,7 @@
       "execution_minutes": 21.916666666666668,
       "pre_ci_minutes": 230.95,
       "lead_minutes": 307.01666666666665,
+      "lead_queue_minutes": 54.15,
       "lead_execution_minutes": 21.916666666666668,
       "deployed_by": "68205017a0d5d3a9a7e759ffc27a58fe6f7d554b",
       "run_ids": [
@@ -497,6 +558,12 @@
         41364697582,
         41364697724
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41364697538,
@@ -537,6 +604,7 @@
       "execution_minutes": 38.85,
       "pre_ci_minutes": 183.53333333333333,
       "lead_minutes": 276.5,
+      "lead_queue_minutes": 54.11666666666667,
       "lead_execution_minutes": 38.85,
       "deployed_by": "15044a9b2a317b13990b16c3aa328a1cc40fd033",
       "run_ids": [
@@ -544,6 +612,12 @@
         41364905130,
         41364905139
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41364905121,
@@ -584,6 +658,7 @@
       "execution_minutes": 1.9333333333333333,
       "pre_ci_minutes": 2.033333333333333,
       "lead_minutes": 4.0,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.9333333333333333,
       "deployed_by": "e16c7842cb5ba136c9eb5b490a8cebdbe427319e",
       "run_ids": [
@@ -591,6 +666,12 @@
         41403627598,
         41403627612
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41403627590,
@@ -631,6 +712,7 @@
       "execution_minutes": 1.9,
       "pre_ci_minutes": 15.316666666666666,
       "lead_minutes": 17.25,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.9,
       "deployed_by": "69056e069a00b0a69753900f2ee58679ff974e58",
       "run_ids": [
@@ -639,6 +721,13 @@
         41408520501,
         41408520678
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 41408520476,
@@ -685,6 +774,7 @@
       "execution_minutes": 1.0166666666666666,
       "pre_ci_minutes": 105.26666666666667,
       "lead_minutes": 106.31666666666666,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.0166666666666666,
       "deployed_by": "072ddd93e5f8753e12920974d0b1245ede627451",
       "run_ids": [
@@ -693,6 +783,13 @@
         42359564336,
         42359564344
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42359564286,
@@ -739,6 +836,7 @@
       "execution_minutes": 1.0833333333333333,
       "pre_ci_minutes": 9.533333333333333,
       "lead_minutes": 10.65,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.0833333333333333,
       "deployed_by": "cedc6ecf267094bd3253077cfd7eee0476726d52",
       "run_ids": [
@@ -747,6 +845,13 @@
         42383788462,
         42383788522
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42383788406,
@@ -793,6 +898,7 @@
       "execution_minutes": 1.0166666666666666,
       "pre_ci_minutes": 85.21666666666667,
       "lead_minutes": 86.26666666666667,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.0166666666666666,
       "deployed_by": "62d9cb103d688948a5d7acb2edeaa60fd0e685cb",
       "run_ids": [
@@ -800,6 +906,12 @@
         42387880997,
         42387881127
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42387880890,
@@ -840,6 +952,7 @@
       "execution_minutes": 1.4666666666666666,
       "pre_ci_minutes": 12.1,
       "lead_minutes": 13.616666666666667,
+      "lead_queue_minutes": 0.05,
       "lead_execution_minutes": 1.4666666666666666,
       "deployed_by": "386f517b90c195e570a7aa87e17f89e11040b454",
       "run_ids": [
@@ -848,6 +961,13 @@
         42388035196,
         42388035302
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42388035169,
@@ -894,6 +1014,7 @@
       "execution_minutes": 1.05,
       "pre_ci_minutes": 30.433333333333334,
       "lead_minutes": 31.516666666666666,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.05,
       "deployed_by": "4f6d9ba02ed096bd12d61d58a425fc9257ca69d4",
       "run_ids": [
@@ -901,6 +1022,12 @@
         42501792528,
         42501792687
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42501792514,
@@ -941,6 +1068,7 @@
       "execution_minutes": 1.0333333333333334,
       "pre_ci_minutes": 19.433333333333334,
       "lead_minutes": 20.5,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.0333333333333334,
       "deployed_by": "cc55e0e3d9a669d4bbe96cc6003c6b5929c2eaf3",
       "run_ids": [
@@ -948,6 +1076,12 @@
         42501866896,
         42501866903
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42501866776,
@@ -988,6 +1122,7 @@
       "execution_minutes": 1.1833333333333333,
       "pre_ci_minutes": 9.85,
       "lead_minutes": 11.066666666666666,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.1833333333333333,
       "deployed_by": "3bcb7b50e8ff1ee49eaeaf1388b17133cff39870",
       "run_ids": [
@@ -995,6 +1130,12 @@
         42501932936,
         42501932947
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42501932933,
@@ -1035,6 +1176,7 @@
       "execution_minutes": 1.0333333333333334,
       "pre_ci_minutes": 13.216666666666667,
       "lead_minutes": 14.283333333333333,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.0333333333333334,
       "deployed_by": "3f6bee831419bd9f0516715a6325f3ea6b4432f8",
       "run_ids": [
@@ -1042,6 +1184,12 @@
         42516019888,
         42516019899
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42516019777,
@@ -1082,6 +1230,7 @@
       "execution_minutes": 1.45,
       "pre_ci_minutes": 3.15,
       "lead_minutes": 4.633333333333334,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.45,
       "deployed_by": "a8e1c94c578047c480a9634ebe56ed57b779294c",
       "run_ids": [
@@ -1091,6 +1240,14 @@
         42523717646,
         42523717653
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42523717554,
@@ -1143,6 +1300,7 @@
       "execution_minutes": 1.1,
       "pre_ci_minutes": 11.416666666666666,
       "lead_minutes": 12.55,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.1,
       "deployed_by": "7c83291ecf3d2efecca79ce1e26888f57ba1e562",
       "run_ids": [
@@ -1150,6 +1308,12 @@
         42525469249,
         42525469303
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42525469154,
@@ -1190,6 +1354,7 @@
       "execution_minutes": 2.783333333333333,
       "pre_ci_minutes": 3.466666666666667,
       "lead_minutes": 6.283333333333333,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 2.783333333333333,
       "deployed_by": "8c86e19c6bb13fbf6fa2942edd5eb13983a9dc23",
       "run_ids": [
@@ -1198,6 +1363,13 @@
         42526352507,
         42526352531
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42526352496,
@@ -1244,6 +1416,7 @@
       "execution_minutes": 3.8,
       "pre_ci_minutes": 8.566666666666666,
       "lead_minutes": 14.65,
+      "lead_queue_minutes": 2.283333333333333,
       "lead_execution_minutes": 3.8,
       "deployed_by": "dbca9b6c257244e345de12792fe5e3f8e673dbe5",
       "run_ids": [
@@ -1251,6 +1424,12 @@
         42530224986,
         42530224990
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42530224980,
@@ -1291,6 +1470,7 @@
       "execution_minutes": 1.15,
       "pre_ci_minutes": 344.01666666666665,
       "lead_minutes": 345.2,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.15,
       "deployed_by": "5c85e94a0f580364bcdee4e16e2c0c9f91959b13",
       "run_ids": [
@@ -1298,6 +1478,12 @@
         42622877796,
         42622877917
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42622877668,
@@ -1338,6 +1524,7 @@
       "execution_minutes": 1.85,
       "pre_ci_minutes": 300.25,
       "lead_minutes": 302.93333333333334,
+      "lead_queue_minutes": 0.8333333333333334,
       "lead_execution_minutes": 1.85,
       "deployed_by": "64475b55921142b48d4b554e1cca9e35a6207121",
       "run_ids": [
@@ -1345,6 +1532,12 @@
         42622928844,
         42622929497
       ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 42622928804,

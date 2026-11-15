@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from scripts.calculate_ci_metrics import GitHub, calculate, run_times
+from scripts.calculate_ci_metrics import GitHub, calculate, enrich_ancestry, run_times
 
 
 def stamp(minute):
@@ -267,3 +267,37 @@ def test_later_failed_rerun_can_recover_without_counting_second_deployment():
     assert result["change_failure_rate_percent"] == 100
     assert result["recovery_time_minutes"]["mean"] == 10
     assert result["records"][0]["green_events"] == [stamp(20), stamp(40)]
+
+
+def test_faster_green_descendant_deploys_change_before_its_own_slow_ci(monkeypatch):
+    data = evidence(
+        [run(finished=50), run(sha="b", created=25, started=26, finished=30, run_id=2)]
+    )
+    api = GitHub("example/repo")
+    calls = []
+
+    def compare(endpoint):
+        calls.append(endpoint)
+        return {"status": "ahead"}
+
+    monkeypatch.setattr(api, "get", compare)
+    enrich_ancestry(api, data)
+    result = calculate(data)
+    assert calls == ["/compare/a...b"]
+    assert result["records"][0]["lead_minutes"] == 30
+    assert result["records"][0]["execution_minutes"] == 38
+    assert result["records"][0]["lead_execution_minutes"] == 18
+
+
+def test_descendant_can_deploy_before_original_job_starts():
+    data = evidence(
+        [
+            run(started=35, finished=50),
+            run(sha="b", created=25, started=26, finished=30, run_id=2),
+        ]
+    )
+    data["ancestry"]["a...b"] = "ahead"
+    row = calculate(data)["records"][0]
+    assert row["lead_minutes"] == 30
+    assert row["lead_queue_minutes"] == 16
+    assert row["lead_execution_minutes"] == 4

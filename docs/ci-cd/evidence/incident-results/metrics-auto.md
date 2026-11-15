@@ -1,6 +1,6 @@
 # Автоматичний підрахунок CI/CD
 
-Згенеровано `scripts/calculate_ci_metrics.py`. Методика і команда: [README](README.md).
+Згенеровано `scripts/calculate_ci_metrics.py`. Методика і команда: [README](../../README.md).
 
 Період UTC: `2026-10-18T21:00:00Z` ≤ created_at < `2026-10-23T19:07:35Z`.
 Час відображення: `UTC`. Завершення після верхньої межі не враховано.

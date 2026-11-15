@@ -78,11 +78,20 @@
       "execution_minutes": 0.03333333333333333,
       "pre_ci_minutes": 3.6333333333333333,
       "lead_minutes": 7069.316666666667,
+      "lead_queue_minutes": 0.0,
       "lead_execution_minutes": 7065.683333333333,
       "deployed_by": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
       "run_ids": [
         39166938505,
         39166938512
+      ],
+      "workflow_names": [
+        "CI",
+        "Static analysis"
+      ],
+      "failure_notes": [
+        "CI/build: The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+        "Static analysis/lint-and-security: The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings"
       ],
       "attempts": [
         {
@@ -118,6 +127,7 @@
       "execution_minutes": 1.0,
       "pre_ci_minutes": 5863.733333333334,
       "lead_minutes": 5864.766666666666,
+      "lead_queue_minutes": 0.03333333333333333,
       "lead_execution_minutes": 1.0,
       "deployed_by": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
       "run_ids": [
@@ -125,6 +135,12 @@
         40007760059,
         40007760118
       ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Static analysis"
+      ],
+      "failure_notes": [],
       "attempts": [
         {
           "id": 40007759942,

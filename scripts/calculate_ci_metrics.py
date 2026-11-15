@@ -169,8 +169,12 @@ class GitHub:
                 with urlopen(location, timeout=60) as response:
                     text = response.read().decode("utf-8", errors="replace")
             except HTTPError as log_error:
-                return {"source": endpoint, "available": False,
-                        "http_status": log_error.code, "stage": "log_storage"}
+                return {
+                    "source": endpoint,
+                    "available": False,
+                    "http_status": log_error.code,
+                    "stage": "log_storage",
+                }
         lines = text.splitlines()
         indices = set()
         for i, line in enumerate(lines):
@@ -251,9 +255,11 @@ def collect(api, start, end, tz_name, workflows):
                     if job["conclusion"] in FAILURES:
                         job["failure_log"] = api.failure_log(job["id"])
                         check_url = job.get("check_run_url")
-                        if check_url and check_url.startswith(api.root + "/check-runs/"):
+                        if check_url and check_url.startswith(
+                            api.root + "/check-runs/"
+                        ):
                             job["annotations"] = api.pages(
-                                check_url[len(api.root):] + "/annotations"
+                                check_url[len(api.root) :] + "/annotations"
                             )
                 evidence["runs"].append(record)
         prs = api.pages(f"/commits/{sha}/pulls")
@@ -295,17 +301,27 @@ def collect(api, start, end, tz_name, workflows):
             change["pr"]["commits"][0]["authored_at"] if prs else change["authored_at"]
         )
         evidence["changes"][sha] = change
-    # Prove containment for failed changes that first become deployable later.
-    grouped = defaultdict(list)
-    for run in evidence["runs"]:
-        grouped[run["head_sha"]].append(run)
-    for sha, runs in grouped.items():
-        if any(r["conclusion"] in FAILURES for r in runs):
-            for candidate in grouped:
-                if candidate != sha:
-                    comparison = api.get(f"/compare/{sha}...{candidate}")
-                    evidence["ancestry"][f"{sha}...{candidate}"] = comparison["status"]
+    enrich_ancestry(api, evidence)
     return evidence
+
+
+def enrich_ancestry(api, evidence):
+    """Check earlier green descendants, including overlapping successful CI."""
+    preliminary = calculate(evidence)
+    for row in preliminary["records"]:
+        for candidate in preliminary["records"]:
+            green = candidate["green_at"]
+            if (
+                candidate["sha"] == row["sha"]
+                or not green
+                or dt(green) < dt(row["created_at"])
+                or (row["green_at"] and dt(green) >= dt(row["green_at"]))
+            ):
+                continue
+            key = f"{row['sha']}...{candidate['sha']}"
+            if key not in evidence["ancestry"]:
+                comparison = api.get(f"/compare/{key}")
+                evidence["ancestry"][key] = comparison["status"]
 
 
 def run_times(run):
@@ -469,19 +485,29 @@ def calculate(evidence):
             ),
             "pre_ci_minutes": minutes(first, created),
             "lead_minutes": None,
+            "lead_queue_minutes": None,
             "lead_execution_minutes": None,
             "deployed_by": None,
             "run_ids": sorted({r["id"] for r in runs}),
             "workflow_names": sorted({r["name"] for r in runs}),
             "failure_notes": [
-                f"{r['name']}/{j['name']}: " + (
-                    "; ".join(a["message"] for a in j.get("annotations", [])
-                              if a["annotation_level"] == "failure")
-                    or "; ".join(s["name"] for s in j.get("steps", [])
-                                 if s.get("conclusion") in FAILURES)
+                f"{r['name']}/{j['name']}: "
+                + (
+                    "; ".join(
+                        a["message"]
+                        for a in j.get("annotations", [])
+                        if a["annotation_level"] == "failure"
+                    )
+                    or "; ".join(
+                        s["name"]
+                        for s in j.get("steps", [])
+                        if s.get("conclusion") in FAILURES
+                    )
                     or "див. failure_log у snapshot; причина потребує аналізу"
                 )
-                for r in runs for j in r["jobs"] if j["conclusion"] in FAILURES
+                for r in runs
+                for j in r["jobs"]
+                if j["conclusion"] in FAILURES
             ],
             "attempts": [
                 {
@@ -531,10 +557,17 @@ def calculate(evidence):
             row["lead_minutes"] = minutes(
                 row["first_commit_at"], deployment["green_at"]
             )
+            starts = [
+                value
+                for value in (row["started_at"], deployment["started_at"])
+                if value and dt(value) <= dt(deployment["green_at"])
+            ]
+            lead_started = min(starts, key=dt) if starts else None
+            row["lead_queue_minutes"] = (
+                minutes(row["created_at"], lead_started) if lead_started else None
+            )
             row["lead_execution_minutes"] = (
-                minutes(row["started_at"], deployment["green_at"])
-                if row["started_at"]
-                else None
+                minutes(lead_started, deployment["green_at"]) if lead_started else None
             )
             if row["lead_minutes"] < 0 or row["pre_ci_minutes"] < 0:
                 raise ValueError(f"Non-monotonic commit timestamps for {row['sha']}")
@@ -556,19 +589,15 @@ def calculate(evidence):
     completed = [r for r in rows if r["completed_at"]]
     failures = [r for r in completed if r["red_at"]]
     leads = [r for r in rows if r["lead_minutes"] is not None]
+    part_sources = {
+        "pre_ci_minutes": "pre_ci_minutes",
+        "queue_minutes": "lead_queue_minutes",
+        "execution_minutes": "lead_execution_minutes",
+        "lead_minutes": "lead_minutes",
+    }
     parts = {
-        key: sum(
-            r["lead_execution_minutes" if key == "execution_minutes" else key]
-            for r in leads
-            if r["lead_execution_minutes" if key == "execution_minutes" else key]
-            is not None
-        )
-        for key in (
-            "pre_ci_minutes",
-            "queue_minutes",
-            "execution_minutes",
-            "lead_minutes",
-        )
+        key: sum(r[source] for r in leads if r[source] is not None)
+        for key, source in part_sources.items()
     }
     total = parts["lead_minutes"]
     parts["shares_percent"] = {
@@ -624,7 +653,9 @@ def render_reports(result, output):
     c = result["counts"]
     docs = Path(__file__).resolve().parents[1] / "docs" / "ci-cd"
     readme_link = Path(os.path.relpath(docs / "README.md", output)).as_posix()
-    baseline_link = Path(os.path.relpath(docs / "evidence/manual-baseline", output)).as_posix()
+    baseline_link = Path(
+        os.path.relpath(docs / "evidence/manual-baseline", output)
+    ).as_posix()
     lines = [
         "# Автоматичний підрахунок CI/CD",
         "",
@@ -699,7 +730,8 @@ def render_reports(result, output):
         "",
         f"Період UTC: `{result['window_utc']['from']}` ≤ створення CI < "
         f"`{result['window_utc']['to_exclusive']}`. Workflow: "
-        + ", ".join(result["workflows"]) + ".",
+        + ", ".join(result["workflows"])
+        + ".",
         "",
         "Один рядок — один коміт. Черга — до першого job; виконання — інтервал "
         "від першого job до завершення врахованих workflow. "
