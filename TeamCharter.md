@@ -7,12 +7,12 @@
   - Mykola Vashchenko (GitHub: @MykolaVashchenko, електронна пошта НаУКМА: m.vashchenko@ukma.edu.ua)
   - Nikita Dyshlyuk (GitHub: @mytec0l, електронна пошта НаУКМА: n.dyshlyuk@ukma.edu.ua)
 ## 2. Ролі та відповідальності (Roles & Responsibilities)
-| Name | Core | Project Requirements | Architecture | API Design | Code Quality | Testing (Labs 06–07) | Quality & Release (Lab 08) | Reliability (Lab 09) |
-|---|---|---|---|---|---|---|---|---|
-| Nazar Sydorchuk | Issue Tracker Lead | Requirements Lead | UML Lead | Quality Lead | Documentation Lead | Test Strategist / Quality Analyst | Code & Security Analyst | Documentation Lead |
-| Oleksii Volik | CI Maintainer | Quality Lead | Architecture Lead | Documentation Lead | Code Reviewer | Integration Lead / Test Planner | Refactoring Lead | Risk Researcher |
-| Mykola Vashchenko | Documentation Lead | Traceability Lead | Data & Threat Modeler / Documentation Lead | Backend Lead / API Design Lead | Security Analyst | Debugging Lead / Review Manager | Release Manager | Reliability Engineer |
-| Nikita Dyshlyuk | Repo Maintainer | Documentation Lead | Requirements-Architecture Mapper | Integration Lead | Quality Lead | Test Lead / Documentation Lead | Testing Engineer | Failure Analyst |
+| Name | Core | Project Requirements | Architecture | API Design | Code Quality | Testing (Labs 06–07) | Quality & Release (Lab 08) | Reliability (Lab 09) | CI/CD Analytics (Lab 10) |
+|---|---|---|---|---|---|---|---|---|---|
+| Nazar Sydorchuk | Issue Tracker Lead | Requirements Lead | UML Lead | Quality Lead | Documentation Lead | Test Strategist / Quality Analyst | Code & Security Analyst | Documentation Lead | Documentation Owner |
+| Oleksii Volik | CI Maintainer | Quality Lead | Architecture Lead | Documentation Lead | Code Reviewer | Integration Lead / Test Planner | Refactoring Lead | Risk Researcher | DORA Analyst |
+| Mykola Vashchenko | Documentation Lead | Traceability Lead | Data & Threat Modeler / Documentation Lead | Backend Lead / API Design Lead | Security Analyst | Debugging Lead / Review Manager | Release Manager | Reliability Engineer | Improvement Designer |
+| Nikita Dyshlyuk | Repo Maintainer | Documentation Lead | Requirements-Architecture Mapper | Integration Lead | Quality Lead | Test Lead / Documentation Lead | Testing Engineer | Failure Analyst | CI/CD Data Analyst |
 ### Відповідальність за тестування (Лаб06 та Лаб07)
 | Учасник | Ролі (Лаб06 & Лаб07) |
 |---|---|
@@ -38,6 +38,16 @@
 | Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Відповідальний за документацію | Веде звіти та готує презентацію |
 
 *Використання ШІ: таблицю додано з допомогою Claude Code; обов'язки взято з розділу «Запропоновані ролі (команда з 4 осіб)» Лабораторної роботи 9, розподіл ролей підтвердив відповідальний за документацію.*
+
+### Відповідальність за аналітику CI/CD (Лаб10)
+| Ім'я | GitHub | Роль (Lab 10) | Відповідальність |
+|---|---|---|---|
+| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Аналітик даних CI/CD | Збирає історію запусків: статус, час у черзі і виконання, перший коміт PR, причину збою |
+| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Аналітик DORA | Обчислює чотири метрики, будує таблиці і графік |
+| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Проєктувальник покращень | Шукає першопричини і веде план покращень |
+| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Відповідальний за документацію | Упорядковує `dora-summary.md` і готує дашборд для презентації |
+
+*Використання ШІ: таблицю додано з допомогою Claude Code; обов'язки взято з розділу «Запропоновані ролі (команда з 4 осіб)» Лабораторної роботи 10, розподіл ролей підтвердив відповідальний за документацію.*
 
 ### Відповідальність за артефакти вимог:
 - **Requirements Lead (Nazar Sydorchuk)**: написання та вдосконалення користувацьких історій (INVEST), ведення розділу функціональних вимог (FR) у `requirements.md`.
