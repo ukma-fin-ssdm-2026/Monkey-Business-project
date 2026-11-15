@@ -225,6 +225,7 @@ xychart-beta
 - Результат: [metrics-auto.md](metrics-auto.md), [metrics-auto.json](metrics-auto.json); докази: [api-snapshot.json](evidence/api-snapshot.json).
 - Порівняння з ручним Етапом 2 та контрольні приклади: [reconciliation.md](reconciliation.md).
 - Скрипт протестовано; він запускається локально й не використовує спільні раннери або розклад.
+- Пояснення роботи скрипта та демонстрація у відео: [Loom відео @mytec0l](https://www.loom.com/share/e0bbbd7d32a841d9ae8051fec8092811) (файл [video_NikitaDyshlyuk.txt](../../Labs/Lab10/video_NikitaDyshlyuk.txt)).
 
 Команда фактичного збору з кореня репозиторію:
 
@@ -237,5 +238,3 @@ xychart-beta
 ```powershell
 .\.venv\Scripts\python.exe scripts/calculate_ci_metrics.py --offline
 ```
-
-**Статус:** технічні артефакти бонусу підготовлено. Для зарахування потрібне також пояснення роботи скрипта у відео хоча б одного учасника. Відео не входить до цієї зміни; бонус поки не заявляється як зарахований.
