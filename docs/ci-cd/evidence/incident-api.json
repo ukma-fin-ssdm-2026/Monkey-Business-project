@@ -1,0 +1,536 @@
+{
+  "schema_version": 1,
+  "repository": "ukma-fin-ssdm-2026/Monkey-Business-project",
+  "branch": "main",
+  "event": "push",
+  "timezone": "UTC",
+  "window_utc": {
+    "from": "2026-10-18T21:00:00Z",
+    "to_exclusive": "2026-10-23T19:07:35Z"
+  },
+  "collected_at": "2026-11-15T15:49:54.986818Z",
+  "workflows": [
+    "CI",
+    "Static analysis",
+    "Lab07 card ordering",
+    "Lab08 characterization tests",
+    "Generate and Deploy API Docs"
+  ],
+  "runs": [
+    {
+      "id": 40007759942,
+      "name": "CI",
+      "head_sha": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "head_branch": "main",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-23T18:59:02Z",
+      "run_started_at": "2026-10-23T18:59:02Z",
+      "updated_at": "2026-10-23T19:00:05Z",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007759942",
+      "workflow_id": 356550171,
+      "jobs": [
+        {
+          "id": 120599944901,
+          "name": "build",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-23T18:59:04Z",
+          "completed_at": "2026-10-23T19:00:04Z",
+          "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007759942/job/120599944901",
+          "check_run_url": "https://api.github.com/repos/ukma-fin-ssdm-2026/Monkey-Business-project/check-runs/120599944901",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-23T18:59:06Z",
+              "completed_at": "2026-10-23T18:59:08Z"
+            },
+            {
+              "name": "Checkout code",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-23T18:59:08Z",
+              "completed_at": "2026-10-23T18:59:09Z"
+            },
+            {
+              "name": "Setup Python",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-23T18:59:09Z",
+              "completed_at": "2026-10-23T18:59:18Z"
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-23T18:59:18Z",
+              "completed_at": "2026-10-23T18:59:43Z"
+            },
+            {
+              "name": "Run tests with coverage",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-23T18:59:43Z",
+              "completed_at": "2026-10-23T18:59:56Z"
+            },
+            {
+              "name": "Add coverage summary to job summary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-23T18:59:56Z",
+              "completed_at": "2026-10-23T18:59:56Z"
+            },
+            {
+              "name": "Upload coverage report artifact",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-23T18:59:56Z",
+              "completed_at": "2026-10-23T18:59:58Z"
+            },
+            {
+              "name": "Verify API integration and OpenAPI generation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-23T18:59:58Z",
+              "completed_at": "2026-10-23T18:59:59Z"
+            },
+            {
+              "name": "Check for spec drift",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-10-23T18:59:59Z",
+              "completed_at": "2026-10-23T18:59:59Z"
+            },
+            {
+              "name": "Post Setup Python",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-10-23T18:59:59Z",
+              "completed_at": "2026-10-23T18:59:59Z"
+            },
+            {
+              "name": "Post Checkout code",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18,
+              "started_at": "2026-10-23T18:59:59Z",
+              "completed_at": "2026-10-23T19:00:00Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19,
+              "started_at": "2026-10-23T19:00:00Z",
+              "completed_at": "2026-10-23T19:00:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 40007760059,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "head_branch": "main",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-23T18:59:02Z",
+      "run_started_at": "2026-10-23T18:59:02Z",
+      "updated_at": "2026-10-23T18:59:43Z",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007760059",
+      "workflow_id": 374121474,
+      "jobs": [
+        {
+          "id": 120599945339,
+          "name": "generate-and-deploy",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-23T18:59:04Z",
+          "completed_at": "2026-10-23T18:59:42Z",
+          "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007760059/job/120599945339",
+          "check_run_url": "https://api.github.com/repos/ukma-fin-ssdm-2026/Monkey-Business-project/check-runs/120599945339",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-23T18:59:06Z",
+              "completed_at": "2026-10-23T18:59:08Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-23T18:59:08Z",
+              "completed_at": "2026-10-23T18:59:09Z"
+            },
+            {
+              "name": "Setup Python",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-23T18:59:09Z",
+              "completed_at": "2026-10-23T18:59:17Z"
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-23T18:59:17Z",
+              "completed_at": "2026-10-23T18:59:34Z"
+            },
+            {
+              "name": "Generate OpenAPI spec from code",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-23T18:59:34Z",
+              "completed_at": "2026-10-23T18:59:35Z"
+            },
+            {
+              "name": "Deploy to GitHub Pages",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-23T18:59:35Z",
+              "completed_at": "2026-10-23T18:59:38Z"
+            },
+            {
+              "name": "Post Setup Python",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-23T18:59:38Z",
+              "completed_at": "2026-10-23T18:59:38Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-23T18:59:38Z",
+              "completed_at": "2026-10-23T18:59:38Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-10-23T18:59:38Z",
+              "completed_at": "2026-10-23T18:59:38Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 40007760118,
+      "name": "Static analysis",
+      "head_sha": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "head_branch": "main",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-23T18:59:02Z",
+      "run_started_at": "2026-10-23T18:59:02Z",
+      "updated_at": "2026-10-23T18:59:42Z",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007760118",
+      "workflow_id": 380828808,
+      "jobs": [
+        {
+          "id": 120599945973,
+          "name": "lint-and-security",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-23T18:59:04Z",
+          "completed_at": "2026-10-23T18:59:41Z",
+          "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007760118/job/120599945973",
+          "check_run_url": "https://api.github.com/repos/ukma-fin-ssdm-2026/Monkey-Business-project/check-runs/120599945973",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-23T18:59:06Z",
+              "completed_at": "2026-10-23T18:59:07Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-23T18:59:07Z",
+              "completed_at": "2026-10-23T18:59:08Z"
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-23T18:59:08Z",
+              "completed_at": "2026-10-23T18:59:16Z"
+            },
+            {
+              "name": "Run pip install -r requirements-dev.txt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-23T18:59:16Z",
+              "completed_at": "2026-10-23T18:59:26Z"
+            },
+            {
+              "name": "Format and style (black, flake8)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-23T18:59:26Z",
+              "completed_at": "2026-10-23T18:59:27Z"
+            },
+            {
+              "name": "Security (bandit)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-23T18:59:27Z",
+              "completed_at": "2026-10-23T18:59:28Z"
+            },
+            {
+              "name": "Secrets (detect-secrets via pre-commit)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-23T18:59:28Z",
+              "completed_at": "2026-10-23T18:59:37Z"
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-10-23T18:59:37Z",
+              "completed_at": "2026-10-23T18:59:37Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-10-23T18:59:37Z",
+              "completed_at": "2026-10-23T18:59:37Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-10-23T18:59:37Z",
+              "completed_at": "2026-10-23T18:59:37Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 39166938505,
+      "name": "CI",
+      "head_sha": "b3df7da390c04499bf68b262202cba56ca43d650",
+      "head_branch": "main",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "created_at": "2026-10-18T21:14:23Z",
+      "run_started_at": "2026-10-18T21:14:23Z",
+      "updated_at": "2026-10-18T21:14:26Z",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/39166938505",
+      "workflow_id": 356550171,
+      "jobs": [
+        {
+          "id": 117791740249,
+          "name": "build",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-18T21:14:23Z",
+          "completed_at": "2026-10-18T21:14:25Z",
+          "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/39166938505/job/117791740249",
+          "check_run_url": "https://api.github.com/repos/ukma-fin-ssdm-2026/Monkey-Business-project/check-runs/117791740249",
+          "steps": [],
+          "failure_log": {
+            "source": "/actions/jobs/117791740249/logs",
+            "available": false,
+            "http_status": 404,
+            "stage": "log_storage"
+          },
+          "annotations": [
+            {
+              "path": ".github",
+              "blob_href": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/b3df7da390c04499bf68b262202cba56ca43d650/.github",
+              "start_line": 1,
+              "start_column": null,
+              "end_line": 1,
+              "end_column": null,
+              "annotation_level": "failure",
+              "title": "",
+              "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+              "raw_details": ""
+            },
+            {
+              "path": ".github",
+              "blob_href": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/b3df7da390c04499bf68b262202cba56ca43d650/.github",
+              "start_line": 1,
+              "start_column": null,
+              "end_line": 1,
+              "end_column": null,
+              "annotation_level": "notice",
+              "title": "",
+              "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\"",
+              "raw_details": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 39166938512,
+      "name": "Static analysis",
+      "head_sha": "b3df7da390c04499bf68b262202cba56ca43d650",
+      "head_branch": "main",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "created_at": "2026-10-18T21:14:23Z",
+      "run_started_at": "2026-10-18T21:14:23Z",
+      "updated_at": "2026-10-18T21:14:26Z",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/39166938512",
+      "workflow_id": 380828808,
+      "jobs": [
+        {
+          "id": 117791739998,
+          "name": "lint-and-security",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-18T21:14:23Z",
+          "completed_at": "2026-10-18T21:14:25Z",
+          "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/39166938512/job/117791739998",
+          "check_run_url": "https://api.github.com/repos/ukma-fin-ssdm-2026/Monkey-Business-project/check-runs/117791739998",
+          "steps": [],
+          "failure_log": {
+            "source": "/actions/jobs/117791739998/logs",
+            "available": false,
+            "http_status": 404,
+            "stage": "log_storage"
+          },
+          "annotations": [
+            {
+              "path": ".github",
+              "blob_href": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/b3df7da390c04499bf68b262202cba56ca43d650/.github",
+              "start_line": 1,
+              "start_column": null,
+              "end_line": 1,
+              "end_column": null,
+              "annotation_level": "failure",
+              "title": "",
+              "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+              "raw_details": ""
+            },
+            {
+              "path": ".github",
+              "blob_href": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/b3df7da390c04499bf68b262202cba56ca43d650/.github",
+              "start_line": 1,
+              "start_column": null,
+              "end_line": 1,
+              "end_column": null,
+              "annotation_level": "notice",
+              "title": "",
+              "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\"",
+              "raw_details": ""
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "changes": {
+    "a0d990b05b18420ea4784dbcc99d61c282c15b77": {
+      "sha": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "commit_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/commit/a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "authored_at": "2026-10-23T18:58:58Z",
+      "committed_at": "2026-10-23T18:58:58Z",
+      "parents": [
+        "b3df7da390c04499bf68b262202cba56ca43d650",
+        "ec0feea26b2b6b24f9c51b80b45a28a8245a811e"
+      ],
+      "pr": {
+        "number": 160,
+        "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/pull/160",
+        "created_at": "2026-10-19T17:15:23Z",
+        "merged_at": "2026-10-23T18:58:59Z",
+        "merge_commit_sha": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+        "commits": [
+          {
+            "sha": "14aec8b752824f4bc73a3323788300a8b53ddf51",
+            "authored_at": "2026-10-19T17:15:18Z",
+            "committed_at": "2026-10-19T17:15:18Z"
+          },
+          {
+            "sha": "ec0feea26b2b6b24f9c51b80b45a28a8245a811e",
+            "authored_at": "2026-10-23T18:43:25Z",
+            "committed_at": "2026-10-23T18:56:47Z"
+          }
+        ]
+      },
+      "first_commit_at": "2026-10-19T17:15:18Z"
+    },
+    "b3df7da390c04499bf68b262202cba56ca43d650": {
+      "sha": "b3df7da390c04499bf68b262202cba56ca43d650",
+      "commit_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/commit/b3df7da390c04499bf68b262202cba56ca43d650",
+      "authored_at": "2026-10-18T21:14:19Z",
+      "committed_at": "2026-10-18T21:14:19Z",
+      "parents": [
+        "5e16ac0c9e53033313189e0cd98c038eeb501b84",
+        "cc8a12d37f4ce6751e1bd9bc2fc9f9e06aee4f1c"
+      ],
+      "pr": {
+        "number": 158,
+        "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/pull/158",
+        "created_at": "2026-10-18T21:11:35Z",
+        "merged_at": "2026-10-18T21:14:20Z",
+        "merge_commit_sha": "b3df7da390c04499bf68b262202cba56ca43d650",
+        "commits": [
+          {
+            "sha": "cc8a12d37f4ce6751e1bd9bc2fc9f9e06aee4f1c",
+            "authored_at": "2026-10-18T21:10:45Z",
+            "committed_at": "2026-10-18T21:10:45Z"
+          }
+        ]
+      },
+      "first_commit_at": "2026-10-18T21:10:45Z"
+    }
+  },
+  "ancestry": {
+    "b3df7da390c04499bf68b262202cba56ca43d650...a0d990b05b18420ea4784dbcc99d61c282c15b77": "ahead"
+  }
+}

@@ -1,0 +1,229 @@
+{
+  "repository": "ukma-fin-ssdm-2026/Monkey-Business-project",
+  "window_utc": {
+    "from": "2026-10-18T21:00:00Z",
+    "to_exclusive": "2026-10-23T19:07:35Z"
+  },
+  "timezone": "UTC",
+  "workflows": [
+    "CI",
+    "Static analysis",
+    "Lab07 card ordering",
+    "Lab08 characterization tests",
+    "Generate and Deploy API Docs"
+  ],
+  "counts": {
+    "commits": 2,
+    "completed_commits": 2,
+    "green_commits": 1,
+    "failed_commits": 1,
+    "workflow_runs": 5,
+    "attempts": 5,
+    "incomplete_commits": 0
+  },
+  "deployment_frequency_per_week": 1.4222055002292742,
+  "change_failure_rate_percent": 50.0,
+  "lead_time_minutes": {
+    "count": 2,
+    "mean": 6467.041666666666,
+    "median": 6467.041666666666,
+    "max": 7069.316666666667
+  },
+  "recovery_time_minutes": {
+    "count": 1,
+    "mean": 7065.65,
+    "median": 7065.65,
+    "max": 7065.65
+  },
+  "unresolved_failures": 0,
+  "workflow_execution_minutes": {
+    "count": 5,
+    "mean": 0.4633333333333333,
+    "median": 0.6166666666666667,
+    "max": 1.0
+  },
+  "commit_execution_minutes": {
+    "count": 2,
+    "mean": 0.5166666666666667,
+    "median": 0.5166666666666667,
+    "max": 1.0
+  },
+  "lead_time_parts": {
+    "pre_ci_minutes": 5867.366666666667,
+    "queue_minutes": 0.03333333333333333,
+    "execution_minutes": 7066.683333333333,
+    "lead_minutes": 12934.083333333332,
+    "shares_percent": {
+      "pre_ci_minutes": 45.36360649189158,
+      "queue_minutes": 0.00025771701383296074,
+      "execution_minutes": 54.636135791094596
+    }
+  },
+  "green_commits_by_day": {
+    "2026-10-23": 1
+  },
+  "records": [
+    {
+      "sha": "b3df7da390c04499bf68b262202cba56ca43d650",
+      "pr": 158,
+      "first_commit_at": "2026-10-18T21:10:45Z",
+      "created_at": "2026-10-18T21:14:23Z",
+      "started_at": "2026-10-18T21:14:23Z",
+      "completed_at": "2026-10-18T21:14:25Z",
+      "green_at": null,
+      "green_events": [],
+      "red_at": "2026-10-18T21:14:25Z",
+      "status": "red",
+      "queue_minutes": 0.0,
+      "execution_minutes": 0.03333333333333333,
+      "pre_ci_minutes": 3.6333333333333333,
+      "lead_minutes": 7069.316666666667,
+      "lead_execution_minutes": 7065.683333333333,
+      "deployed_by": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "run_ids": [
+        39166938505,
+        39166938512
+      ],
+      "attempts": [
+        {
+          "id": 39166938505,
+          "attempt": 1,
+          "conclusion": "failure",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/39166938505"
+        },
+        {
+          "id": 39166938512,
+          "attempt": 1,
+          "conclusion": "failure",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/39166938512"
+        }
+      ],
+      "active_job_minutes": 0.03333333333333333,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "pr": 160,
+      "first_commit_at": "2026-10-19T17:15:18Z",
+      "created_at": "2026-10-23T18:59:02Z",
+      "started_at": "2026-10-23T18:59:04Z",
+      "completed_at": "2026-10-23T19:00:04Z",
+      "green_at": "2026-10-23T19:00:04Z",
+      "green_events": [
+        "2026-10-23T19:00:04Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0,
+      "pre_ci_minutes": 5863.733333333334,
+      "lead_minutes": 5864.766666666666,
+      "lead_execution_minutes": 1.0,
+      "deployed_by": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "run_ids": [
+        40007759942,
+        40007760059,
+        40007760118
+      ],
+      "attempts": [
+        {
+          "id": 40007759942,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007759942"
+        },
+        {
+          "id": 40007760059,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007760059"
+        },
+        {
+          "id": 40007760118,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007760118"
+        }
+      ],
+      "active_job_minutes": 1.0,
+      "internal_idle_minutes": 0.0
+    }
+  ],
+  "workflow_timings": [
+    {
+      "id": 40007759942,
+      "name": "CI",
+      "head_sha": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007759942",
+      "started_at": "2026-10-23T18:59:04Z",
+      "completed_at": "2026-10-23T19:00:04Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0
+    },
+    {
+      "id": 40007760059,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007760059",
+      "started_at": "2026-10-23T18:59:04Z",
+      "completed_at": "2026-10-23T18:59:42Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.6333333333333333
+    },
+    {
+      "id": 40007760118,
+      "name": "Static analysis",
+      "head_sha": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/40007760118",
+      "started_at": "2026-10-23T18:59:04Z",
+      "completed_at": "2026-10-23T18:59:41Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.6166666666666667
+    },
+    {
+      "id": 39166938505,
+      "name": "CI",
+      "head_sha": "b3df7da390c04499bf68b262202cba56ca43d650",
+      "run_attempt": 1,
+      "conclusion": "failure",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/39166938505",
+      "started_at": "2026-10-18T21:14:23Z",
+      "completed_at": "2026-10-18T21:14:25Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.0,
+      "execution_minutes": 0.03333333333333333
+    },
+    {
+      "id": 39166938512,
+      "name": "Static analysis",
+      "head_sha": "b3df7da390c04499bf68b262202cba56ca43d650",
+      "run_attempt": 1,
+      "conclusion": "failure",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/39166938512",
+      "started_at": "2026-10-18T21:14:23Z",
+      "completed_at": "2026-10-18T21:14:25Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.0,
+      "execution_minutes": 0.03333333333333333
+    }
+  ],
+  "recoveries": [
+    {
+      "failed_sha": "b3df7da390c04499bf68b262202cba56ca43d650",
+      "red_at": "2026-10-18T21:14:25Z",
+      "green_sha": "a0d990b05b18420ea4784dbcc99d61c282c15b77",
+      "green_at": "2026-10-23T19:00:04Z",
+      "minutes": 7065.65
+    }
+  ],
+  "warnings": []
+}
