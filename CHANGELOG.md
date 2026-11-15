@@ -11,6 +11,15 @@
 - Health check БД (`/health`) робить до 3 спроб `SELECT 1` з експоненційним
   відступом і full jitter у межах дедлайну 10 с; повторюються лише перехідні
   збої (обрив з'єднання, pool timeout).
+- `scripts/calculate_ci_metrics.py`: локальний підрахунок чотирьох метрик
+  DORA з GitHub Actions API (черга й виконання окремо, відтворення без
+  мережі через `--offline`); тести — `tests/test_ci_metrics.py`.
+
+### Changed:
+
+- Повільний набір тестів із PostgreSQL (`lab07-card-order.yml`) більше не
+  запускається на pull request — лише після злиття в `main` і вручну
+  (`workflow_dispatch`); на PR лишається швидкий набір `CI / build`.
 
 ### Fixed:
 

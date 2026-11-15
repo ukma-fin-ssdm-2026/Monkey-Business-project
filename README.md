@@ -29,12 +29,12 @@
 
 ## Команда
 
-| Ім'я | GitHub | Роль (Lab 9) |
+| Ім'я | GitHub | Роль (Lab 10) |
 |---|---|---|
-| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | Risk Researcher |
-| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | Failure Analyst |
-| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Reliability Engineer |
-| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Documentation Lead |
+| Nikita Dyshlyuk | [@mytec0l](https://github.com/mytec0l) | CI/CD Data Analyst |
+| Oleksii Volik | [@saoleksii](https://github.com/saoleksii) | DORA Analyst |
+| Mykola Vashchenko | [@MykolaVashchenko](https://github.com/MykolaVashchenko) | Improvement Designer |
+| Nazar Sydorchuk | [@punguiin](https://github.com/punguiin) | Documentation Owner |
 
 ## Стратегія розробки
 Використовуємо GitHub Flow: зміни в `main` вносяться лише через Pull Request з проходженням CI та щонайменше одним схваленням. Стандарт кодування, обов'язкові інструменти, кроки огляду коду та критерії готовності описано в [політиці якості та огляду коду](./TeamCharter.md#5-політика-якості-та-огляду-коду).
@@ -94,6 +94,14 @@
 - Reliability-тести: [backend](./tests/reliability/) (R1–R3, R10) і [frontend](./src/frontend/tests/reliability.test.tsx) (R5–R8).
 - Запуск: `python -m pytest tests/reliability --no-cov` із кореня та `npm run test:unit -- --run` у `src/frontend`.
 
+## Аналітика CI/CD — Лаб10
+
+- [Звіт DORA](./docs/ci-cd/dora-summary.md) — чотири метрики, черга й виконання, аналіз парами, першопричини, план покращень, дашборд і бонуси.
+- [Сирі дані](./docs/ci-cd/metrics-raw.md) і [докази](./docs/ci-cd/evidence/) — 25 комітів і 93 запуски на `main` за 01–14.11.2026.
+- [Розбір жовтневого інциденту на `main`](./docs/ci-cd/incident-review.md) — запуски не стартували через обмеження оплати GitHub-hosted раннерів.
+- Автоматичний підрахунок метрик: [скрипт](./scripts/calculate_ci_metrics.py), [методика й запуск](./docs/ci-cd/README.md), [результат](./docs/ci-cd/metrics-auto.md), [звірка з ручним розрахунком](./docs/ci-cd/reconciliation.md). Відтворення без мережі: `python scripts/calculate_ci_metrics.py --offline`.
+- Швидкий і повільний набори тестів: на PR — `CI / build`, повільний [Lab07 card ordering](./.github/workflows/lab07-card-order.yml) з PostgreSQL — лише на `main` і вручну.
+
 ## Документи проєкту
 - [TeamCharter.md](./TeamCharter.md) — командний статут
 - [Project-Description.md](./Project-Description.md) — опис проєкту
@@ -117,4 +125,9 @@
 Оновлення для Лабораторної роботи 9:
 - **Інструмент:** Claude Code
 - **Застосування:** оновлення таблиці ролей і додавання розділу «Надійність — Лаб09»
+- **Верифікація:** наявність файлів за посиланнями перевірено в репозиторії; розподіл ролей підтвердив відповідальний за документацію
+
+Оновлення для Лабораторної роботи 10:
+- **Інструмент:** Claude Code
+- **Застосування:** оновлення таблиці ролей і додавання розділу «Аналітика CI/CD — Лаб10»
 - **Верифікація:** наявність файлів за посиланнями перевірено в репозиторії; розподіл ролей підтвердив відповідальний за документацію
