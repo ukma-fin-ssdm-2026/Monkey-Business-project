@@ -195,8 +195,8 @@ xychart-beta
 
 | Запуск | Посилання | Набори | Тривалість |
 |--------|-----------|--------|------------|
-| PR лише зі швидким набором | _TODO: посилання на запуск CI цього PR_ | швидкий | _TODO_ |
-| `main` з обома наборами | _TODO: посилання на запуски CI і Lab07 після злиття_ | швидкий + повільний | _TODO_ |
+| PR лише зі швидким набором | [CI на PR #237](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/43745464196) | швидкий (`postgres-card-order` серед перевірок PR відсутній) | `build` — 1 хв 3 с, з них тести — 20 с |
+| `main` з обома наборами (коміт злиття #237) | [CI](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/43746047102), [Lab07 card ordering](https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/43746047128) | швидкий + повільний | `build` — 1 хв 5 с (тести — 20 с); `postgres-card-order` — 58 с (тести — 4 с) |
 
 Орієнтир до зміни (3 останні запуски на `main`): job `postgres-card-order` — 56–91 с, з них самі тести — 5–12 с. Решта — старт контейнера PostgreSQL і встановлення залежностей. Поділ звільняє один раннер приблизно на хвилину на кожен push у PR.
 
