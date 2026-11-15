@@ -1,10 +1,16 @@
+# Доповнення (Claude Code, Лаб 10, бонус «Швидкий і повільний набори тестів»):
+# це повільний набір — інтеграційні тести зі справжньою PostgreSQL у контейнері.
+# Він більше не запускається на pull request (там працює лише швидкий набір —
+# job `build` у ci.yml, де ці тести пропускаються без TEST_DATABASE_URL), а
+# тільки після злиття в main. workflow_dispatch дозволяє вручну прогнати
+# повільний набір на гілці перед злиттям ризикової зміни.
+# Ціна поділу: дефект, який ловить лише цей набір, дасть червоний запуск на main.
 name: Lab07 card ordering
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
   postgres-card-order:
