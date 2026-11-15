@@ -1,0 +1,2778 @@
+{
+  "repository": "ukma-fin-ssdm-2026/Monkey-Business-project",
+  "window_utc": {
+    "from": "2026-10-31T22:00:00Z",
+    "to_exclusive": "2026-11-14T22:00:00Z"
+  },
+  "timezone": "Europe/Kyiv",
+  "workflows": [
+    "CI",
+    "Static analysis",
+    "Lab07 card ordering",
+    "Lab08 characterization tests",
+    "Generate and Deploy API Docs"
+  ],
+  "counts": {
+    "commits": 25,
+    "completed_commits": 25,
+    "green_commits": 25,
+    "failed_commits": 0,
+    "workflow_runs": 93,
+    "attempts": 93,
+    "incomplete_commits": 0
+  },
+  "deployment_frequency_per_week": 12.5,
+  "change_failure_rate_percent": 0.0,
+  "lead_time_minutes": {
+    "count": 25,
+    "mean": 107.43666666666667,
+    "median": 24.966666666666665,
+    "max": 598.8833333333333
+  },
+  "recovery_time_minutes": {
+    "count": 0,
+    "mean": null,
+    "median": null,
+    "max": null
+  },
+  "unresolved_failures": 0,
+  "workflow_execution_minutes": {
+    "count": 93,
+    "mean": 1.0150537634408603,
+    "median": 0.9,
+    "max": 3.8
+  },
+  "commit_execution_minutes": {
+    "count": 25,
+    "mean": 9.537333333333333,
+    "median": 1.8,
+    "max": 103.15
+  },
+  "lead_time_parts": {
+    "pre_ci_minutes": 2298.85,
+    "queue_minutes": 148.63333333333333,
+    "execution_minutes": 238.43333333333334,
+    "lead_minutes": 2685.9166666666665,
+    "shares_percent": {
+      "pre_ci_minutes": 85.58902919549503,
+      "queue_minutes": 5.533802860600043,
+      "execution_minutes": 8.877167943904936
+    }
+  },
+  "green_commits_by_day": {
+    "2026-11-01": 6,
+    "2026-11-02": 5,
+    "2026-11-07": 4,
+    "2026-11-08": 7,
+    "2026-11-09": 3
+  },
+  "records": [
+    {
+      "sha": "e5db88ee9f610e2f1c05ab3fbb7f9e3322be0f7d",
+      "pr": 192,
+      "first_commit_at": "2026-10-31T20:53:48Z",
+      "created_at": "2026-10-31T23:05:53Z",
+      "started_at": "2026-10-31T23:06:34Z",
+      "completed_at": "2026-10-31T23:14:48Z",
+      "green_at": "2026-10-31T23:14:48Z",
+      "green_events": [
+        "2026-10-31T23:14:48Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.6833333333333333,
+      "execution_minutes": 8.233333333333333,
+      "pre_ci_minutes": 132.08333333333334,
+      "lead_minutes": 141.0,
+      "lead_queue_minutes": 0.6833333333333333,
+      "lead_execution_minutes": 8.233333333333333,
+      "deployed_by": "e5db88ee9f610e2f1c05ab3fbb7f9e3322be0f7d",
+      "run_ids": [
+        41251061208,
+        41251061210,
+        41251061229,
+        41251061238,
+        41251061256
+      ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41251061208,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41251061208"
+        },
+        {
+          "id": 41251061210,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41251061210"
+        },
+        {
+          "id": 41251061229,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41251061229"
+        },
+        {
+          "id": 41251061238,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41251061238"
+        },
+        {
+          "id": 41251061256,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41251061256"
+        }
+      ],
+      "active_job_minutes": 2.933333333333333,
+      "internal_idle_minutes": 5.299999999999999
+    },
+    {
+      "sha": "16e54e1d1d1f42224417265075962e882e14c70a",
+      "pr": 193,
+      "first_commit_at": "2026-10-31T22:17:24Z",
+      "created_at": "2026-10-31T23:20:10Z",
+      "started_at": "2026-10-31T23:20:50Z",
+      "completed_at": "2026-10-31T23:22:38Z",
+      "green_at": "2026-10-31T23:22:38Z",
+      "green_events": [
+        "2026-10-31T23:22:38Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.6666666666666666,
+      "execution_minutes": 1.8,
+      "pre_ci_minutes": 62.766666666666666,
+      "lead_minutes": 65.23333333333333,
+      "lead_queue_minutes": 0.6666666666666666,
+      "lead_execution_minutes": 1.8,
+      "deployed_by": "16e54e1d1d1f42224417265075962e882e14c70a",
+      "run_ids": [
+        41252094239,
+        41252094243,
+        41252094245,
+        41252094248,
+        41252094284
+      ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41252094239,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41252094239"
+        },
+        {
+          "id": 41252094243,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41252094243"
+        },
+        {
+          "id": 41252094245,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41252094245"
+        },
+        {
+          "id": 41252094248,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41252094248"
+        },
+        {
+          "id": 41252094284,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41252094284"
+        }
+      ],
+      "active_job_minutes": 1.8,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "124ce675d929f4a77322c9ee90dcc0f0cbfbcb08",
+      "pr": 194,
+      "first_commit_at": "2026-11-01T00:04:18Z",
+      "created_at": "2026-11-01T10:02:12Z",
+      "started_at": "2026-11-01T10:02:14Z",
+      "completed_at": "2026-11-01T10:03:11Z",
+      "green_at": "2026-11-01T10:03:11Z",
+      "green_events": [
+        "2026-11-01T10:03:11Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.95,
+      "pre_ci_minutes": 597.9,
+      "lead_minutes": 598.8833333333333,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 0.95,
+      "deployed_by": "124ce675d929f4a77322c9ee90dcc0f0cbfbcb08",
+      "run_ids": [
+        41295671464,
+        41295671471,
+        41295671474
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41295671464,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41295671464"
+        },
+        {
+          "id": 41295671471,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41295671471"
+        },
+        {
+          "id": 41295671474,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41295671474"
+        }
+      ],
+      "active_job_minutes": 0.95,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "268e753434da26019e59aaed2e9e34a35199a067",
+      "pr": 195,
+      "first_commit_at": "2026-11-01T16:47:48Z",
+      "created_at": "2026-11-01T16:57:06Z",
+      "started_at": "2026-11-01T16:57:09Z",
+      "completed_at": "2026-11-01T17:10:58Z",
+      "green_at": "2026-11-01T17:10:58Z",
+      "green_events": [
+        "2026-11-01T17:10:58Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.05,
+      "execution_minutes": 13.816666666666666,
+      "pre_ci_minutes": 9.3,
+      "lead_minutes": 23.166666666666668,
+      "lead_queue_minutes": 0.05,
+      "lead_execution_minutes": 13.816666666666666,
+      "deployed_by": "268e753434da26019e59aaed2e9e34a35199a067",
+      "run_ids": [
+        41328923035,
+        41328923046,
+        41328923176,
+        41328923193
+      ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41328923035,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41328923035"
+        },
+        {
+          "id": 41328923046,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41328923046"
+        },
+        {
+          "id": 41328923176,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41328923176"
+        },
+        {
+          "id": 41328923193,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41328923193"
+        }
+      ],
+      "active_job_minutes": 3.216666666666667,
+      "internal_idle_minutes": 10.6
+    },
+    {
+      "sha": "cdd0b9ebaba6221fc11b4d8074b79162e90465f1",
+      "pr": 196,
+      "first_commit_at": "2026-11-01T17:07:30Z",
+      "created_at": "2026-11-01T17:46:40Z",
+      "started_at": "2026-11-01T17:49:37Z",
+      "completed_at": "2026-11-01T18:03:32Z",
+      "green_at": "2026-11-01T18:03:32Z",
+      "green_events": [
+        "2026-11-01T18:03:32Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 2.95,
+      "execution_minutes": 13.916666666666666,
+      "pre_ci_minutes": 39.166666666666664,
+      "lead_minutes": 56.03333333333333,
+      "lead_queue_minutes": 2.95,
+      "lead_execution_minutes": 13.916666666666666,
+      "deployed_by": "cdd0b9ebaba6221fc11b4d8074b79162e90465f1",
+      "run_ids": [
+        41333194530,
+        41333194551,
+        41333194556,
+        41333194557,
+        41333194560
+      ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41333194530,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41333194530"
+        },
+        {
+          "id": 41333194551,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41333194551"
+        },
+        {
+          "id": 41333194556,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41333194556"
+        },
+        {
+          "id": 41333194557,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41333194557"
+        },
+        {
+          "id": 41333194560,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41333194560"
+        }
+      ],
+      "active_job_minutes": 3.5166666666666666,
+      "internal_idle_minutes": 10.399999999999999
+    },
+    {
+      "sha": "4eb30353e5d0026224b5689d56608f58c97246ae",
+      "pr": 197,
+      "first_commit_at": "2026-11-01T17:55:53Z",
+      "created_at": "2026-11-01T18:03:51Z",
+      "started_at": "2026-11-01T18:09:54Z",
+      "completed_at": "2026-11-01T18:20:51Z",
+      "green_at": "2026-11-01T18:20:51Z",
+      "green_events": [
+        "2026-11-01T18:20:51Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 6.05,
+      "execution_minutes": 10.95,
+      "pre_ci_minutes": 7.966666666666667,
+      "lead_minutes": 24.966666666666665,
+      "lead_queue_minutes": 6.05,
+      "lead_execution_minutes": 10.95,
+      "deployed_by": "4eb30353e5d0026224b5689d56608f58c97246ae",
+      "run_ids": [
+        41334636455,
+        41334636466,
+        41334636475,
+        41334636501,
+        41334636509
+      ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41334636455,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41334636455"
+        },
+        {
+          "id": 41334636466,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41334636466"
+        },
+        {
+          "id": 41334636475,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41334636475"
+        },
+        {
+          "id": 41334636501,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41334636501"
+        },
+        {
+          "id": 41334636509,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41334636509"
+        }
+      ],
+      "active_job_minutes": 3.15,
+      "internal_idle_minutes": 7.799999999999999
+    },
+    {
+      "sha": "3184d4f3fc2b2c596eebad69f967066c98000794",
+      "pr": 198,
+      "first_commit_at": "2026-11-01T19:45:07Z",
+      "created_at": "2026-11-01T20:47:02Z",
+      "started_at": "2026-11-01T21:13:22Z",
+      "completed_at": "2026-11-01T22:56:31Z",
+      "green_at": "2026-11-01T22:56:31Z",
+      "green_events": [
+        "2026-11-01T22:56:31Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 26.333333333333332,
+      "execution_minutes": 103.15,
+      "pre_ci_minutes": 61.916666666666664,
+      "lead_minutes": 191.4,
+      "lead_queue_minutes": 26.333333333333332,
+      "lead_execution_minutes": 103.15,
+      "deployed_by": "3184d4f3fc2b2c596eebad69f967066c98000794",
+      "run_ids": [
+        41348615223,
+        41348615234,
+        41348615291,
+        41348615367,
+        41348615458
+      ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41348615223,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41348615223"
+        },
+        {
+          "id": 41348615234,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41348615234"
+        },
+        {
+          "id": 41348615291,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41348615291"
+        },
+        {
+          "id": 41348615367,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41348615367"
+        },
+        {
+          "id": 41348615458,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41348615458"
+        }
+      ],
+      "active_job_minutes": 8.45,
+      "internal_idle_minutes": 94.7
+    },
+    {
+      "sha": "68205017a0d5d3a9a7e759ffc27a58fe6f7d554b",
+      "pr": 199,
+      "first_commit_at": "2026-11-01T20:07:45Z",
+      "created_at": "2026-11-01T23:58:42Z",
+      "started_at": "2026-11-02T00:52:51Z",
+      "completed_at": "2026-11-02T01:14:46Z",
+      "green_at": "2026-11-02T01:14:46Z",
+      "green_events": [
+        "2026-11-02T01:14:46Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 54.15,
+      "execution_minutes": 21.916666666666668,
+      "pre_ci_minutes": 230.95,
+      "lead_minutes": 307.01666666666665,
+      "lead_queue_minutes": 54.15,
+      "lead_execution_minutes": 21.916666666666668,
+      "deployed_by": "68205017a0d5d3a9a7e759ffc27a58fe6f7d554b",
+      "run_ids": [
+        41364697538,
+        41364697582,
+        41364697724
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41364697538,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364697538"
+        },
+        {
+          "id": 41364697582,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364697582"
+        },
+        {
+          "id": 41364697724,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364697724"
+        }
+      ],
+      "active_job_minutes": 5.566666666666666,
+      "internal_idle_minutes": 16.35
+    },
+    {
+      "sha": "15044a9b2a317b13990b16c3aa328a1cc40fd033",
+      "pr": 200,
+      "first_commit_at": "2026-11-01T20:57:39Z",
+      "created_at": "2026-11-02T00:01:11Z",
+      "started_at": "2026-11-02T00:55:18Z",
+      "completed_at": "2026-11-02T01:34:09Z",
+      "green_at": "2026-11-02T01:34:09Z",
+      "green_events": [
+        "2026-11-02T01:34:09Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 54.11666666666667,
+      "execution_minutes": 38.85,
+      "pre_ci_minutes": 183.53333333333333,
+      "lead_minutes": 276.5,
+      "lead_queue_minutes": 54.11666666666667,
+      "lead_execution_minutes": 38.85,
+      "deployed_by": "15044a9b2a317b13990b16c3aa328a1cc40fd033",
+      "run_ids": [
+        41364905121,
+        41364905130,
+        41364905139
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41364905121,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364905121"
+        },
+        {
+          "id": 41364905130,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364905130"
+        },
+        {
+          "id": 41364905139,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364905139"
+        }
+      ],
+      "active_job_minutes": 5.916666666666667,
+      "internal_idle_minutes": 32.93333333333334
+    },
+    {
+      "sha": "e16c7842cb5ba136c9eb5b490a8cebdbe427319e",
+      "pr": 201,
+      "first_commit_at": "2026-11-02T06:59:39Z",
+      "created_at": "2026-11-02T07:01:41Z",
+      "started_at": "2026-11-02T07:01:43Z",
+      "completed_at": "2026-11-02T07:03:39Z",
+      "green_at": "2026-11-02T07:03:39Z",
+      "green_events": [
+        "2026-11-02T07:03:39Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.9333333333333333,
+      "pre_ci_minutes": 2.033333333333333,
+      "lead_minutes": 4.0,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.9333333333333333,
+      "deployed_by": "e16c7842cb5ba136c9eb5b490a8cebdbe427319e",
+      "run_ids": [
+        41403627590,
+        41403627598,
+        41403627612
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41403627590,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41403627590"
+        },
+        {
+          "id": 41403627598,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41403627598"
+        },
+        {
+          "id": 41403627612,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41403627612"
+        }
+      ],
+      "active_job_minutes": 1.9333333333333333,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "69056e069a00b0a69753900f2ee58679ff974e58",
+      "pr": 202,
+      "first_commit_at": "2026-11-02T07:31:42Z",
+      "created_at": "2026-11-02T07:47:01Z",
+      "started_at": "2026-11-02T07:47:03Z",
+      "completed_at": "2026-11-02T07:48:57Z",
+      "green_at": "2026-11-02T07:48:57Z",
+      "green_events": [
+        "2026-11-02T07:48:57Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.9,
+      "pre_ci_minutes": 15.316666666666666,
+      "lead_minutes": 17.25,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.9,
+      "deployed_by": "69056e069a00b0a69753900f2ee58679ff974e58",
+      "run_ids": [
+        41408520476,
+        41408520490,
+        41408520501,
+        41408520678
+      ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 41408520476,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41408520476"
+        },
+        {
+          "id": 41408520490,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41408520490"
+        },
+        {
+          "id": 41408520501,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41408520501"
+        },
+        {
+          "id": 41408520678,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41408520678"
+        }
+      ],
+      "active_job_minutes": 1.9,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "072ddd93e5f8753e12920974d0b1245ede627451",
+      "pr": 216,
+      "first_commit_at": "2026-11-07T07:38:36Z",
+      "created_at": "2026-11-07T09:23:52Z",
+      "started_at": "2026-11-07T09:23:54Z",
+      "completed_at": "2026-11-07T09:24:55Z",
+      "green_at": "2026-11-07T09:24:55Z",
+      "green_events": [
+        "2026-11-07T09:24:55Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0166666666666666,
+      "pre_ci_minutes": 105.26666666666667,
+      "lead_minutes": 106.31666666666666,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.0166666666666666,
+      "deployed_by": "072ddd93e5f8753e12920974d0b1245ede627451",
+      "run_ids": [
+        42359564286,
+        42359564288,
+        42359564336,
+        42359564344
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42359564286,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42359564286"
+        },
+        {
+          "id": 42359564288,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42359564288"
+        },
+        {
+          "id": 42359564336,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42359564336"
+        },
+        {
+          "id": 42359564344,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42359564344"
+        }
+      ],
+      "active_job_minutes": 1.0166666666666666,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "cedc6ecf267094bd3253077cfd7eee0476726d52",
+      "pr": 217,
+      "first_commit_at": "2026-11-07T14:44:57Z",
+      "created_at": "2026-11-07T14:54:29Z",
+      "started_at": "2026-11-07T14:54:31Z",
+      "completed_at": "2026-11-07T14:55:36Z",
+      "green_at": "2026-11-07T14:55:36Z",
+      "green_events": [
+        "2026-11-07T14:55:36Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0833333333333333,
+      "pre_ci_minutes": 9.533333333333333,
+      "lead_minutes": 10.65,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.0833333333333333,
+      "deployed_by": "cedc6ecf267094bd3253077cfd7eee0476726d52",
+      "run_ids": [
+        42383788406,
+        42383788451,
+        42383788462,
+        42383788522
+      ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42383788406,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42383788406"
+        },
+        {
+          "id": 42383788451,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42383788451"
+        },
+        {
+          "id": 42383788462,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42383788462"
+        },
+        {
+          "id": 42383788522,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42383788522"
+        }
+      ],
+      "active_job_minutes": 1.0833333333333333,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "62d9cb103d688948a5d7acb2edeaa60fd0e685cb",
+      "pr": 219,
+      "first_commit_at": "2026-11-07T14:19:50Z",
+      "created_at": "2026-11-07T15:45:03Z",
+      "started_at": "2026-11-07T15:45:05Z",
+      "completed_at": "2026-11-07T15:46:06Z",
+      "green_at": "2026-11-07T15:46:06Z",
+      "green_events": [
+        "2026-11-07T15:46:06Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0166666666666666,
+      "pre_ci_minutes": 85.21666666666667,
+      "lead_minutes": 86.26666666666667,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.0166666666666666,
+      "deployed_by": "62d9cb103d688948a5d7acb2edeaa60fd0e685cb",
+      "run_ids": [
+        42387880890,
+        42387880997,
+        42387881127
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42387880890,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42387880890"
+        },
+        {
+          "id": 42387880997,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42387880997"
+        },
+        {
+          "id": 42387881127,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42387881127"
+        }
+      ],
+      "active_job_minutes": 1.0166666666666666,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "386f517b90c195e570a7aa87e17f89e11040b454",
+      "pr": 218,
+      "first_commit_at": "2026-11-07T15:34:50Z",
+      "created_at": "2026-11-07T15:46:56Z",
+      "started_at": "2026-11-07T15:46:59Z",
+      "completed_at": "2026-11-07T15:48:27Z",
+      "green_at": "2026-11-07T15:48:27Z",
+      "green_events": [
+        "2026-11-07T15:48:27Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.05,
+      "execution_minutes": 1.4666666666666666,
+      "pre_ci_minutes": 12.1,
+      "lead_minutes": 13.616666666666667,
+      "lead_queue_minutes": 0.05,
+      "lead_execution_minutes": 1.4666666666666666,
+      "deployed_by": "386f517b90c195e570a7aa87e17f89e11040b454",
+      "run_ids": [
+        42388035169,
+        42388035192,
+        42388035196,
+        42388035302
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42388035169,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42388035169"
+        },
+        {
+          "id": 42388035192,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42388035192"
+        },
+        {
+          "id": 42388035196,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42388035196"
+        },
+        {
+          "id": 42388035302,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42388035302"
+        }
+      ],
+      "active_job_minutes": 1.4666666666666666,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "4f6d9ba02ed096bd12d61d58a425fc9257ca69d4",
+      "pr": 220,
+      "first_commit_at": "2026-11-08T16:18:29Z",
+      "created_at": "2026-11-08T16:48:55Z",
+      "started_at": "2026-11-08T16:48:57Z",
+      "completed_at": "2026-11-08T16:50:00Z",
+      "green_at": "2026-11-08T16:50:00Z",
+      "green_events": [
+        "2026-11-08T16:50:00Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.05,
+      "pre_ci_minutes": 30.433333333333334,
+      "lead_minutes": 31.516666666666666,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.05,
+      "deployed_by": "4f6d9ba02ed096bd12d61d58a425fc9257ca69d4",
+      "run_ids": [
+        42501792514,
+        42501792528,
+        42501792687
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42501792514,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501792514"
+        },
+        {
+          "id": 42501792528,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501792528"
+        },
+        {
+          "id": 42501792687,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501792687"
+        }
+      ],
+      "active_job_minutes": 1.05,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "cc55e0e3d9a669d4bbe96cc6003c6b5929c2eaf3",
+      "pr": 221,
+      "first_commit_at": "2026-11-08T16:30:23Z",
+      "created_at": "2026-11-08T16:49:49Z",
+      "started_at": "2026-11-08T16:49:51Z",
+      "completed_at": "2026-11-08T16:50:53Z",
+      "green_at": "2026-11-08T16:50:53Z",
+      "green_events": [
+        "2026-11-08T16:50:53Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0333333333333334,
+      "pre_ci_minutes": 19.433333333333334,
+      "lead_minutes": 20.5,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.0333333333333334,
+      "deployed_by": "cc55e0e3d9a669d4bbe96cc6003c6b5929c2eaf3",
+      "run_ids": [
+        42501866776,
+        42501866896,
+        42501866903
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42501866776,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501866776"
+        },
+        {
+          "id": 42501866896,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501866896"
+        },
+        {
+          "id": 42501866903,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501866903"
+        }
+      ],
+      "active_job_minutes": 1.0333333333333334,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "3bcb7b50e8ff1ee49eaeaf1388b17133cff39870",
+      "pr": 222,
+      "first_commit_at": "2026-11-08T16:40:43Z",
+      "created_at": "2026-11-08T16:50:34Z",
+      "started_at": "2026-11-08T16:50:36Z",
+      "completed_at": "2026-11-08T16:51:47Z",
+      "green_at": "2026-11-08T16:51:47Z",
+      "green_events": [
+        "2026-11-08T16:51:47Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.1833333333333333,
+      "pre_ci_minutes": 9.85,
+      "lead_minutes": 11.066666666666666,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.1833333333333333,
+      "deployed_by": "3bcb7b50e8ff1ee49eaeaf1388b17133cff39870",
+      "run_ids": [
+        42501932933,
+        42501932936,
+        42501932947
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42501932933,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501932933"
+        },
+        {
+          "id": 42501932936,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501932936"
+        },
+        {
+          "id": 42501932947,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501932947"
+        }
+      ],
+      "active_job_minutes": 1.1833333333333333,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "3f6bee831419bd9f0516715a6325f3ea6b4432f8",
+      "pr": 223,
+      "first_commit_at": "2026-11-08T19:24:59Z",
+      "created_at": "2026-11-08T19:38:12Z",
+      "started_at": "2026-11-08T19:38:14Z",
+      "completed_at": "2026-11-08T19:39:16Z",
+      "green_at": "2026-11-08T19:39:16Z",
+      "green_events": [
+        "2026-11-08T19:39:16Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0333333333333334,
+      "pre_ci_minutes": 13.216666666666667,
+      "lead_minutes": 14.283333333333333,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.0333333333333334,
+      "deployed_by": "3f6bee831419bd9f0516715a6325f3ea6b4432f8",
+      "run_ids": [
+        42516019777,
+        42516019888,
+        42516019899
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42516019777,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42516019777"
+        },
+        {
+          "id": 42516019888,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42516019888"
+        },
+        {
+          "id": 42516019899,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42516019899"
+        }
+      ],
+      "active_job_minutes": 1.0333333333333334,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "a8e1c94c578047c480a9634ebe56ed57b779294c",
+      "pr": 224,
+      "first_commit_at": "2026-11-08T21:05:47Z",
+      "created_at": "2026-11-08T21:08:56Z",
+      "started_at": "2026-11-08T21:08:58Z",
+      "completed_at": "2026-11-08T21:10:25Z",
+      "green_at": "2026-11-08T21:10:25Z",
+      "green_events": [
+        "2026-11-08T21:10:25Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.45,
+      "pre_ci_minutes": 3.15,
+      "lead_minutes": 4.633333333333334,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.45,
+      "deployed_by": "a8e1c94c578047c480a9634ebe56ed57b779294c",
+      "run_ids": [
+        42523717554,
+        42523717630,
+        42523717635,
+        42523717646,
+        42523717653
+      ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Lab08 characterization tests",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42523717554,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42523717554"
+        },
+        {
+          "id": 42523717630,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42523717630"
+        },
+        {
+          "id": 42523717635,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42523717635"
+        },
+        {
+          "id": 42523717646,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42523717646"
+        },
+        {
+          "id": 42523717653,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42523717653"
+        }
+      ],
+      "active_job_minutes": 1.45,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "7c83291ecf3d2efecca79ce1e26888f57ba1e562",
+      "pr": 225,
+      "first_commit_at": "2026-11-08T21:18:14Z",
+      "created_at": "2026-11-08T21:29:39Z",
+      "started_at": "2026-11-08T21:29:41Z",
+      "completed_at": "2026-11-08T21:30:47Z",
+      "green_at": "2026-11-08T21:30:47Z",
+      "green_events": [
+        "2026-11-08T21:30:47Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.1,
+      "pre_ci_minutes": 11.416666666666666,
+      "lead_minutes": 12.55,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.1,
+      "deployed_by": "7c83291ecf3d2efecca79ce1e26888f57ba1e562",
+      "run_ids": [
+        42525469154,
+        42525469249,
+        42525469303
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42525469154,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42525469154"
+        },
+        {
+          "id": 42525469249,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42525469249"
+        },
+        {
+          "id": 42525469303,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42525469303"
+        }
+      ],
+      "active_job_minutes": 1.1,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "8c86e19c6bb13fbf6fa2942edd5eb13983a9dc23",
+      "pr": 226,
+      "first_commit_at": "2026-11-08T21:36:44Z",
+      "created_at": "2026-11-08T21:40:12Z",
+      "started_at": "2026-11-08T21:40:14Z",
+      "completed_at": "2026-11-08T21:43:01Z",
+      "green_at": "2026-11-08T21:43:01Z",
+      "green_events": [
+        "2026-11-08T21:43:01Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 2.783333333333333,
+      "pre_ci_minutes": 3.466666666666667,
+      "lead_minutes": 6.283333333333333,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 2.783333333333333,
+      "deployed_by": "8c86e19c6bb13fbf6fa2942edd5eb13983a9dc23",
+      "run_ids": [
+        42526352496,
+        42526352505,
+        42526352507,
+        42526352531
+      ],
+      "workflow_names": [
+        "CI",
+        "Generate and Deploy API Docs",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42526352496,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42526352496"
+        },
+        {
+          "id": 42526352505,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42526352505"
+        },
+        {
+          "id": 42526352507,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42526352507"
+        },
+        {
+          "id": 42526352531,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42526352531"
+        }
+      ],
+      "active_job_minutes": 2.783333333333333,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "dbca9b6c257244e345de12792fe5e3f8e673dbe5",
+      "pr": 227,
+      "first_commit_at": "2026-11-08T22:17:37Z",
+      "created_at": "2026-11-08T22:26:11Z",
+      "started_at": "2026-11-08T22:28:28Z",
+      "completed_at": "2026-11-08T22:32:16Z",
+      "green_at": "2026-11-08T22:32:16Z",
+      "green_events": [
+        "2026-11-08T22:32:16Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 2.283333333333333,
+      "execution_minutes": 3.8,
+      "pre_ci_minutes": 8.566666666666666,
+      "lead_minutes": 14.65,
+      "lead_queue_minutes": 2.283333333333333,
+      "lead_execution_minutes": 3.8,
+      "deployed_by": "dbca9b6c257244e345de12792fe5e3f8e673dbe5",
+      "run_ids": [
+        42530224980,
+        42530224986,
+        42530224990
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42530224980,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42530224980"
+        },
+        {
+          "id": 42530224986,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42530224986"
+        },
+        {
+          "id": 42530224990,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42530224990"
+        }
+      ],
+      "active_job_minutes": 3.35,
+      "internal_idle_minutes": 0.44999999999999973
+    },
+    {
+      "sha": "5c85e94a0f580364bcdee4e16e2c0c9f91959b13",
+      "pr": 229,
+      "first_commit_at": "2026-11-09T07:24:39Z",
+      "created_at": "2026-11-09T13:08:40Z",
+      "started_at": "2026-11-09T13:08:42Z",
+      "completed_at": "2026-11-09T13:09:51Z",
+      "green_at": "2026-11-09T13:09:51Z",
+      "green_events": [
+        "2026-11-09T13:09:51Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.15,
+      "pre_ci_minutes": 344.01666666666665,
+      "lead_minutes": 345.2,
+      "lead_queue_minutes": 0.03333333333333333,
+      "lead_execution_minutes": 1.15,
+      "deployed_by": "5c85e94a0f580364bcdee4e16e2c0c9f91959b13",
+      "run_ids": [
+        42622877668,
+        42622877796,
+        42622877917
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42622877668,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622877668"
+        },
+        {
+          "id": 42622877796,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622877796"
+        },
+        {
+          "id": 42622877917,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622877917"
+        }
+      ],
+      "active_job_minutes": 1.15,
+      "internal_idle_minutes": 0.0
+    },
+    {
+      "sha": "64475b55921142b48d4b554e1cca9e35a6207121",
+      "pr": 230,
+      "first_commit_at": "2026-11-09T08:08:47Z",
+      "created_at": "2026-11-09T13:09:02Z",
+      "started_at": "2026-11-09T13:09:52Z",
+      "completed_at": "2026-11-09T13:11:43Z",
+      "green_at": "2026-11-09T13:11:43Z",
+      "green_events": [
+        "2026-11-09T13:11:43Z"
+      ],
+      "red_at": null,
+      "status": "green",
+      "queue_minutes": 0.8333333333333334,
+      "execution_minutes": 1.85,
+      "pre_ci_minutes": 300.25,
+      "lead_minutes": 302.93333333333334,
+      "lead_queue_minutes": 0.8333333333333334,
+      "lead_execution_minutes": 1.85,
+      "deployed_by": "64475b55921142b48d4b554e1cca9e35a6207121",
+      "run_ids": [
+        42622928804,
+        42622928844,
+        42622929497
+      ],
+      "workflow_names": [
+        "CI",
+        "Lab07 card ordering",
+        "Static analysis"
+      ],
+      "failure_notes": [],
+      "attempts": [
+        {
+          "id": 42622928804,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622928804"
+        },
+        {
+          "id": 42622928844,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622928844"
+        },
+        {
+          "id": 42622929497,
+          "attempt": 1,
+          "conclusion": "success",
+          "url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622929497"
+        }
+      ],
+      "active_job_minutes": 1.8166666666666667,
+      "internal_idle_minutes": 0.03333333333333344
+    }
+  ],
+  "workflow_timings": [
+    {
+      "id": 42359564286,
+      "name": "Static analysis",
+      "head_sha": "072ddd93e5f8753e12920974d0b1245ede627451",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42359564286",
+      "started_at": "2026-11-07T09:23:54Z",
+      "completed_at": "2026-11-07T09:24:32Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.6333333333333333
+    },
+    {
+      "id": 42359564288,
+      "name": "Lab08 characterization tests",
+      "head_sha": "072ddd93e5f8753e12920974d0b1245ede627451",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42359564288",
+      "started_at": "2026-11-07T09:23:54Z",
+      "completed_at": "2026-11-07T09:24:18Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.4
+    },
+    {
+      "id": 42359564336,
+      "name": "Lab07 card ordering",
+      "head_sha": "072ddd93e5f8753e12920974d0b1245ede627451",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42359564336",
+      "started_at": "2026-11-07T09:23:54Z",
+      "completed_at": "2026-11-07T09:24:47Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.8833333333333333
+    },
+    {
+      "id": 42359564344,
+      "name": "CI",
+      "head_sha": "072ddd93e5f8753e12920974d0b1245ede627451",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42359564344",
+      "started_at": "2026-11-07T09:23:54Z",
+      "completed_at": "2026-11-07T09:24:55Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0166666666666666
+    },
+    {
+      "id": 41295671464,
+      "name": "CI",
+      "head_sha": "124ce675d929f4a77322c9ee90dcc0f0cbfbcb08",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41295671464",
+      "started_at": "2026-11-01T10:02:14Z",
+      "completed_at": "2026-11-01T10:03:11Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.95
+    },
+    {
+      "id": 41295671471,
+      "name": "Static analysis",
+      "head_sha": "124ce675d929f4a77322c9ee90dcc0f0cbfbcb08",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41295671471",
+      "started_at": "2026-11-01T10:02:15Z",
+      "completed_at": "2026-11-01T10:02:49Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.05,
+      "execution_minutes": 0.5666666666666667
+    },
+    {
+      "id": 41295671474,
+      "name": "Lab07 card ordering",
+      "head_sha": "124ce675d929f4a77322c9ee90dcc0f0cbfbcb08",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41295671474",
+      "started_at": "2026-11-01T10:02:15Z",
+      "completed_at": "2026-11-01T10:03:07Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.05,
+      "execution_minutes": 0.8666666666666667
+    },
+    {
+      "id": 41364905121,
+      "name": "Static analysis",
+      "head_sha": "15044a9b2a317b13990b16c3aa328a1cc40fd033",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364905121",
+      "started_at": "2026-11-02T01:32:47Z",
+      "completed_at": "2026-11-02T01:34:09Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 91.6,
+      "execution_minutes": 1.3666666666666667
+    },
+    {
+      "id": 41364905130,
+      "name": "Lab07 card ordering",
+      "head_sha": "15044a9b2a317b13990b16c3aa328a1cc40fd033",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364905130",
+      "started_at": "2026-11-02T00:55:18Z",
+      "completed_at": "2026-11-02T00:57:31Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 54.11666666666667,
+      "execution_minutes": 2.216666666666667
+    },
+    {
+      "id": 41364905139,
+      "name": "CI",
+      "head_sha": "15044a9b2a317b13990b16c3aa328a1cc40fd033",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364905139",
+      "started_at": "2026-11-02T01:28:13Z",
+      "completed_at": "2026-11-02T01:30:33Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 87.03333333333333,
+      "execution_minutes": 2.3333333333333335
+    },
+    {
+      "id": 41252094239,
+      "name": "Static analysis",
+      "head_sha": "16e54e1d1d1f42224417265075962e882e14c70a",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41252094239",
+      "started_at": "2026-10-31T23:20:50Z",
+      "completed_at": "2026-10-31T23:21:26Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.6666666666666666,
+      "execution_minutes": 0.6
+    },
+    {
+      "id": 41252094243,
+      "name": "CI",
+      "head_sha": "16e54e1d1d1f42224417265075962e882e14c70a",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41252094243",
+      "started_at": "2026-10-31T23:21:44Z",
+      "completed_at": "2026-10-31T23:22:38Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 1.5666666666666667,
+      "execution_minutes": 0.9
+    },
+    {
+      "id": 41252094245,
+      "name": "Lab07 card ordering",
+      "head_sha": "16e54e1d1d1f42224417265075962e882e14c70a",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41252094245",
+      "started_at": "2026-10-31T23:21:22Z",
+      "completed_at": "2026-10-31T23:22:13Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 1.2,
+      "execution_minutes": 0.85
+    },
+    {
+      "id": 41252094248,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "16e54e1d1d1f42224417265075962e882e14c70a",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41252094248",
+      "started_at": "2026-10-31T23:21:36Z",
+      "completed_at": "2026-10-31T23:22:11Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 1.4333333333333333,
+      "execution_minutes": 0.5833333333333334
+    },
+    {
+      "id": 41252094284,
+      "name": "Lab08 characterization tests",
+      "head_sha": "16e54e1d1d1f42224417265075962e882e14c70a",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41252094284",
+      "started_at": "2026-10-31T23:21:23Z",
+      "completed_at": "2026-10-31T23:21:42Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 1.2166666666666666,
+      "execution_minutes": 0.31666666666666665
+    },
+    {
+      "id": 41328923035,
+      "name": "Lab07 card ordering",
+      "head_sha": "268e753434da26019e59aaed2e9e34a35199a067",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41328923035",
+      "started_at": "2026-11-01T17:03:40Z",
+      "completed_at": "2026-11-01T17:04:37Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 6.566666666666666,
+      "execution_minutes": 0.95
+    },
+    {
+      "id": 41328923046,
+      "name": "Static analysis",
+      "head_sha": "268e753434da26019e59aaed2e9e34a35199a067",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41328923046",
+      "started_at": "2026-11-01T17:10:10Z",
+      "completed_at": "2026-11-01T17:10:58Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 13.066666666666666,
+      "execution_minutes": 0.8
+    },
+    {
+      "id": 41328923176,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "268e753434da26019e59aaed2e9e34a35199a067",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41328923176",
+      "started_at": "2026-11-01T16:57:09Z",
+      "completed_at": "2026-11-01T16:57:48Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.05,
+      "execution_minutes": 0.65
+    },
+    {
+      "id": 41328923193,
+      "name": "CI",
+      "head_sha": "268e753434da26019e59aaed2e9e34a35199a067",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41328923193",
+      "started_at": "2026-11-01T17:04:26Z",
+      "completed_at": "2026-11-01T17:05:26Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 7.333333333333333,
+      "execution_minutes": 1.0
+    },
+    {
+      "id": 41348615223,
+      "name": "CI",
+      "head_sha": "3184d4f3fc2b2c596eebad69f967066c98000794",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41348615223",
+      "started_at": "2026-11-01T22:53:55Z",
+      "completed_at": "2026-11-01T22:56:31Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 126.88333333333334,
+      "execution_minutes": 2.6
+    },
+    {
+      "id": 41348615234,
+      "name": "Lab07 card ordering",
+      "head_sha": "3184d4f3fc2b2c596eebad69f967066c98000794",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41348615234",
+      "started_at": "2026-11-01T22:33:44Z",
+      "completed_at": "2026-11-01T22:35:58Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 106.7,
+      "execution_minutes": 2.2333333333333334
+    },
+    {
+      "id": 41348615291,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "3184d4f3fc2b2c596eebad69f967066c98000794",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41348615291",
+      "started_at": "2026-11-01T22:25:23Z",
+      "completed_at": "2026-11-01T22:26:43Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 98.35,
+      "execution_minutes": 1.3333333333333333
+    },
+    {
+      "id": 41348615367,
+      "name": "Static analysis",
+      "head_sha": "3184d4f3fc2b2c596eebad69f967066c98000794",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41348615367",
+      "started_at": "2026-11-01T22:15:11Z",
+      "completed_at": "2026-11-01T22:16:36Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 88.15,
+      "execution_minutes": 1.4166666666666667
+    },
+    {
+      "id": 41348615458,
+      "name": "Lab08 characterization tests",
+      "head_sha": "3184d4f3fc2b2c596eebad69f967066c98000794",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41348615458",
+      "started_at": "2026-11-01T21:13:22Z",
+      "completed_at": "2026-11-01T21:14:14Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 26.333333333333332,
+      "execution_minutes": 0.8666666666666667
+    },
+    {
+      "id": 42388035169,
+      "name": "Lab08 characterization tests",
+      "head_sha": "386f517b90c195e570a7aa87e17f89e11040b454",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42388035169",
+      "started_at": "2026-11-07T15:48:07Z",
+      "completed_at": "2026-11-07T15:48:27Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 1.1833333333333333,
+      "execution_minutes": 0.3333333333333333
+    },
+    {
+      "id": 42388035192,
+      "name": "Lab07 card ordering",
+      "head_sha": "386f517b90c195e570a7aa87e17f89e11040b454",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42388035192",
+      "started_at": "2026-11-07T15:46:59Z",
+      "completed_at": "2026-11-07T15:47:54Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.05,
+      "execution_minutes": 0.9166666666666666
+    },
+    {
+      "id": 42388035196,
+      "name": "Static analysis",
+      "head_sha": "386f517b90c195e570a7aa87e17f89e11040b454",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42388035196",
+      "started_at": "2026-11-07T15:47:32Z",
+      "completed_at": "2026-11-07T15:48:09Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.6,
+      "execution_minutes": 0.6166666666666667
+    },
+    {
+      "id": 42388035302,
+      "name": "CI",
+      "head_sha": "386f517b90c195e570a7aa87e17f89e11040b454",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42388035302",
+      "started_at": "2026-11-07T15:47:13Z",
+      "completed_at": "2026-11-07T15:48:16Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.26666666666666666,
+      "execution_minutes": 1.05
+    },
+    {
+      "id": 42501932933,
+      "name": "CI",
+      "head_sha": "3bcb7b50e8ff1ee49eaeaf1388b17133cff39870",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501932933",
+      "started_at": "2026-11-08T16:50:36Z",
+      "completed_at": "2026-11-08T16:51:38Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0333333333333334
+    },
+    {
+      "id": 42501932936,
+      "name": "Static analysis",
+      "head_sha": "3bcb7b50e8ff1ee49eaeaf1388b17133cff39870",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501932936",
+      "started_at": "2026-11-08T16:50:55Z",
+      "completed_at": "2026-11-08T16:51:30Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.35,
+      "execution_minutes": 0.5833333333333334
+    },
+    {
+      "id": 42501932947,
+      "name": "Lab07 card ordering",
+      "head_sha": "3bcb7b50e8ff1ee49eaeaf1388b17133cff39870",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501932947",
+      "started_at": "2026-11-08T16:50:56Z",
+      "completed_at": "2026-11-08T16:51:47Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.36666666666666664,
+      "execution_minutes": 0.85
+    },
+    {
+      "id": 42516019777,
+      "name": "Lab07 card ordering",
+      "head_sha": "3f6bee831419bd9f0516715a6325f3ea6b4432f8",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42516019777",
+      "started_at": "2026-11-08T19:38:14Z",
+      "completed_at": "2026-11-08T19:39:07Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.8833333333333333
+    },
+    {
+      "id": 42516019888,
+      "name": "Static analysis",
+      "head_sha": "3f6bee831419bd9f0516715a6325f3ea6b4432f8",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42516019888",
+      "started_at": "2026-11-08T19:38:14Z",
+      "completed_at": "2026-11-08T19:38:51Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.6166666666666667
+    },
+    {
+      "id": 42516019899,
+      "name": "CI",
+      "head_sha": "3f6bee831419bd9f0516715a6325f3ea6b4432f8",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42516019899",
+      "started_at": "2026-11-08T19:38:14Z",
+      "completed_at": "2026-11-08T19:39:16Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0333333333333334
+    },
+    {
+      "id": 41334636455,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "4eb30353e5d0026224b5689d56608f58c97246ae",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41334636455",
+      "started_at": "2026-11-01T18:11:19Z",
+      "completed_at": "2026-11-01T18:11:54Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 7.466666666666667,
+      "execution_minutes": 0.5833333333333334
+    },
+    {
+      "id": 41334636466,
+      "name": "Lab08 characterization tests",
+      "head_sha": "4eb30353e5d0026224b5689d56608f58c97246ae",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41334636466",
+      "started_at": "2026-11-01T18:09:54Z",
+      "completed_at": "2026-11-01T18:10:16Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 6.05,
+      "execution_minutes": 0.36666666666666664
+    },
+    {
+      "id": 41334636475,
+      "name": "CI",
+      "head_sha": "4eb30353e5d0026224b5689d56608f58c97246ae",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41334636475",
+      "started_at": "2026-11-01T18:19:51Z",
+      "completed_at": "2026-11-01T18:20:51Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 16.0,
+      "execution_minutes": 1.0
+    },
+    {
+      "id": 41334636501,
+      "name": "Static analysis",
+      "head_sha": "4eb30353e5d0026224b5689d56608f58c97246ae",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41334636501",
+      "started_at": "2026-11-01T18:16:16Z",
+      "completed_at": "2026-11-01T18:16:53Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 12.416666666666666,
+      "execution_minutes": 0.6166666666666667
+    },
+    {
+      "id": 41334636509,
+      "name": "Lab07 card ordering",
+      "head_sha": "4eb30353e5d0026224b5689d56608f58c97246ae",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41334636509",
+      "started_at": "2026-11-01T18:11:33Z",
+      "completed_at": "2026-11-01T18:12:29Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 7.7,
+      "execution_minutes": 0.9333333333333333
+    },
+    {
+      "id": 42501792514,
+      "name": "Static analysis",
+      "head_sha": "4f6d9ba02ed096bd12d61d58a425fc9257ca69d4",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501792514",
+      "started_at": "2026-11-08T16:48:57Z",
+      "completed_at": "2026-11-08T16:49:36Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.65
+    },
+    {
+      "id": 42501792528,
+      "name": "CI",
+      "head_sha": "4f6d9ba02ed096bd12d61d58a425fc9257ca69d4",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501792528",
+      "started_at": "2026-11-08T16:48:57Z",
+      "completed_at": "2026-11-08T16:50:00Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.05
+    },
+    {
+      "id": 42501792687,
+      "name": "Lab07 card ordering",
+      "head_sha": "4f6d9ba02ed096bd12d61d58a425fc9257ca69d4",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501792687",
+      "started_at": "2026-11-08T16:49:00Z",
+      "completed_at": "2026-11-08T16:49:54Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.08333333333333333,
+      "execution_minutes": 0.9
+    },
+    {
+      "id": 42622877668,
+      "name": "Lab07 card ordering",
+      "head_sha": "5c85e94a0f580364bcdee4e16e2c0c9f91959b13",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622877668",
+      "started_at": "2026-11-09T13:08:42Z",
+      "completed_at": "2026-11-09T13:09:39Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.95
+    },
+    {
+      "id": 42622877796,
+      "name": "Static analysis",
+      "head_sha": "5c85e94a0f580364bcdee4e16e2c0c9f91959b13",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622877796",
+      "started_at": "2026-11-09T13:08:42Z",
+      "completed_at": "2026-11-09T13:09:21Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.65
+    },
+    {
+      "id": 42622877917,
+      "name": "CI",
+      "head_sha": "5c85e94a0f580364bcdee4e16e2c0c9f91959b13",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622877917",
+      "started_at": "2026-11-09T13:08:42Z",
+      "completed_at": "2026-11-09T13:09:51Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.15
+    },
+    {
+      "id": 42387880890,
+      "name": "CI",
+      "head_sha": "62d9cb103d688948a5d7acb2edeaa60fd0e685cb",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42387880890",
+      "started_at": "2026-11-07T15:45:05Z",
+      "completed_at": "2026-11-07T15:46:06Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0166666666666666
+    },
+    {
+      "id": 42387880997,
+      "name": "Static analysis",
+      "head_sha": "62d9cb103d688948a5d7acb2edeaa60fd0e685cb",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42387880997",
+      "started_at": "2026-11-07T15:45:05Z",
+      "completed_at": "2026-11-07T15:45:42Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.6166666666666667
+    },
+    {
+      "id": 42387881127,
+      "name": "Lab07 card ordering",
+      "head_sha": "62d9cb103d688948a5d7acb2edeaa60fd0e685cb",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42387881127",
+      "started_at": "2026-11-07T15:45:06Z",
+      "completed_at": "2026-11-07T15:45:58Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.05,
+      "execution_minutes": 0.8666666666666667
+    },
+    {
+      "id": 42622928804,
+      "name": "CI",
+      "head_sha": "64475b55921142b48d4b554e1cca9e35a6207121",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622928804",
+      "started_at": "2026-11-09T13:09:55Z",
+      "completed_at": "2026-11-09T13:11:02Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.8833333333333333,
+      "execution_minutes": 1.1166666666666667
+    },
+    {
+      "id": 42622928844,
+      "name": "Lab07 card ordering",
+      "head_sha": "64475b55921142b48d4b554e1cca9e35a6207121",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622928844",
+      "started_at": "2026-11-09T13:09:52Z",
+      "completed_at": "2026-11-09T13:10:46Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.8333333333333334,
+      "execution_minutes": 0.9
+    },
+    {
+      "id": 42622929497,
+      "name": "Static analysis",
+      "head_sha": "64475b55921142b48d4b554e1cca9e35a6207121",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42622929497",
+      "started_at": "2026-11-09T13:11:04Z",
+      "completed_at": "2026-11-09T13:11:43Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 2.033333333333333,
+      "execution_minutes": 0.65
+    },
+    {
+      "id": 41364697538,
+      "name": "Lab07 card ordering",
+      "head_sha": "68205017a0d5d3a9a7e759ffc27a58fe6f7d554b",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364697538",
+      "started_at": "2026-11-02T00:52:51Z",
+      "completed_at": "2026-11-02T00:54:59Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 54.15,
+      "execution_minutes": 2.1333333333333333
+    },
+    {
+      "id": 41364697582,
+      "name": "CI",
+      "head_sha": "68205017a0d5d3a9a7e759ffc27a58fe6f7d554b",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364697582",
+      "started_at": "2026-11-02T01:12:16Z",
+      "completed_at": "2026-11-02T01:14:46Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 73.56666666666666,
+      "execution_minutes": 2.5
+    },
+    {
+      "id": 41364697724,
+      "name": "Static analysis",
+      "head_sha": "68205017a0d5d3a9a7e759ffc27a58fe6f7d554b",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41364697724",
+      "started_at": "2026-11-02T01:11:20Z",
+      "completed_at": "2026-11-02T01:13:03Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 72.63333333333334,
+      "execution_minutes": 1.7166666666666666
+    },
+    {
+      "id": 41408520476,
+      "name": "CI",
+      "head_sha": "69056e069a00b0a69753900f2ee58679ff974e58",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41408520476",
+      "started_at": "2026-11-02T07:47:03Z",
+      "completed_at": "2026-11-02T07:48:57Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.9
+    },
+    {
+      "id": 41408520490,
+      "name": "Static analysis",
+      "head_sha": "69056e069a00b0a69753900f2ee58679ff974e58",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41408520490",
+      "started_at": "2026-11-02T07:47:03Z",
+      "completed_at": "2026-11-02T07:48:08Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0833333333333333
+    },
+    {
+      "id": 41408520501,
+      "name": "Lab07 card ordering",
+      "head_sha": "69056e069a00b0a69753900f2ee58679ff974e58",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41408520501",
+      "started_at": "2026-11-02T07:47:04Z",
+      "completed_at": "2026-11-02T07:48:39Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.05,
+      "execution_minutes": 1.5833333333333333
+    },
+    {
+      "id": 41408520678,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "69056e069a00b0a69753900f2ee58679ff974e58",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41408520678",
+      "started_at": "2026-11-02T07:47:07Z",
+      "completed_at": "2026-11-02T07:48:13Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.1,
+      "execution_minutes": 1.1
+    },
+    {
+      "id": 42525469154,
+      "name": "Static analysis",
+      "head_sha": "7c83291ecf3d2efecca79ce1e26888f57ba1e562",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42525469154",
+      "started_at": "2026-11-08T21:29:41Z",
+      "completed_at": "2026-11-08T21:30:21Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.6666666666666666
+    },
+    {
+      "id": 42525469249,
+      "name": "Lab07 card ordering",
+      "head_sha": "7c83291ecf3d2efecca79ce1e26888f57ba1e562",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42525469249",
+      "started_at": "2026-11-08T21:29:42Z",
+      "completed_at": "2026-11-08T21:30:37Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.05,
+      "execution_minutes": 0.9166666666666666
+    },
+    {
+      "id": 42525469303,
+      "name": "CI",
+      "head_sha": "7c83291ecf3d2efecca79ce1e26888f57ba1e562",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42525469303",
+      "started_at": "2026-11-08T21:29:42Z",
+      "completed_at": "2026-11-08T21:30:47Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.05,
+      "execution_minutes": 1.0833333333333333
+    },
+    {
+      "id": 42526352496,
+      "name": "CI",
+      "head_sha": "8c86e19c6bb13fbf6fa2942edd5eb13983a9dc23",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42526352496",
+      "started_at": "2026-11-08T21:40:14Z",
+      "completed_at": "2026-11-08T21:43:01Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 2.783333333333333
+    },
+    {
+      "id": 42526352505,
+      "name": "Lab07 card ordering",
+      "head_sha": "8c86e19c6bb13fbf6fa2942edd5eb13983a9dc23",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42526352505",
+      "started_at": "2026-11-08T21:41:34Z",
+      "completed_at": "2026-11-08T21:42:31Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 1.3666666666666667,
+      "execution_minutes": 0.95
+    },
+    {
+      "id": 42526352507,
+      "name": "Static analysis",
+      "head_sha": "8c86e19c6bb13fbf6fa2942edd5eb13983a9dc23",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42526352507",
+      "started_at": "2026-11-08T21:40:14Z",
+      "completed_at": "2026-11-08T21:41:01Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.7833333333333333
+    },
+    {
+      "id": 42526352531,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "8c86e19c6bb13fbf6fa2942edd5eb13983a9dc23",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42526352531",
+      "started_at": "2026-11-08T21:41:15Z",
+      "completed_at": "2026-11-08T21:41:53Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 1.05,
+      "execution_minutes": 0.6333333333333333
+    },
+    {
+      "id": 42523717554,
+      "name": "Static analysis",
+      "head_sha": "a8e1c94c578047c480a9634ebe56ed57b779294c",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42523717554",
+      "started_at": "2026-11-08T21:08:58Z",
+      "completed_at": "2026-11-08T21:09:37Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.65
+    },
+    {
+      "id": 42523717630,
+      "name": "CI",
+      "head_sha": "a8e1c94c578047c480a9634ebe56ed57b779294c",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42523717630",
+      "started_at": "2026-11-08T21:08:58Z",
+      "completed_at": "2026-11-08T21:10:02Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0666666666666667
+    },
+    {
+      "id": 42523717635,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "a8e1c94c578047c480a9634ebe56ed57b779294c",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42523717635",
+      "started_at": "2026-11-08T21:08:58Z",
+      "completed_at": "2026-11-08T21:09:37Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.65
+    },
+    {
+      "id": 42523717646,
+      "name": "Lab08 characterization tests",
+      "head_sha": "a8e1c94c578047c480a9634ebe56ed57b779294c",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42523717646",
+      "started_at": "2026-11-08T21:08:58Z",
+      "completed_at": "2026-11-08T21:09:23Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.4166666666666667
+    },
+    {
+      "id": 42523717653,
+      "name": "Lab07 card ordering",
+      "head_sha": "a8e1c94c578047c480a9634ebe56ed57b779294c",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42523717653",
+      "started_at": "2026-11-08T21:09:37Z",
+      "completed_at": "2026-11-08T21:10:25Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.6833333333333333,
+      "execution_minutes": 0.8
+    },
+    {
+      "id": 42501866776,
+      "name": "CI",
+      "head_sha": "cc55e0e3d9a669d4bbe96cc6003c6b5929c2eaf3",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501866776",
+      "started_at": "2026-11-08T16:49:51Z",
+      "completed_at": "2026-11-08T16:50:53Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0333333333333334
+    },
+    {
+      "id": 42501866896,
+      "name": "Static analysis",
+      "head_sha": "cc55e0e3d9a669d4bbe96cc6003c6b5929c2eaf3",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501866896",
+      "started_at": "2026-11-08T16:50:07Z",
+      "completed_at": "2026-11-08T16:50:42Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.3,
+      "execution_minutes": 0.5833333333333334
+    },
+    {
+      "id": 42501866903,
+      "name": "Lab07 card ordering",
+      "head_sha": "cc55e0e3d9a669d4bbe96cc6003c6b5929c2eaf3",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42501866903",
+      "started_at": "2026-11-08T16:49:51Z",
+      "completed_at": "2026-11-08T16:50:42Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.85
+    },
+    {
+      "id": 41333194530,
+      "name": "Lab07 card ordering",
+      "head_sha": "cdd0b9ebaba6221fc11b4d8074b79162e90465f1",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41333194530",
+      "started_at": "2026-11-01T18:02:05Z",
+      "completed_at": "2026-11-01T18:02:59Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 15.416666666666666,
+      "execution_minutes": 0.9
+    },
+    {
+      "id": 41333194551,
+      "name": "CI",
+      "head_sha": "cdd0b9ebaba6221fc11b4d8074b79162e90465f1",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41333194551",
+      "started_at": "2026-11-01T17:49:37Z",
+      "completed_at": "2026-11-01T17:50:36Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 2.95,
+      "execution_minutes": 0.9833333333333333
+    },
+    {
+      "id": 41333194556,
+      "name": "Static analysis",
+      "head_sha": "cdd0b9ebaba6221fc11b4d8074b79162e90465f1",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41333194556",
+      "started_at": "2026-11-01T17:52:44Z",
+      "completed_at": "2026-11-01T17:53:24Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 6.066666666666666,
+      "execution_minutes": 0.6666666666666666
+    },
+    {
+      "id": 41333194557,
+      "name": "Lab08 characterization tests",
+      "head_sha": "cdd0b9ebaba6221fc11b4d8074b79162e90465f1",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41333194557",
+      "started_at": "2026-11-01T18:03:12Z",
+      "completed_at": "2026-11-01T18:03:32Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 16.533333333333335,
+      "execution_minutes": 0.3333333333333333
+    },
+    {
+      "id": 41333194560,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "cdd0b9ebaba6221fc11b4d8074b79162e90465f1",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41333194560",
+      "started_at": "2026-11-01T17:54:35Z",
+      "completed_at": "2026-11-01T17:55:13Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 7.916666666666667,
+      "execution_minutes": 0.6333333333333333
+    },
+    {
+      "id": 42383788406,
+      "name": "Lab07 card ordering",
+      "head_sha": "cedc6ecf267094bd3253077cfd7eee0476726d52",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42383788406",
+      "started_at": "2026-11-07T14:54:31Z",
+      "completed_at": "2026-11-07T14:55:27Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.9333333333333333
+    },
+    {
+      "id": 42383788451,
+      "name": "CI",
+      "head_sha": "cedc6ecf267094bd3253077cfd7eee0476726d52",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42383788451",
+      "started_at": "2026-11-07T14:54:31Z",
+      "completed_at": "2026-11-07T14:55:36Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.0833333333333333
+    },
+    {
+      "id": 42383788462,
+      "name": "Static analysis",
+      "head_sha": "cedc6ecf267094bd3253077cfd7eee0476726d52",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42383788462",
+      "started_at": "2026-11-07T14:54:31Z",
+      "completed_at": "2026-11-07T14:55:09Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.6333333333333333
+    },
+    {
+      "id": 42383788522,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "cedc6ecf267094bd3253077cfd7eee0476726d52",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42383788522",
+      "started_at": "2026-11-07T14:54:31Z",
+      "completed_at": "2026-11-07T14:55:09Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 0.6333333333333333
+    },
+    {
+      "id": 42530224980,
+      "name": "CI",
+      "head_sha": "dbca9b6c257244e345de12792fe5e3f8e673dbe5",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42530224980",
+      "started_at": "2026-11-08T22:28:28Z",
+      "completed_at": "2026-11-08T22:32:16Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 2.283333333333333,
+      "execution_minutes": 3.8
+    },
+    {
+      "id": 42530224986,
+      "name": "Static analysis",
+      "head_sha": "dbca9b6c257244e345de12792fe5e3f8e673dbe5",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42530224986",
+      "started_at": "2026-11-08T22:30:21Z",
+      "completed_at": "2026-11-08T22:30:58Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 4.166666666666667,
+      "execution_minutes": 0.6166666666666667
+    },
+    {
+      "id": 42530224990,
+      "name": "Lab07 card ordering",
+      "head_sha": "dbca9b6c257244e345de12792fe5e3f8e673dbe5",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/42530224990",
+      "started_at": "2026-11-08T22:29:53Z",
+      "completed_at": "2026-11-08T22:30:47Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 3.7,
+      "execution_minutes": 0.9
+    },
+    {
+      "id": 41403627590,
+      "name": "CI",
+      "head_sha": "e16c7842cb5ba136c9eb5b490a8cebdbe427319e",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41403627590",
+      "started_at": "2026-11-02T07:01:43Z",
+      "completed_at": "2026-11-02T07:03:39Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.9333333333333333
+    },
+    {
+      "id": 41403627598,
+      "name": "Static analysis",
+      "head_sha": "e16c7842cb5ba136c9eb5b490a8cebdbe427319e",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41403627598",
+      "started_at": "2026-11-02T07:02:09Z",
+      "completed_at": "2026-11-02T07:03:14Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.4666666666666667,
+      "execution_minutes": 1.0833333333333333
+    },
+    {
+      "id": 41403627612,
+      "name": "Lab07 card ordering",
+      "head_sha": "e16c7842cb5ba136c9eb5b490a8cebdbe427319e",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41403627612",
+      "started_at": "2026-11-02T07:01:43Z",
+      "completed_at": "2026-11-02T07:03:23Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.03333333333333333,
+      "execution_minutes": 1.6666666666666667
+    },
+    {
+      "id": 41251061208,
+      "name": "Generate and Deploy API Docs",
+      "head_sha": "e5db88ee9f610e2f1c05ab3fbb7f9e3322be0f7d",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41251061208",
+      "started_at": "2026-10-31T23:12:37Z",
+      "completed_at": "2026-10-31T23:13:14Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 6.733333333333333,
+      "execution_minutes": 0.6166666666666667
+    },
+    {
+      "id": 41251061210,
+      "name": "Static analysis",
+      "head_sha": "e5db88ee9f610e2f1c05ab3fbb7f9e3322be0f7d",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41251061210",
+      "started_at": "2026-10-31T23:06:34Z",
+      "completed_at": "2026-10-31T23:07:11Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.6833333333333333,
+      "execution_minutes": 0.6166666666666667
+    },
+    {
+      "id": 41251061229,
+      "name": "Lab07 card ordering",
+      "head_sha": "e5db88ee9f610e2f1c05ab3fbb7f9e3322be0f7d",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41251061229",
+      "started_at": "2026-10-31T23:06:40Z",
+      "completed_at": "2026-10-31T23:07:34Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 0.7833333333333333,
+      "execution_minutes": 0.9
+    },
+    {
+      "id": 41251061238,
+      "name": "CI",
+      "head_sha": "e5db88ee9f610e2f1c05ab3fbb7f9e3322be0f7d",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41251061238",
+      "started_at": "2026-10-31T23:07:47Z",
+      "completed_at": "2026-10-31T23:08:45Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 1.9,
+      "execution_minutes": 0.9666666666666667
+    },
+    {
+      "id": 41251061256,
+      "name": "Lab08 characterization tests",
+      "head_sha": "e5db88ee9f610e2f1c05ab3fbb7f9e3322be0f7d",
+      "run_attempt": 1,
+      "conclusion": "success",
+      "html_url": "https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/actions/runs/41251061256",
+      "started_at": "2026-10-31T23:14:27Z",
+      "completed_at": "2026-10-31T23:14:48Z",
+      "completion_source": "jobs.completed_at",
+      "queue_minutes": 8.566666666666666,
+      "execution_minutes": 0.35
+    }
+  ],
+  "recoveries": [],
+  "warnings": []
+}
