@@ -31,6 +31,32 @@ WORKFLOWS = (
 )
 FAILURES = {"failure", "timed_out", "action_required", "startup_failure", "stale"}
 UTC = timezone.utc
+ARTIFACT_ROOT = Path(__file__).resolve().parents[1] / "docs" / "ci-cd"
+
+
+def artifact_path(value):
+    """Constrain CLI and caller paths, including symlinks, to CI/CD artifacts."""
+    root = ARTIFACT_ROOT.resolve()
+    path = Path(value).resolve()
+    if not path.is_relative_to(root):
+        raise ValueError("Artifact path must stay inside docs/ci-cd")
+    return path
+
+
+def api_endpoint(value):
+    """Only the read-only routes needed by the collector are accepted."""
+    routes = (
+        r"/actions/runs",
+        r"/actions/runs/[1-9][0-9]*/attempts/[1-9][0-9]*(?:/jobs)?",
+        r"/actions/jobs/[1-9][0-9]*/logs",
+        r"/commits/[0-9a-f]{40}(?:/pulls|/check-runs)?",
+        r"/pulls(?:/[1-9][0-9]*(?:/commits)?)?",
+        r"/compare/[0-9a-f]{40}\.\.\.[0-9a-f]{40}",
+        r"/check-runs/[1-9][0-9]*(?:/annotations)?",
+    )
+    if not isinstance(value, str) or not any(re.fullmatch(r, value) for r in routes):
+        raise ValueError("Unsupported GitHub API endpoint")
+    return value
 
 
 def dt(value):
@@ -60,7 +86,7 @@ def selected(source, keys):
 
 
 def write_json(path, value):
-    path = Path(path)
+    path = artifact_path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", "utf-8")
 
@@ -104,11 +130,15 @@ class GitHub:
     """Read-only API client. Tokens are never persisted or printed."""
 
     def __init__(self, repo, token=None):
+        if not isinstance(repo, str) or not re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9-]*/[A-Za-z0-9_][A-Za-z0-9_.-]*", repo
+        ):
+            raise ValueError("Repository must be owner/name")
         self.root = f"https://api.github.com/repos/{repo}"
         self.token = token
 
     def get(self, endpoint, params=None):
-        url = self.root + endpoint
+        url = self.root + api_endpoint(endpoint)
         if params:
             url += "?" + urlencode(params)
         headers = {
@@ -151,7 +181,7 @@ class GitHub:
             def redirect_request(self, req, fp, code, msg, headers, newurl):
                 return None
 
-        endpoint = f"/actions/jobs/{job_id}/logs"
+        endpoint = api_endpoint(f"/actions/jobs/{job_id}/logs")
         headers = {"User-Agent": "Monkey-Business-Lab10-metrics"}
         if self.token:
             headers["Authorization"] = "Bearer " + self.token
@@ -648,6 +678,7 @@ def number(value):
 
 
 def render_reports(result, output):
+    output = artifact_path(output)
     output.mkdir(parents=True, exist_ok=True)
     write_json(output / "metrics-auto.json", result)
     c = result["counts"]
@@ -713,7 +744,9 @@ def render_reports(result, output):
     lines += [f"- {w}" for w in result["warnings"]] or [
         "Пропусків часових даних не виявлено."
     ]
-    (output / "metrics-auto.md").write_text("\n".join(lines) + "\n", "utf-8")
+    artifact_path(output / "metrics-auto.md").write_text(
+        "\n".join(lines) + "\n", "utf-8"
+    )
     tz = ZoneInfo(result["timezone"])
 
     def local(value):
@@ -755,7 +788,7 @@ def render_reports(result, output):
             f"{number(row['queue_minutes'])} | {number(row['execution_minutes'])} | "
             f"{row['status']} | {links} | {note} |"
         )
-    (output / "metrics-raw.md").write_text("\n".join(raw) + "\n", "utf-8")
+    artifact_path(output / "metrics-raw.md").write_text("\n".join(raw) + "\n", "utf-8")
 
 
 def main():
@@ -785,8 +818,10 @@ def main():
     parser.add_argument("--output", type=Path, default=Path("docs/ci-cd"))
     args = parser.parse_args()
     try:
+        evidence_path = artifact_path(args.evidence)
+        output_path = artifact_path(args.output)
         if args.offline:
-            evidence = json.loads(args.evidence.read_text("utf-8"))
+            evidence = json.loads(evidence_path.read_text("utf-8"))
         else:
             if not args.start or not args.end:
                 parser.error("--from and --to are required for collection")
@@ -801,9 +836,9 @@ def main():
             evidence = collect(
                 api, start, end, args.timezone, args.workflow or WORKFLOWS
             )
-            write_json(args.evidence, evidence)
+            write_json(evidence_path, evidence)
         result = calculate(evidence)
-        render_reports(result, args.output)
+        render_reports(result, output_path)
         print(json.dumps(result["counts"], ensure_ascii=False))
         return 0
     except (ValueError, OSError, KeyError) as exc:

@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 import pytest
 
 from scripts.calculate_ci_metrics import GitHub, calculate, enrich_ancestry, run_times
+from scripts import calculate_ci_metrics as metrics
 
 
 def stamp(minute):
@@ -301,3 +302,94 @@ def test_descendant_can_deploy_before_original_job_starts():
     assert row["lead_minutes"] == 30
     assert row["lead_queue_minutes"] == 16
     assert row["lead_execution_minutes"] == 4
+
+
+@pytest.mark.parametrize("value", ["../outside.json", "nested/../../outside.json"])
+def test_artifact_traversal_is_rejected(tmp_path, monkeypatch, value):
+    root = tmp_path / "artifacts"
+    root.mkdir()
+    monkeypatch.setattr(metrics, "ARTIFACT_ROOT", root)
+    with pytest.raises(ValueError, match="inside docs/ci-cd"):
+        metrics.write_json(root / value, {"value": "untrusted"})
+    assert not (tmp_path / "outside.json").exists()
+
+
+def test_absolute_artifact_path_outside_root_is_rejected(tmp_path, monkeypatch):
+    monkeypatch.setattr(metrics, "ARTIFACT_ROOT", tmp_path / "artifacts")
+    with pytest.raises(ValueError, match="inside docs/ci-cd"):
+        metrics.render_reports({}, tmp_path / "artifacts-sibling")
+    assert not (tmp_path / "artifacts-sibling").exists()
+
+
+def test_nested_artifact_json_remains_supported(tmp_path, monkeypatch):
+    monkeypatch.setattr(metrics, "ARTIFACT_ROOT", tmp_path)
+    target = tmp_path / "evidence" / "snapshot.json"
+    metrics.write_json(target, {"value": 42})
+    assert target.read_text("utf-8") == '{\n  "value": 42\n}\n'
+
+
+def test_artifact_symlink_escape_is_rejected(tmp_path, monkeypatch):
+    root = tmp_path / "artifacts"
+    root.mkdir()
+    monkeypatch.setattr(metrics, "ARTIFACT_ROOT", root)
+    link = root / "escape"
+    try:
+        link.symlink_to(tmp_path, target_is_directory=True)
+    except OSError:
+        pytest.skip("Creating symlinks needs Windows privilege")
+    with pytest.raises(ValueError, match="inside docs/ci-cd"):
+        metrics.write_json(link / "outside.json", {})
+
+
+@pytest.mark.parametrize(
+    "repo",
+    [
+        "../other",
+        "owner/../../other",
+        "owner/repo?query=1",
+        "owner/repo#fragment",
+        "owner\\repo",
+        "https://example.com/repo",
+    ],
+)
+def test_repository_cannot_change_api_scope(repo):
+    with pytest.raises(ValueError, match="owner/name"):
+        GitHub(repo)
+
+
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        "/../users",
+        "/commits/../../users",
+        "/actions/runs?branch=other",
+        "/actions/runs#fragment",
+        "/actions/%2e%2e/users",
+        "https://example.com",
+        "//example.com",
+        "/actions\\runs",
+        "/check-runs/1/annotations/../../../../users",
+    ],
+)
+def test_api_traversal_rejected_before_network(monkeypatch, endpoint):
+    def network_must_not_run(*args, **kwargs):
+        pytest.fail("Invalid route reached the network")
+
+    monkeypatch.setattr(metrics, "urlopen", network_must_not_run)
+    with pytest.raises(ValueError, match="Unsupported"):
+        GitHub("example/repo").get(endpoint)
+
+
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        "/actions/runs",
+        "/actions/runs/12/attempts/2/jobs",
+        "/commits/" + "a" * 40 + "/pulls",
+        "/pulls/236/commits",
+        "/compare/" + "a" * 40 + "..." + "b" * 40,
+        "/check-runs/123/annotations",
+    ],
+)
+def test_collector_api_routes_are_supported(endpoint):
+    assert metrics.api_endpoint(endpoint) == endpoint
