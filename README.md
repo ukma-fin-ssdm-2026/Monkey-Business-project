@@ -101,6 +101,7 @@
 - [Розбір жовтневого інциденту на `main`](./docs/ci-cd/incident-review.md) — запуски не стартували через обмеження оплати GitHub-hosted раннерів.
 - Автоматичний підрахунок метрик: [скрипт](./scripts/calculate_ci_metrics.py), [методика й запуск](./docs/ci-cd/README.md), [результат](./docs/ci-cd/metrics-auto.md), [звірка з ручним розрахунком](./docs/ci-cd/reconciliation.md). Відтворення без мережі: `python scripts/calculate_ci_metrics.py --offline`.
 - Швидкий і повільний набори тестів: на PR — `CI / build`, повільний [Lab07 card ordering](./.github/workflows/lab07-card-order.yml) з PostgreSQL — лише на `main` і вручну.
+- Пошук нестабільних тестів: ручний workflow [Lab10 flaky tests](./.github/workflows/lab10-flaky-tests.yml) 5 разів повторює повний набір тестів на одному коміті, а [скрипт](./scripts/find_flaky_tests.py) виводить тести з різним результатом між повторами.
 
 ## Документи проєкту
 - [TeamCharter.md](./TeamCharter.md) — командний статут

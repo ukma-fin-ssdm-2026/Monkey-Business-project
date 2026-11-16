@@ -16,6 +16,7 @@
 | [evidence/incident-api.json](evidence/incident-api.json) | API-дані історичного інциденту, annotations і перевірка ancestry |
 | [evidence/manual-baseline/](evidence/manual-baseline/) | Незмінені копії командної таблиці й звіту до перерахунку |
 | [скрипт](../../scripts/calculate_ci_metrics.py), [тести](../../tests/test_ci_metrics.py) | Збір, формули, звіти й перевірка граничних випадків |
+| [workflow](../../.github/workflows/lab10-flaky-tests.yml), [скрипт](../../scripts/find_flaky_tests.py), [тести](../../tests/test_find_flaky_tests.py) | Бонус «Пошук нестабільних тестів»: ручний повтор повного набору тестів і список тестів з різним результатом (див. [dora-summary.md](dora-summary.md), «Бонуси») |
 
 ## Запуск
 
