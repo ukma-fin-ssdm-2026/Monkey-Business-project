@@ -14,6 +14,10 @@
 - `scripts/calculate_ci_metrics.py`: локальний підрахунок чотирьох метрик
   DORA з GitHub Actions API (черга й виконання окремо, відтворення без
   мережі через `--offline`); тести — `tests/test_ci_metrics.py`.
+- Ручний workflow `lab10-flaky-tests.yml` повторює повний набір тестів
+  (pytest із PostgreSQL + Vitest) щонайменше 5 разів на одному коміті;
+  `scripts/find_flaky_tests.py` виводить тести з різним результатом між
+  повторами; тести — `tests/test_find_flaky_tests.py`.
 
 ### Changed:
 
