@@ -82,15 +82,18 @@ class InMemoryCardChildRepository(InMemoryRepository):
         return [i for i in self.items.values() if getattr(i, "card_id", None) == card_id]
 
 class InMemoryUserRepository(InMemoryRepository):
+    def get_for_update(self, user_id):
+        return self.get(user_id)
+
     def get_by_email(self, email: str):
         return next((u for u in self.items.values() if u.email == email), None)
 
 
 class InMemoryBoardMentorRepository(InMemoryRepository):
-    def get_by_token(self, token: str):
+    def get_by_token(self, token: str, *, for_update=False):
         return next((m for m in self.items.values() if m.invite_token == token), None)
 
-    def get_by_board_and_mentor(self, board_id, mentor_id):
+    def get_by_board_and_mentor(self, board_id, mentor_id, *, for_update=False):
         return next(
             (
                 m
@@ -128,6 +131,8 @@ class InMemoryCardRepository(InMemoryRepository):
 @pytest.fixture(autouse=True)
 def jwt_secret(monkeypatch) -> str:
     monkeypatch.setenv("JWT_SECRET", TEST_SECRET)
+    monkeypatch.setenv("MAIL_FROM_EMAIL", "board@example.com")
+    monkeypatch.setenv("MAILTRAP_SANDBOX", "false")
     return TEST_SECRET
 
 
@@ -476,6 +481,7 @@ def test_accept_invitation_with_password_activates_account_and_issues_token(
     repos, mentor, make_invitation
 ):
     # Arrange
+    mentor.password_hash = ""
     invitation = make_invitation(mentor, MentorStatus.pending, token="abc")
     payload = AcceptInvitationRequest(password=MENTOR_PASSWORD)
 

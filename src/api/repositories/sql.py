@@ -236,6 +236,16 @@ class SqlUserRepository(_SqlRepository[User]):
         row = self._session.scalar(select(UserRow).where(UserRow.email == email))
         return None if row is None else self._to_entity(row)
 
+    def get_for_update(self, user_id: UUID) -> Optional[User]:
+        # Serialize activation across invitations for the same account.
+        row = self._session.scalar(
+            select(UserRow)
+            .where(UserRow.id == user_id)
+            .with_for_update()
+            .execution_options(populate_existing=True)
+        )
+        return None if row is None else self._to_entity(row)
+
 
 class SqlLoginAttemptRepository:
     """Лічильник входів у власних транзакціях.
@@ -386,21 +396,25 @@ class SqlBoardMentorRepository(_SqlRepository[BoardMentor]):
     row_type = BoardMentorRow
     entity_type = BoardMentor
 
-    def get_by_token(self, token: str) -> Optional[BoardMentor]:
-        row = self._session.scalar(
-            select(BoardMentorRow).where(BoardMentorRow.invite_token == token)
-        )
+    def get_by_token(
+        self, token: str, *, for_update: bool = False
+    ) -> Optional[BoardMentor]:
+        query = select(BoardMentorRow).where(BoardMentorRow.invite_token == token)
+        if for_update:
+            query = query.with_for_update().execution_options(populate_existing=True)
+        row = self._session.scalar(query)
         return None if row is None else self._to_entity(row)
 
     def get_by_board_and_mentor(
-        self, board_id: UUID, mentor_id: UUID
+        self, board_id: UUID, mentor_id: UUID, *, for_update: bool = False
     ) -> Optional[BoardMentor]:
-        row = self._session.scalar(
-            select(BoardMentorRow).where(
-                BoardMentorRow.board_id == board_id,
-                BoardMentorRow.mentor_id == mentor_id,
-            )
+        query = select(BoardMentorRow).where(
+            BoardMentorRow.board_id == board_id,
+            BoardMentorRow.mentor_id == mentor_id,
         )
+        if for_update:
+            query = query.with_for_update().execution_options(populate_existing=True)
+        row = self._session.scalar(query)
         return None if row is None else self._to_entity(row)
 
     def list_for_board(self, board_id: UUID) -> list[BoardMentor]:

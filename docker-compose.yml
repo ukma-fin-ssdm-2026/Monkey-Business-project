@@ -36,6 +36,10 @@ services:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-interview_board}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@db:5432/${POSTGRES_DB:-interview_board}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
       MAILTRAP_API_TOKEN: ${MAILTRAP_API_TOKEN}
+      MAIL_FROM_EMAIL: ${MAIL_FROM_EMAIL:-}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Interview Board}
+      MAILTRAP_SANDBOX: ${MAILTRAP_SANDBOX:-false}
+      MAILTRAP_INBOX_ID: ${MAILTRAP_INBOX_ID:-}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
     ports:
       - "127.0.0.1:${API_PORT:-3000}:8000"

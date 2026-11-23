@@ -141,7 +141,8 @@ export function MentorsPanel({ boardId, canWrite, onClose }: Props) {
                 <li key={m.id}>
                   <span className="mentor-email">{m.email}</span>
                   <span className={`mentor-status-badge status-${m.status}`}>
-                    {STATUS_LABELS[m.status] ?? m.status}
+                    {m.status === "pending" && m.expires_at && new Date(m.expires_at).getTime() <= Date.now()
+                      ? "Прострочено — запросіть повторно" : STATUS_LABELS[m.status] ?? m.status}
                   </span>
                   {canWrite && m.status !== "revoked" && (
                     <button

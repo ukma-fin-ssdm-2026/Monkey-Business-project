@@ -249,6 +249,29 @@ label {
   align-items: flex-start;
 }
 
+.card-create-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.card-create-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.card-create-fields .checkbox-label {
+  flex-direction: row;
+}
+
 .stage-column {
   background: #ebecf0;
   border-radius: var(--radius);

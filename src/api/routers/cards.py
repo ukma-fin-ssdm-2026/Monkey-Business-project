@@ -23,7 +23,7 @@ from fastapi import APIRouter, Path, Query, status
 
 from ..auth import CandidateOrAdmin, CurrentUser
 from ..db import Repos
-from ..domain import Card, utcnow
+from ..domain import Card, CardLink, CardNote, utcnow
 from ..errors import NotFoundError, error_responses
 from ..repositories.base import Repositories
 from ..schemas import (
@@ -199,7 +199,7 @@ def create_card(
 ) -> CardOut:
     require_board(repos, board_id, user, write=True)
     _require_stage(repos, board_id, payload.stage_id)
-    data = payload.model_dump()
+    data = payload.model_dump(exclude={"links", "notes"})
     if data.get("vacancy_url") is not None:
         data["vacancy_url"] = str(data["vacancy_url"])
     card = repos.cards.add(
@@ -209,6 +209,12 @@ def create_card(
             **data,
         )
     )
+    for url in payload.links:
+        repos.links.add(CardLink(card_id=card.id, url=str(url)))
+    for note in payload.notes:
+        repos.notes.add(
+            CardNote(card_id=card.id, content=note.content, source=note.source.value)
+        )
     return CardOut.model_validate(card)
 
 
@@ -259,8 +265,7 @@ def update_card(
         changes["vacancy_url"] = str(changes["vacancy_url"])
     if changes.get("status") is not None:
         changes["status"] = changes["status"].value
-    # An explicit null is ignored, so optional fields cannot be cleared yet.
-    changes = {k: v for k, v in changes.items() if v is not None}
+    # Unset fields are untouched; explicit null clears only nullable fields.
     card = repos.cards.save(replace(card, **changes, updated_at=utcnow()))
     return CardOut.model_validate(card)
 

@@ -38,6 +38,8 @@ class Repository(Protocol[E]):
 class UserRepository(Repository[User], Protocol):
     def get_by_email(self, email: str) -> Optional[User]: ...
 
+    def get_for_update(self, user_id: UUID) -> Optional[User]: ...
+
 
 class LoginAttemptRepository(Protocol):
     """Лічильник невдалих входів; кожна зміна фіксується одразу, поза
@@ -82,10 +84,12 @@ class CardNoteRepository(Repository[CardNote], Protocol):
 
 
 class BoardMentorRepository(Repository[BoardMentor], Protocol):
-    def get_by_token(self, token: str) -> Optional[BoardMentor]: ...
+    def get_by_token(
+        self, token: str, *, for_update: bool = False
+    ) -> Optional[BoardMentor]: ...
 
     def get_by_board_and_mentor(
-        self, board_id: UUID, mentor_id: UUID
+        self, board_id: UUID, mentor_id: UUID, *, for_update: bool = False
     ) -> Optional[BoardMentor]: ...
 
     def list_for_board(self, board_id: UUID) -> list[BoardMentor]: ...
