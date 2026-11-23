@@ -14,6 +14,7 @@ const state = vi.hoisted(() => ({
   authToken: null as string | null,
   navigate: vi.fn(),
   setBoardId: vi.fn(),
+  applySession: vi.fn(),
 }));
 
 vi.mock("react-router-dom", () => ({
@@ -21,13 +22,13 @@ vi.mock("react-router-dom", () => ({
   useNavigate: () => state.navigate,
 }));
 vi.mock("../src/context/AuthContext", () => ({
-  useAuth: () => ({ token: state.authToken, setBoardId: state.setBoardId }),
+  useAuth: () => ({ token: state.authToken, setBoardId: state.setBoardId, applySession: state.applySession }),
 }));
 vi.mock("../src/api/client", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../src/api/client")>();
   return {
     ...actual,
-    api: { getInvitation: vi.fn(), acceptInvitation: vi.fn() },
+    api: { getInvitation: vi.fn(), acceptInvitation: vi.fn(), login: vi.fn() },
     setAuthToken: vi.fn(),
   };
 });
@@ -172,8 +173,9 @@ describe("InvitationPage: behavior before refactoring", () => {
   });
 
   // @ts-ignore
-  it("stores a new session and board, removes cached user, and leaves context unchanged", async () => {
-    vi.mocked(api.acceptInvitation).mockResolvedValue({ message: "Accepted", board_id: "board-id", status: "accepted", access_token: "new-session" });
+  it("activates the new mentor session in context and opens the invited board", async () => {
+    const user = { id: "mentor-id", email: "mentor@example.com", role: "mentor" as const, is_active: true };
+    vi.mocked(api.acceptInvitation).mockResolvedValue({ message: "Accepted", board_id: "board-id", status: "accepted", access_token: "new-session", user, expires_in: 86400 });
     localStorage.setItem("tib.user", "cached-user");
     await openForm();
     for (const label of ["Пароль", "Підтвердіть пароль"]) {
@@ -182,12 +184,24 @@ describe("InvitationPage: behavior before refactoring", () => {
     vi.useFakeTimers();
     await act(async () => submit());
     expect(api.acceptInvitation).toHaveBeenCalledWith("invitation-token", { password: "example-pass" });
-    expect(setAuthToken).toHaveBeenCalledWith("new-session");
-    expect(localStorage.getItem("tib.token")).toBe("new-session");
-    expect(localStorage.getItem("tib.board.mentor-id")).toBe("board-id");
-    expect(localStorage.getItem("tib.user")).toBeNull();
+    expect(state.applySession).toHaveBeenCalledWith({ access_token: "new-session", user }, "board-id");
     expect(state.setBoardId).not.toHaveBeenCalled();
     act(() => vi.advanceTimersByTime(2000));
     expect(state.navigate).toHaveBeenCalledWith("/board");
+  });
+
+  it("logs an existing mentor in without sending a replacement password to acceptance", async () => {
+    vi.mocked(api.getInvitation).mockResolvedValue({ ...invitation, requires_password: false });
+    const session = { access_token: "existing-token", token_type: "bearer", expires_in: 86400,
+      user: { id: "mentor-id", email: invitation.email, role: "mentor" as const, is_active: true } };
+    vi.mocked(api.login).mockResolvedValue(session);
+    vi.mocked(api.acceptInvitation).mockResolvedValue({ message: "Accepted", board_id: "board-id", status: "accepted", access_token: null });
+    await openForm();
+    expect(screen.queryByLabelText("Підтвердіть пароль")).toBeNull();
+    fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "current-password" } });
+    await act(async () => submit());
+    expect(api.login).toHaveBeenCalledWith({ email: invitation.email, password: "current-password" }); // pragma: allowlist secret
+    expect(api.acceptInvitation).toHaveBeenCalledWith("invitation-token", undefined);
+    expect(state.applySession).toHaveBeenLastCalledWith(session, "board-id");
   });
 });

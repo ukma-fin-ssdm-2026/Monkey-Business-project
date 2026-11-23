@@ -98,7 +98,7 @@ class _Users(_InMemory):
 
 
 class _Mentors(_InMemory):
-    def get_by_board_and_mentor(self, board_id, mentor_id):
+    def get_by_board_and_mentor(self, board_id, mentor_id, *, for_update=False):
         return next(
             (
                 m

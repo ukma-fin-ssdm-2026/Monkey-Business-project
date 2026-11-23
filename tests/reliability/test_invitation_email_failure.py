@@ -29,6 +29,8 @@ RECIPIENT = "mentor@example.com"
 def mailtrap_client(monkeypatch) -> MagicMock:
     """Тестовий дублер клієнта Mailtrap замість мережевого виклику."""
     client = MagicMock()
+    monkeypatch.setenv("MAIL_FROM_EMAIL", "board@example.com")
+    monkeypatch.setenv("MAILTRAP_SANDBOX", "false")
     monkeypatch.setattr(mentors, "MAILTRAP_API_TOKEN", "fake-token")
     monkeypatch.setattr(mentors.mt, "MailtrapClient", MagicMock(return_value=client))
     return client

@@ -63,6 +63,8 @@ export interface CardOut {
 }
 
 export interface CardCreate {
+  links?: string[];
+  notes?: CardNoteCreate[];
   company: string;
   position: string;
   vacancy_url?: string | null;
@@ -175,7 +177,9 @@ export interface BoardMentorOut {
   mentor_id: string | null;
   email: string;
   status: MentorStatus;
-  invite_token: string;
+  invite_token: string | null;
+  expires_at?: string | null;
+  requires_password?: boolean;
   invited_at: string;
   accepted_at: string | null;
 }
@@ -193,6 +197,8 @@ export interface AcceptInvitationResponse {
   board_id: string;
   status: MentorStatus;
   access_token: string | null;
+  user?: UserOut | null;
+  expires_in?: number | null;
 }
 
 // --- comments ---
@@ -205,6 +211,8 @@ export interface CommentOut {
   id: string;
   card_id: string;
   author_id: string;
+  author_name?: string;
+  author_role?: UserRole | null;
   content: string;
   created_at: string;
 }

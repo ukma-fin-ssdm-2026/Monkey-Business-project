@@ -21,13 +21,24 @@ from ..db import Repos
 from ..domain import Comment
 from ..errors import ForbiddenError, NotFoundError, error_responses
 from ..repositories.base import Repositories
-from ..schemas import CommentCreate, CommentOut
+from ..schemas import CommentCreate, CommentOut, UserRole
 from .card_access import require_card
 
 router = APIRouter(
     prefix="/boards/{board_id}/cards/{card_id}/comments",
     tags=["Comments"],
 )
+
+
+def _comment_out(comment: Comment, repos: Repositories) -> CommentOut:
+    # Resolve authors independently of current board membership (FR-013).
+    author = repos.users.get(comment.author_id)
+    return CommentOut.model_validate(comment).model_copy(
+        update={
+            "author_name": author.email if author else "Користувач",
+            "author_role": UserRole(author.role) if author else None,
+        }
+    )
 
 
 def _require_comment(repos: Repositories, card_id: UUID, comment_id: UUID) -> Comment:
@@ -55,7 +66,7 @@ def list_comments(
     repos: Repos = None,
 ) -> list[CommentOut]:
     require_card(repos, board_id, card_id, user)
-    return [CommentOut.model_validate(c) for c in repos.comments.list_for_card(card_id)]
+    return [_comment_out(c, repos) for c in repos.comments.list_for_card(card_id)]
 
 
 @router.post(
@@ -88,7 +99,7 @@ def create_comment(
             content=payload.content,
         )
     )
-    return CommentOut.model_validate(comment)
+    return _comment_out(comment, repos)
 
 
 @router.delete(

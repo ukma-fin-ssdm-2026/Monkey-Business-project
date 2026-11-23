@@ -189,6 +189,16 @@ class CardCreate(CardBase):
         description="Етап, у якому створюється картка",
         examples=["22222222-2222-2222-2222-222222222222"],
     )
+    links: list[HttpUrl] = Field(
+        default_factory=list,
+        max_length=50,
+        description="Посилання, які створюються в одній транзакції з карткою",
+    )
+    notes: list["CardNoteCreate"] = Field(
+        default_factory=list,
+        max_length=50,
+        description="Початкові нотатки; помилка відкочує створення всієї картки",
+    )
 
 
 class CardUpdate(BaseModel):
@@ -238,6 +248,13 @@ class CardUpdate(BaseModel):
     def require_change(self) -> "CardUpdate":
         if not self.model_fields_set:
             raise ValueError("потрібно вказати хоча б одне поле для оновлення")
+        for name in ("company", "position", "notifications_enabled", "status"):
+            if name in self.model_fields_set and getattr(self, name) is None:
+                raise ValueError(f"поле {name} не може бути null")
+        for name in ("company", "position"):
+            value = getattr(self, name)
+            if value is not None and not value.strip():
+                raise ValueError(f"поле {name} не може бути порожнім рядком")
         return self
 
 
@@ -460,14 +477,20 @@ class BoardMentorOut(BaseModel):
     status: MentorStatus = Field(
         ..., description="Поточний статус запрошення (pending, accepted, revoked)"
     )
-    invite_token: str = Field(
-        ...,
+    invite_token: Optional[str] = Field(
+        default=None,
         examples=["k7X9vL2mQ8n4P1z0R3t5Y6u7I8o9W0e1"],  # pragma: allowlist secret
         description="Одноразовий токен запрошення",
     )
     invited_at: datetime = Field(..., description="Дата і час надсилання запрошення")
     accepted_at: Optional[datetime] = Field(
         default=None, description="Дата і час прийняття запрошення"
+    )
+    expires_at: Optional[datetime] = Field(
+        default=None, description="Строк дії запрошення"
+    )
+    requires_password: bool = Field(
+        default=False, description="Потрібна первинна активація акаунта"
     )
 
     model_config = {"from_attributes": True}
@@ -501,6 +524,8 @@ class AcceptInvitationResponse(BaseModel):
         description="JWT токен, якщо під час прийняття було активовано акаунт із паролем",
     )
     token_type: str = Field(default="bearer", examples=["bearer"])
+    user: Optional[UserOut] = None
+    expires_in: Optional[int] = None
 
 
 # --------------------------------------------------------------------------- #
@@ -529,6 +554,10 @@ class CommentOut(BaseModel):
     id: UUID = Field(..., description="Ідентифікатор коментаря")
     card_id: UUID = Field(..., description="Картка, до якої належить коментар")
     author_id: UUID = Field(..., description="Ідентифікатор автора коментаря")
+    author_name: str = Field(
+        default="Користувач", description="Email автора як відображуване ім’я"
+    )
+    author_role: Optional[UserRole] = None
     content: str = Field(..., description="Текст коментаря")
     created_at: datetime = Field(..., description="Дата і час створення коментаря")
 

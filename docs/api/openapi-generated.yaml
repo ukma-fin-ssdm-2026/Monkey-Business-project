@@ -1349,6 +1349,113 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /v1/boards/{board_id}/cards/{card_id}/links/{link_id}:
+    patch:
+      tags:
+      - Card Links
+      summary: Змінити посилання на тестове завдання
+      description: Замінює URL зі збереженням ID та часу створення (FR-009, US-003).
+      operationId: update_link
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: board_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Board Id
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Card Id
+      - name: link_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Link Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardLinkCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardLinkOut'
+        '401':
+          description: Потрібна автентифікація
+          content:
+            application/json:
+              examples:
+                unauthorized:
+                  summary: Потрібен Bearer-токен
+                  value:
+                    error:
+                      code: UNAUTHORIZED
+                      message: Потрібен Bearer-токен
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостатньо прав
+          content:
+            application/json:
+              examples:
+                forbidden:
+                  summary: Недостатньо прав для виконання цієї дії
+                  value:
+                    error:
+                      code: FORBIDDEN
+                      message: Недостатньо прав для виконання цієї дії
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Посилання або картку не знайдено
+          content:
+            application/json:
+              examples:
+                not_found:
+                  summary: Посилання або картку не знайдено
+                  value:
+                    error:
+                      code: NOT_FOUND
+                      message: Посилання або картку не знайдено
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#error-handling
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Невалідний URL
+          content:
+            application/json:
+              examples:
+                validation_error:
+                  summary: Запит містить невалідні поля
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Запит містить невалідні поля
+                      details: []
+                      request_id: req_example
+                      documentation: https://github.com/ukma-fin-ssdm-2026/Monkey-Business-project/blob/main/docs/api/api-design.md#validation
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
       - Card Links
@@ -2968,6 +3075,15 @@ components:
           default: bearer
           examples:
           - bearer
+        user:
+          anyOf:
+          - $ref: '#/components/schemas/UserOut'
+          - type: 'null'
+        expires_in:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expires In
       type: object
       required:
       - message
@@ -3005,7 +3121,9 @@ components:
           $ref: '#/components/schemas/MentorStatus'
           description: Поточний статус запрошення (pending, accepted, revoked)
         invite_token:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Invite Token
           description: Одноразовий токен запрошення
           examples:
@@ -3022,6 +3140,18 @@ components:
           - type: 'null'
           title: Accepted At
           description: Дата і час прийняття запрошення
+        expires_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires At
+          description: Строк дії запрошення
+        requires_password:
+          type: boolean
+          title: Requires Password
+          description: Потрібна первинна активація акаунта
+          default: false
       type: object
       required:
       - id
@@ -3029,7 +3159,6 @@ components:
       - mentor_id
       - email
       - status
-      - invite_token
       - invited_at
       title: BoardMentorOut
     BoardOut:
@@ -3120,6 +3249,23 @@ components:
           description: Етап, у якому створюється картка
           examples:
           - 22222222-2222-2222-2222-222222222222
+        links:
+          items:
+            type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          type: array
+          maxItems: 50
+          title: Links
+          description: Посилання, які створюються в одній транзакції з карткою
+        notes:
+          items:
+            $ref: '#/components/schemas/CardNoteCreate'
+          type: array
+          maxItems: 50
+          title: Notes
+          description: Початкові нотатки; помилка відкочує створення всієї картки
       type: object
       required:
       - company
@@ -3503,6 +3649,15 @@ components:
           format: uuid
           title: Author Id
           description: Ідентифікатор автора коментаря
+        author_name:
+          type: string
+          title: Author Name
+          description: Email автора як відображуване ім’я
+          default: Користувач
+        author_role:
+          anyOf:
+          - $ref: '#/components/schemas/UserRole'
+          - type: 'null'
         content:
           type: string
           title: Content

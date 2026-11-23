@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import logging
 import secrets
+from datetime import timedelta, timezone
 from typing import Annotated, Optional
 from uuid import UUID
 
@@ -58,6 +59,7 @@ from .card_access import require_board
 
 MAILTRAP_API_TOKEN = os.getenv("MAILTRAP_API_TOKEN")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
+INVITATION_TTL = timedelta(days=7)
 
 # Provider details (URLs, inbox id, raw API answers) go to the log only;
 # the client gets this message and the request_id (CWE-209).
@@ -72,16 +74,37 @@ mentors_router = APIRouter(prefix="/boards/{board_id}/mentors", tags=["Mentors"]
 invitations_router = APIRouter(prefix="/invitations", tags=["Invitations"])
 
 
-def _to_mentor_out(invitation: BoardMentor, email: str) -> BoardMentorOut:
+def _expires_at(invitation: BoardMentor):
+    invited_at = invitation.invited_at
+    return invited_at.replace(tzinfo=invited_at.tzinfo or timezone.utc) + INVITATION_TTL
+
+
+def _pending(invitation: BoardMentor | None) -> bool:
+    return (
+        invitation is not None
+        and invitation.status == MentorStatus.pending.value
+        and _expires_at(invitation) > utcnow()
+    )
+
+
+def _to_mentor_out(
+    invitation: BoardMentor,
+    email: str,
+    *,
+    expose_token: bool = True,
+    requires_password: bool = False,
+) -> BoardMentorOut:
     return BoardMentorOut(
         id=invitation.id,
         board_id=invitation.board_id,
         mentor_id=invitation.mentor_id,
         email=email,
         status=MentorStatus(invitation.status),
-        invite_token=invitation.invite_token,
+        invite_token=invitation.invite_token if expose_token else None,
         invited_at=invitation.invited_at,
         accepted_at=invitation.accepted_at,
+        expires_at=_expires_at(invitation),
+        requires_password=requires_password,
     )
 
 
@@ -100,9 +123,18 @@ def _send_invitation_email(email: str, token: str, board_id: UUID) -> None:
         )
         raise ServiceUnavailableError(EMAIL_UNAVAILABLE_MESSAGE)
 
+    sender = os.getenv("MAIL_FROM_EMAIL", "").strip()
+    mode = os.getenv("MAILTRAP_SANDBOX", "false").lower()
+    inbox_id = os.getenv("MAILTRAP_INBOX_ID", "").strip()
+    if not sender or mode not in {"true", "false"} or (mode == "true" and not inbox_id):
+        logger.error("Invitation email configuration is incomplete or invalid")
+        raise ServiceUnavailableError(EMAIL_UNAVAILABLE_MESSAGE)
+
     invite_url = f"{FRONTEND_URL}/invitations/{token}"
     mail = mt.Mail(
-        sender=mt.Address(email="hello@demomailtrap.co", name="Interview Board"),
+        sender=mt.Address(
+            email=sender, name=os.getenv("MAIL_FROM_NAME", "Interview Board")
+        ),
         to=[mt.Address(email=email)],
         subject="Запрошення до дошки",
         text=(
@@ -111,12 +143,14 @@ def _send_invitation_email(email: str, token: str, board_id: UUID) -> None:
             f"Щоб приєднатися, перейдіть за цим посиланням:\n"
             f"{invite_url}\n\n"
         ),
-        category="Invitation Test",
+        category="Mentor invitation",
     )
 
     try:
         client = mt.MailtrapClient(
-            token=MAILTRAP_API_TOKEN, sandbox=True, inbox_id=4439163
+            token=MAILTRAP_API_TOKEN,
+            sandbox=mode == "true",
+            inbox_id=inbox_id if mode == "true" else None,
         )
         client.send(mail)
     # Only provider and network failures; a bug in our own code (TypeError
@@ -168,14 +202,18 @@ def invite_mentor(
         )
     elif mentor.role != UserRole.mentor.value:
         raise ConflictError("Користувач із таким email зареєстрований з іншою роллю")
+    if not mentor.is_active:
+        raise ForbiddenError("Обліковий запис ментора заблоковано")
 
-    existing = repos.mentors.get_by_board_and_mentor(board_id, mentor.id)
+    existing = repos.mentors.get_by_board_and_mentor(
+        board_id, mentor.id, for_update=True
+    )
     if existing is not None:
         if existing.status == MentorStatus.accepted.value:
             raise ConflictError("Цей ментор уже має доступ до дошки")
-        if existing.status == MentorStatus.pending.value:
+        if _pending(existing):
             raise ConflictError("Запрошення для цього ментора вже очікує підтвердження")
-        if existing.status == MentorStatus.revoked.value:
+        if existing.status in {MentorStatus.revoked.value, MentorStatus.pending.value}:
             existing.status = MentorStatus.pending.value
             existing.invite_token = secrets.token_urlsafe(32)
             existing.invited_at = utcnow()
@@ -219,7 +257,11 @@ def list_board_mentors(
     for inv in invitations:
         mentor = repos.users.get(inv.mentor_id)
         if mentor is not None:
-            result.append(_to_mentor_out(inv, mentor.email))
+            result.append(
+                _to_mentor_out(
+                    inv, mentor.email, expose_token=user.role != UserRole.mentor.value
+                )
+            )
     return result
 
 
@@ -238,12 +280,14 @@ def get_invitation(
     repos: Repos = None,
 ) -> BoardMentorOut:
     invitation = repos.mentors.get_by_token(token)
-    if invitation is None or invitation.status != MentorStatus.pending.value:
+    if not _pending(invitation):
         raise NotFoundError("Запрошення не знайдено або термін його дії минув")
     mentor = repos.users.get(invitation.mentor_id)
-    if mentor is None:
+    if mentor is None or not mentor.is_active or mentor.role != UserRole.mentor.value:
         raise NotFoundError("Користувача для цього запрошення не знайдено")
-    return _to_mentor_out(invitation, mentor.email)
+    return _to_mentor_out(
+        invitation, mentor.email, requires_password=not mentor.password_hash
+    )
 
 
 @invitations_router.post(
@@ -282,33 +326,36 @@ def accept_invitation(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)] = None,
     repos: Repos = None,
 ) -> AcceptInvitationResponse:
-    invitation = repos.mentors.get_by_token(token)
-    if invitation is None or invitation.status != MentorStatus.pending.value:
+    # Keep the invitation and account locked until the request transaction commits.
+    # The user lock also protects activation through two different invitations.
+    invitation = repos.mentors.get_by_token(token, for_update=True)
+    if not _pending(invitation):
         raise ForbiddenError("Недійсне або прострочене запрошення")
 
     access_token: Optional[str] = None
+    token_response = None
+    mentor = repos.users.get_for_update(invitation.mentor_id)
+    if mentor is None:
+        raise ForbiddenError("Користувача для цього запрошення не знайдено")
+    if not mentor.is_active or mentor.role != UserRole.mentor.value:
+        raise ForbiddenError("Обліковий запис ментора недоступний")
 
     if credentials is not None:
         user = get_current_user(credentials, repos)
         if user.role != UserRole.mentor.value:
             raise ForbiddenError("Лише ментор може прийняти запрошення")
-        invited_mentor = repos.users.get(invitation.mentor_id)
-        if invited_mentor is None:
-            raise ForbiddenError("Користувача для цього запрошення не знайдено")
-        if invited_mentor.email.lower() != user.email.lower():
+        if mentor.id != user.id:
             raise ForbiddenError("Це запрошення призначене для іншого email")
         invitation.mentor_id = user.id
     elif payload is not None and payload.password:
-        mentor = repos.users.get(invitation.mentor_id)
-        if mentor is None:
-            raise ForbiddenError("Користувача для цього запрошення не знайдено")
+        if mentor.password_hash:
+            raise UnauthorizedError("Потрібен вхід у систему для прийняття запрошення")
         mentor.password_hash = _hash_password(payload.password)
         repos.users.save(mentor)
         token_response = _issue_token(mentor)
         access_token = token_response.access_token
     else:
-        mentor = repos.users.get(invitation.mentor_id)
-        if mentor is not None and mentor.password_hash:
+        if mentor.password_hash:
             raise UnauthorizedError("Потрібен вхід у систему для прийняття запрошення")
         raise UnauthorizedError(
             "Вкажіть пароль для активації облікового запису ментора"
@@ -323,6 +370,8 @@ def accept_invitation(
         board_id=invitation.board_id,
         status=MentorStatus.accepted,
         access_token=access_token,
+        user=token_response.user if token_response else None,
+        expires_in=token_response.expires_in if token_response else None,
     )
 
 
@@ -347,7 +396,9 @@ def revoke_mentor(
     repos: Repos = None,
 ) -> None:
     require_board(repos, board_id, user, write=True)
-    invitation = repos.mentors.get_by_board_and_mentor(board_id, mentor_id)
+    invitation = repos.mentors.get_by_board_and_mentor(
+        board_id, mentor_id, for_update=True
+    )
     if invitation is None:
         raise NotFoundError("Ментора серед запрошених для цієї дошки не знайдено")
     invitation.status = MentorStatus.revoked.value

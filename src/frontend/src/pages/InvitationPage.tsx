@@ -7,10 +7,10 @@
  * Логіка:
  *  1. Завантажуємо деталі запрошення (email, статус).
  *  2. Якщо ментор уже залогінений (токен у AuthContext) — приймаємо без пароля.
- *  3. Якщо ні — пропонуємо форму встановлення пароля.
+ *  3. Новий ментор встановлює пароль; наявний входить із поточним паролем.
  *  4. Після успішного прийняття зберігаємо сесію та board_id, переходимо на /board.
  *
- * Верифікація: Перевірено типи і білд.
+ * Codex: сесію активації передаємо в AuthContext; регресії — InvitationPage.test.tsx.
  */
 
 /**
@@ -21,13 +21,9 @@
  */
 import { FormEvent, type ReactNode, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { api, ApiError, setAuthToken } from "../api/client";
+import { api, ApiError } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import type { BoardMentorOut } from "../api/types";
-
-const TOKEN_KEY = "tib.token";
-const USER_KEY = "tib.user";
-const BOARD_KEY_PREFIX = "tib.board.";
 
 function InvitationStatusScreen({ children }: { children: ReactNode }) {
   return (
@@ -40,7 +36,7 @@ function InvitationStatusScreen({ children }: { children: ReactNode }) {
 export function InvitationPage() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
-  const { token: authToken, setBoardId } = useAuth();
+  const { token: authToken, user, setBoardId, applySession, logout } = useAuth();
 
   const [invitation, setInvitation] = useState<BoardMentorOut | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -51,6 +47,13 @@ export function InvitationPage() {
   const [accepting, setAccepting] = useState(false);
   const [acceptError, setAcceptError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const needsActivation = invitation?.requires_password !== false;
+
+  useEffect(() => {
+    if (!done) return;
+    const timer = window.setTimeout(() => navigate("/board"), 2000);
+    return () => window.clearTimeout(timer);
+  }, [done, navigate]);
 
   // Крок 1: Завантажити дані запрошення
   useEffect(() => {
@@ -86,7 +89,7 @@ export function InvitationPage() {
         setAcceptError("Введіть пароль для активації облікового запису");
         return;
       }
-      if (password !== confirmPassword) {
+      if (needsActivation && password !== confirmPassword) {
         setAcceptError("Паролі не співпадають");
         return;
       }
@@ -94,33 +97,26 @@ export function InvitationPage() {
 
     setAccepting(true);
     try {
-      const payload = authToken ? undefined : { password };
+      let session;
+      if (!authToken && !needsActivation && invitation) {
+        session = await api.login({ email: invitation.email, password });
+        applySession(session);
+      }
+      const payload = authToken || session ? undefined : { password };
       const result = await api.acceptInvitation(token, payload);
 
       // Якщо бекенд повернув новий токен (новий ментор встановив пароль)
       if (result.access_token) {
-        // Зберігаємо JWT у клієнта та localStorage.
-        // AuthContext.applySession — приватний, тому оновлюємо вручну.
-        setAuthToken(result.access_token);
-        localStorage.setItem(TOKEN_KEY, result.access_token);
-        // USER_KEY видаляємо — AuthProvider прочитає його на наступному mount
-        // і покаже "Завантаження" до входу. Натомість зберігаємо board_id
-        // прямо в localStorage під ключем інвайтованого ментора (mentor_id
-        // з запрошення), щоб він не загубився після перезавантаження.
-        localStorage.removeItem(USER_KEY);
-        if (invitation) {
-          localStorage.setItem(
-            BOARD_KEY_PREFIX + invitation.mentor_id,
-            result.board_id,
-          );
-        }
+        if (!result.user) throw new Error("API не повернув профіль ментора");
+        applySession({ access_token: result.access_token, user: result.user }, result.board_id);
+      } else if (session) {
+        applySession(session, result.board_id);
       } else {
         // Вже залогінений ментор — setBoardId спрацює, бо user в контексті є
         setBoardId(result.board_id);
       }
 
       setDone(true);
-      setTimeout(() => navigate("/board"), 2000);
     } catch (err) {
       setAcceptError(
         err instanceof ApiError ? err.message : "Не вдалося прийняти запрошення",
@@ -185,14 +181,16 @@ export function InvitationPage() {
           </p>
         </div>
 
-        {authToken ? (
+        {authToken && user && user.id !== invitation.mentor_id ? (
+          <p className="hint">Запрошення для іншого акаунта. <button type="button" onClick={logout}>Вийти й продовжити</button></p>
+        ) : authToken ? (
           <p className="hint">
             Ви вже залогінені. Натисніть «Прийняти», щоб приєднатися до дошки.
           </p>
         ) : (
           <>
             <p className="hint">
-              Встановіть пароль для вашого облікового запису ментора.
+              {needsActivation ? "Встановіть пароль для вашого облікового запису ментора." : "Увійдіть із поточним паролем ментора."}
             </p>
             <label>
               Пароль
@@ -201,11 +199,11 @@ export function InvitationPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                autoComplete="new-password"
+                autoComplete={needsActivation ? "new-password" : "current-password"}
                 minLength={8}
               />
             </label>
-            <label>
+            {needsActivation && <label>
               Підтвердіть пароль
               <input
                 type="password"
@@ -214,13 +212,13 @@ export function InvitationPage() {
                 required
                 autoComplete="new-password"
               />
-            </label>
+            </label>}
           </>
         )}
 
         {acceptError && <p className="form-error">{acceptError}</p>}
 
-        <button type="submit" disabled={accepting}>
+        <button type="submit" disabled={accepting || Boolean(authToken && user && user.id !== invitation.mentor_id)}>
           {accepting ? "Прийняття..." : "Прийняти запрошення"}
         </button>
 

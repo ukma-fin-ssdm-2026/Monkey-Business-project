@@ -9,7 +9,7 @@
 
 import { Droppable } from "@hello-pangea/dnd";
 import { useState } from "react";
-import type { CardOut, StageOut } from "../api/types";
+import type { CardCreate, CardOut, StageOut } from "../api/types";
 import { CardItem } from "./CardItem";
 import { focusOnMount } from "./focusOnMount";
 import { NewCardForm } from "./NewCardForm";
@@ -19,7 +19,7 @@ interface Props {
   cards: CardOut[];
   canWrite: boolean;
   onOpenCard: (cardId: string) => void;
-  onAddCard: (stageId: string, company: string, position: string) => Promise<void>;
+  onAddCard: (stageId: string, payload: Omit<CardCreate, "stage_id">) => Promise<void>;
   onRenameStage: (stageId: string, name: string) => Promise<void>;
   onDeleteStage: (stageId: string) => Promise<void>;
 }
@@ -110,8 +110,8 @@ export function StageColumn({
       {canWrite &&
         (adding ? (
           <NewCardForm
-            onSubmit={async (company, position) => {
-              await onAddCard(stage.id, company, position);
+            onSubmit={async (payload) => {
+              await onAddCard(stage.id, payload);
               setAdding(false);
             }}
             onCancel={() => setAdding(false)}

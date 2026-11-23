@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from uuid import UUID
 
 from fastapi import APIRouter, Path, status
@@ -78,6 +79,30 @@ def create_link(
     require_card(repos, board_id, card_id, user, write=True)
     link = repos.links.add(CardLink(card_id=card_id, url=str(payload.url)))
     return CardLinkOut.model_validate(link)
+
+
+@router.patch(
+    "/{link_id}",
+    response_model=CardLinkOut,
+    summary="Змінити посилання на тестове завдання",
+    description="Замінює URL зі збереженням ID та часу створення (FR-009, US-003).",
+    responses=error_responses("Посилання або картку не знайдено", "Невалідний URL"),
+)
+def update_link(
+    payload: CardLinkCreate,
+    board_id: UUID,
+    card_id: UUID,
+    link_id: UUID,
+    user: CandidateOrAdmin,
+    repos: Repos,
+) -> CardLinkOut:
+    require_card(repos, board_id, card_id, user, write=True)
+    link = repos.links.get(link_id)
+    if link is None or link.card_id != card_id:
+        raise NotFoundError(f"Посилання {link_id} не знайдено")
+    return CardLinkOut.model_validate(
+        repos.links.save(replace(link, url=str(payload.url)))
+    )
 
 
 @router.delete(

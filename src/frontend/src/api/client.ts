@@ -102,6 +102,7 @@ function readBody(res: Response, signal: AbortSignal): Promise<string> {
 }
 
 let authToken: string | null = null;
+export const SESSION_EXPIRED_EVENT = "tib:session-expired";
 
 export function setAuthToken(token: string | null): void {
   authToken = token;
@@ -113,8 +114,9 @@ async function request<T>(
   body?: unknown,
 ): Promise<T> {
   const headers: Record<string, string> = {};
+  const requestToken = path === "/v1/auth/login" || path === "/v1/auth/register" ? null : authToken;
   if (body !== undefined) headers["Content-Type"] = "application/json";
-  if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+  if (requestToken) headers["Authorization"] = `Bearer ${requestToken}`;
 
   let res: Response;
   let text: string;
@@ -140,6 +142,10 @@ async function request<T>(
       );
     }
 
+    if (res.status === 401 && requestToken && requestToken === authToken) {
+      setAuthToken(null);
+      window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+    }
     if (res.status === 204) {
       return undefined as T;
     }
@@ -239,6 +245,8 @@ export const api = {
       `/v1/boards/${boardId}/cards/${cardId}/links`,
       payload,
     ),
+  updateLink: (boardId: string, cardId: string, linkId: string, payload: CardLinkCreate) =>
+    request<CardLinkOut>("PATCH", `/v1/boards/${boardId}/cards/${cardId}/links/${linkId}`, payload),
   deleteLink: (boardId: string, cardId: string, linkId: string) =>
     request<void>(
       "DELETE",

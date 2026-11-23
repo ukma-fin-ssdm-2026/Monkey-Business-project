@@ -15,7 +15,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, ApiError } from "../api/client";
 import { useAuth } from "../context/AuthContext";
-import type { CardOut, StageOut } from "../api/types";
+import type { CardCreate, CardOut, StageOut } from "../api/types";
 import { StageColumn } from "../components/StageColumn";
 import { CardModal } from "../components/CardModal";
 import { MentorsPanel } from "../components/MentorsPanel";
@@ -73,17 +73,48 @@ export function BoardPage() {
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);
+        if (err.status === 403) {
+          setCards([]);
+          setStages([]);
+          setSelectedCardId(null);
+          navigate("/board/setup", { replace: true });
+        }
       } else {
         setError(err instanceof Error ? err.message : "Не вдалося завантажити дошку");
       }
     } finally {
       setLoading(false);
     }
-  }, [boardId]);
+  }, [boardId, navigate]);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (user?.role !== "mentor") return;
+    let cancelled = false;
+    const checkAccess = async () => {
+      try {
+        const boards = await api.listMyBoards();
+        if (!cancelled && !boards.some((board) => board.id === boardId)) {
+          setCards([]);
+          setStages([]);
+          setSelectedCardId(null);
+          navigate("/board/setup", { replace: true });
+        }
+      } catch {
+        // A 401 is handled centrally. A network outage is not a revocation.
+      }
+    };
+    const timer = window.setInterval(checkAccess, 15_000);
+    window.addEventListener("focus", checkAccess);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+      window.removeEventListener("focus", checkAccess);
+    };
+  }, [boardId, user?.role, navigate]);
 
   useEffect(() => {
     if (!boardId) navigate("/board/setup", { replace: true });
@@ -133,14 +164,10 @@ export function BoardPage() {
     }
   }
 
-  async function handleAddCard(stageId: string, company: string, position: string) {
+  async function handleAddCard(stageId: string, payload: Omit<CardCreate, "stage_id">) {
     if (!boardId) return;
-    try {
-      await api.createCard(boardId, { company, position, stage_id: stageId });
-      await load();
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Не вдалося створити картку");
-    }
+    const created = await api.createCard(boardId, { ...payload, stage_id: stageId });
+    setCards((previous) => [...previous, created]);
   }
 
   async function handleAddStage() {

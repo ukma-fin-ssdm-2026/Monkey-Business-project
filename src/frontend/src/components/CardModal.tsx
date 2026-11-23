@@ -3,12 +3,8 @@
  * Застосування: Модальне вікно картки — редагування полів (PATCH
  * .../cards/{id}), видалення, список/додавання/видалення посилань
  * (.../links) та нотаток/фідбеку (.../notes) по картці.
- * Верифікація: PATCH надсилає лише змінені поля (diff), бо CardUpdate у
- * schemas.py вимагає хоча б одне поле в model_fields_set; явне очищення
- * необов'язкового поля (null) не надсилається, бо бекенд такий null
- * ігнорує (коментар у routers/cards.py: "optional fields cannot be
- * cleared yet") — це обмеження бекенду, не фронтенду. Перевірено типи й
- * білд.
+ * Codex: очищення nullable-полів, редагування URL і нотаток, стабільний
+ * автор коментаря. Перевірка: first-phase.test.tsx та production build.
  */
 
 import { FormEvent, useEffect, useState } from "react";
@@ -86,6 +82,11 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
   const [mentors, setMentors] = useState<BoardMentorOut[]>([]);
   const [mentorsError, setMentorsError] = useState<string | null>(null);
   const [relatedDataReloadKey, setRelatedDataReloadKey] = useState(0);
+  const [editingLink, setEditingLink] = useState<string | null>(null);
+  const [linkDraft, setLinkDraft] = useState("");
+  const [editingNote, setEditingNote] = useState<string | null>(null);
+  const [noteDraft, setNoteDraft] = useState("");
+  const [savingRelated, setSavingRelated] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -149,15 +150,15 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
     if (position.trim() !== card.position) diff.position = position.trim();
     const urlTrimmed = vacancyUrl.trim();
     if (urlTrimmed !== (card.vacancy_url ?? "")) {
-      if (urlTrimmed) diff.vacancy_url = urlTrimmed;
+      diff.vacancy_url = urlTrimmed || null;
     }
     const reqTrimmed = requirements.trim();
     if (reqTrimmed !== (card.requirements_text ?? "")) {
-      if (reqTrimmed) diff.requirements_text = reqTrimmed;
+      diff.requirements_text = reqTrimmed || null;
     }
     const deadlineIso = deadline ? new Date(deadline).toISOString() : "";
-    if (deadlineIso !== (card.deadline ?? "")) {
-      if (deadlineIso) diff.deadline = deadlineIso;
+    if (deadline !== toLocalInputValue(card.deadline)) {
+      diff.deadline = deadlineIso || null;
     }
     if (notificationsEnabled !== card.notifications_enabled) {
       diff.notifications_enabled = notificationsEnabled;
@@ -204,6 +205,38 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
       setNewLink("");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Не вдалося додати посилання");
+    }
+  }
+
+  async function handleUpdateLink(e: FormEvent) {
+    e.preventDefault();
+    if (!editingLink || !linkDraft.trim()) return;
+    setSavingRelated(true);
+    setError(null);
+    try {
+      const updated = await api.updateLink(boardId, card.id, editingLink, { url: linkDraft.trim() });
+      setLinks((prev) => (prev ?? []).map((link) => link.id === updated.id ? updated : link));
+      setEditingLink(null);
+    } catch (err) {
+      setError(formatApiError(err, "Не вдалося змінити посилання"));
+    } finally {
+      setSavingRelated(false);
+    }
+  }
+
+  async function handleUpdateNote(e: FormEvent) {
+    e.preventDefault();
+    if (!editingNote || !noteDraft.trim()) return;
+    setSavingRelated(true);
+    setError(null);
+    try {
+      const updated = await api.updateNote(boardId, card.id, editingNote, { content: noteDraft.trim() });
+      setNotes((prev) => (prev ?? []).map((note) => note.id === updated.id ? updated : note));
+      setEditingNote(null);
+    } catch (err) {
+      setError(formatApiError(err, "Не вдалося змінити нотатку"));
+    } finally {
+      setSavingRelated(false);
     }
   }
 
@@ -407,14 +440,23 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
           <ul className="simple-list">
             {(links ?? []).map((link) => (
               <li key={link.id}>
+                {editingLink === link.id ? (
+                  <form className="inline-form stacked" onSubmit={handleUpdateLink}>
+                    <label>Новий URL<input type="url" value={linkDraft} onChange={(e) => setLinkDraft(e.target.value)} required disabled={savingRelated} /></label>
+                    <button type="submit" disabled={savingRelated}>Зберегти посилання</button>
+                    <button type="button" disabled={savingRelated} onClick={() => setEditingLink(null)}>Скасувати</button>
+                  </form>
+                ) : <>
                 <a href={link.url} target="_blank" rel="noreferrer">
                   {link.url}
                 </a>
+                {canWrite && <button type="button" className="secondary" onClick={() => { setEditingLink(link.id); setLinkDraft(link.url); }}>Редагувати посилання</button>}
                 {canWrite && (
                   <button className="icon-button" onClick={() => handleDeleteLink(link.id)}>
                     ✕
                   </button>
                 )}
+                </>}
               </li>
             ))}
             {links !== null && !linksError && links.length === 0 && (
@@ -466,7 +508,16 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
                     </button>
                   )}
                 </div>
-                <p>{note.content}</p>
+                {editingNote === note.id ? (
+                  <form className="inline-form stacked" onSubmit={handleUpdateNote}>
+                    <label>Текст нотатки<textarea value={noteDraft} onChange={(e) => setNoteDraft(e.target.value)} maxLength={3000} required disabled={savingRelated} /></label>
+                    <button type="submit" disabled={savingRelated || !noteDraft.trim()}>Зберегти нотатку</button>
+                    <button type="button" disabled={savingRelated} onClick={() => setEditingNote(null)}>Скасувати</button>
+                  </form>
+                ) : <>
+                  <p>{note.content}</p>
+                  {canWrite && <button type="button" className="secondary" onClick={() => { setEditingNote(note.id); setNoteDraft(note.content); }}>Редагувати нотатку</button>}
+                </>}
               </li>
             ))}
             {notes !== null && !notesError && notes.length === 0 && (
@@ -535,7 +586,9 @@ export function CardModal({ boardId, card, canWrite, onClose, onUpdated, onDelet
                 const isAuthor = user?.id === c.author_id;
                 const canDelete = isAuthor || user?.role === "admin";
                 const mentor = mentors.find((m) => m.mentor_id === c.author_id);
-                const authorLabel = isAuthor
+                const authorLabel = c.author_name
+                  ? `${c.author_name}${c.author_role === "mentor" ? " (ментор)" : ""}${isAuthor ? " — Ви" : ""}`
+                  : isAuthor
                   ? `Ви${user?.role === "mentor" ? " (ментор)" : ""}`
                   : mentor
                   ? `Ментор (${mentor.email})`
